@@ -1,0 +1,35 @@
+const sql = require('mssql');
+require('dotenv').config();
+
+const config = {
+    server: process.env.DB_SERVER,
+    port: parseInt(process.env.DB_PORT, 10) || 1433,
+    database: process.env.DB_DATABASE,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    options: {
+        encrypt: process.env.DB_ENCRYPT === 'true',
+        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
+    },
+};
+
+let poolPromise;
+
+function getPool() {
+    if (!poolPromise) {
+        poolPromise = new sql.ConnectionPool(config)
+            .connect()
+            .then((pool) => {
+                console.log('เชื่อมต่อ SQL Server สำเร็จ');
+                return pool;
+            })
+            .catch((err) => {
+                console.error('เชื่อมต่อ SQL Server ไม่สำเร็จ:', err);
+                poolPromise = null; // เผื่อ retry รอบถัดไป
+                throw err;
+            });
+    }
+    return poolPromise;
+}
+
+module.exports = { sql, getPool };
