@@ -8,25 +8,36 @@ import {
   LogOut,
   ScanLine,
   ShoppingCart,
+  UserCog,
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { key: "tickets", label: "Manage tickets", icon: Ticket },
-  { key: "codes", label: "Ticket codes", icon: KeyRound },
-  { key: "sell", label: "Sell ticket", icon: ShoppingCart },
-  { key: "scan", label: "Scan ticket", icon: ScanLine },
-  { key: "reports", label: "Reports", icon: BarChart3 },
-  { key: "users", label: "Admin users", icon: Users },
-  { key: "profile", label: "My profile", icon: UserRound },
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, adminOnly: false },
+  { key: "tickets", label: "Manage tickets", icon: Ticket, adminOnly: true },
+  { key: "codes", label: "Ticket codes", icon: KeyRound, adminOnly: false },
+  { key: "sell", label: "Sell ticket", icon: ShoppingCart, adminOnly: false },
+  { key: "scan", label: "Scan ticket", icon: ScanLine, adminOnly: false },
+  { key: "reports", label: "Reports", icon: BarChart3, adminOnly: false },
+  { key: "users", label: "Admin users", icon: Users, adminOnly: true },
+  { key: "profile", label: "My profile", icon: UserRound, adminOnly: false },
 ];
 
+// เมนู "Switch user" มีไว้สำหรับ dev/testing เท่านั้น
+// import.meta.env.DEV เป็น true ตอนรัน `npm run dev` และเป็น false ตอน build production จริง
+// เมนูนี้จะหายไปเองอัตโนมัติเมื่อ deploy ขึ้นจริง ไม่ต้องมาลบออกเอง
+if (import.meta.env.DEV) {
+  NAV_ITEMS.push({ key: "switchUser", label: "Switch user (dev)", icon: UserCog });
+}
+
 export default function Sidebar({ page, setPage, user, onLogout }) {
+  const isAdmin = user?.role === "Admin";
+  const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-neutral-200 bg-white px-4 py-6">
+    <aside className="flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-neutral-200 bg-white px-4 py-6">
       <div className="mb-6 px-2 text-lg font-semibold text-neutral-900">Ticket admin</div>
       <nav className="flex-1 space-y-1">
-        {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
+        {visibleItems.map(({ key, label, icon: Icon }) => {
           const active = page === key;
           return (
             <button

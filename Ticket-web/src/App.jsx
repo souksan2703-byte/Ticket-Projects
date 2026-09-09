@@ -22,6 +22,9 @@ const PAGES = {
   profile: MyProfilePage,
 };
 
+// หน้าที่ Admin เท่านั้นเข้าได้ (ต้องตรงกับ adminOnly ใน Sidebar.jsx)
+const ADMIN_ONLY_PAGES = ["tickets", "users"];
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
@@ -47,12 +50,18 @@ export default function App() {
     return <LoginPage onSignIn={setUser} />;
   }
 
-  const Page = PAGES[page];
+  // กันไว้อีกชั้น เผื่อ role User หลุดเข้าไปอยู่ที่หน้า Admin-only มาจากตอน login ก่อนหน้า (session ค้าง)
+  const isAdmin = user.role === "Admin";
+  const safePage = ADMIN_ONLY_PAGES.includes(page) && !isAdmin ? "dashboard" : page;
+
+  const Page = PAGES[safePage];
 
   return (
-    <div className="flex min-h-screen bg-neutral-50">
-      <Sidebar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
-      <main className="flex-1 overflow-x-auto p-8">
+    // h-screen + overflow-hidden ที่ตัวนอกสุด กันไม่ให้ทั้งหน้าเลื่อนรวมกัน
+    // แล้วให้ Sidebar กับ main แบ่งกันเลื่อนอิสระของใครของมันแทน
+    <div className="flex h-screen overflow-hidden bg-neutral-50">
+      <Sidebar page={safePage} setPage={setPage} user={user} onLogout={handleLogout} />
+      <main className="h-screen flex-1 overflow-y-auto overflow-x-auto p-8">
         <Page currentUser={user} />
       </main>
     </div>
