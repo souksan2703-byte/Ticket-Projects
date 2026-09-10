@@ -11,6 +11,9 @@ import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import MyProfilePage from "./pages/MyProfilePage.jsx";
 import { isLoggedIn, getCurrentUser, logout } from "./api.js";
 
+// URL ของหน้าร้านลูกค้า (Ticket-store) - ตั้งค่าผ่าน .env ได้ ถ้าไม่ตั้งจะใช้ค่านี้เป็นค่าเริ่มต้น
+const STORE_URL = import.meta.env.VITE_STORE_URL || "http://localhost:5174";
+
 const PAGES = {
   dashboard: DashboardPage,
   tickets: ManageTicketsPage,
@@ -38,6 +41,15 @@ export default function App() {
     setChecked(true);
   }, []);
 
+  // ถ้า login เป็น role "User" ให้เด้งออกไปที่หน้าร้าน Ticket Store ทันที ไม่ต้องเข้า Admin panel เลย
+  // (ใช้ window.location.href เพราะ Ticket Store เป็นคนละแอปคนละ origin ไม่ใช่แค่ route ในแอปเดียวกัน)
+  useEffect(() => {
+    if (user && user.role === "User") {
+      logout(); // เคลียร์ token ของฝั่ง admin ทิ้งไปด้วย เพราะ user role นี้ไม่ควรมี session ค้างอยู่ในแอปนี้
+      window.location.href = STORE_URL;
+    }
+  }, [user]);
+
   function handleLogout() {
     logout();
     setUser(null);
@@ -50,7 +62,16 @@ export default function App() {
     return <LoginPage onSignIn={setUser} />;
   }
 
-  // กันไว้อีกชั้น เผื่อ role User หลุดเข้าไปอยู่ที่หน้า Admin-only มาจากตอน login ก่อนหน้า (session ค้าง)
+  // ระหว่างที่กำลังจะเด้งไป Ticket Store (role User) ให้แสดงข้อความรอไว้ก่อน ไม่ต้อง render admin UI เลย
+  if (user.role === "User") {
+    return (
+      <div className="flex h-screen items-center justify-center bg-neutral-50 text-neutral-500">
+        กำลังนำท่านไปที่ Ticket Store...
+      </div>
+    );
+  }
+
+  // กันไว้อีกชั้น เผื่อ role อื่นที่ไม่ใช่ Admin หลุดเข้ามาถึงตรงนี้ได้ (ตอนนี้เหลือแค่ Admin เท่านั้นที่ควรมาถึงจุดนี้)
   const isAdmin = user.role === "Admin";
   const safePage = ADMIN_ONLY_PAGES.includes(page) && !isAdmin ? "dashboard" : page;
 
