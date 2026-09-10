@@ -8,6 +8,7 @@ const adminUserRoutes = require('./routes/adminUsers');
 const ticketCodeRoutes = require('./routes/ticketCodes');
 const reportRoutes = require('./routes/reports');
 const dashboardRoutes = require('./routes/dashboard');
+const publicRoutes = require('./routes/public');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/admin-users', adminUserRoutes); // Admin users
 app.use('/api/ticket-codes', ticketCodeRoutes); // Ticket codes
 app.use('/api/reports', reportRoutes);        // Reports
 app.use('/api/dashboard', dashboardRoutes);   // Dashboard
+app.use('/api/public', publicRoutes);         // หน้าร้านสำหรับลูกค้า (ไม่ต้อง login)
 
 app.get('/', (req, res) => {
     res.json({ message: 'Ticket Admin API กำลังทำงานอยู่' });

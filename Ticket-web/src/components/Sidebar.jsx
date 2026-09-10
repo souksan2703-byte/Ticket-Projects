@@ -8,7 +8,6 @@ import {
   LogOut,
   ScanLine,
   ShoppingCart,
-  UserCog,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -21,13 +20,6 @@ const NAV_ITEMS = [
   { key: "users", label: "Admin users", icon: Users, adminOnly: true },
   { key: "profile", label: "My profile", icon: UserRound, adminOnly: false },
 ];
-
-// เมนู "Switch user" มีไว้สำหรับ dev/testing เท่านั้น
-// import.meta.env.DEV เป็น true ตอนรัน `npm run dev` และเป็น false ตอน build production จริง
-// เมนูนี้จะหายไปเองอัตโนมัติเมื่อ deploy ขึ้นจริง ไม่ต้องมาลบออกเอง
-if (import.meta.env.DEV) {
-  NAV_ITEMS.push({ key: "switchUser", label: "Switch user (dev)", icon: UserCog });
-}
 
 export default function Sidebar({ page, setPage, user, onLogout }) {
   const isAdmin = user?.role === "Admin";
