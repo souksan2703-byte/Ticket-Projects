@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // 1. เพิ่ม useEffect ตรงนี้
 import { login } from "../api.js";
 
 export default function LoginPage({ onSignIn }) {
@@ -6,6 +6,12 @@ export default function LoginPage({ onSignIn }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // 2. เคลียร์ Session เก่าทิ้งทันทีที่เปิดเข้าหน้านี้ ป้องกันการ Redirect วนกลับ
+  useEffect(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
