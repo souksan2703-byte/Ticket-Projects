@@ -11,7 +11,7 @@ export default function Navbar() {
   sessionStorage.clear();
 
   // 2. Redirect ตรงไปที่หน้า /login ของ Admin (เปลี่ยน Port ให้ตรงตามจริง)
-  window.location.href = "http://localhost:5173/login";
+  window.location.href = "http://localhost:5173";
 };
 
   return (
