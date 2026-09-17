@@ -113,4 +113,115 @@ async function checkout(req, res) {
     }
 }
 
-module.exports = { getEvents, getEventById, checkout };
+// POST /api/public/check-ticket -> ใช้ตอนสแกน QR ครั้งแรก แค่เช็คสถานะ ไม่มาร์คว่ารับตั๋ว
+// body: { code: "<ค่าที่สแกนได้จาก QR>" }
+async function checkTicket(req, res) {
+    try {
+        const { code } = req.body;
+        if (!code) {
+            return res.status(400).json({ result: 'invalid', message: 'ไม่พบข้อมูลโค้ดที่สแกน' });
+        }
+
+        const pool = await getPool();
+        const result = await pool.request()
+            .input('code', sql.NVarChar(50), code.trim())
+            .query(`
+                SELECT tc.id, tc.code, tc.status, tc.myticket, tc.owner, tc.tranid, m.Title AS eventName
+                FROM TicketCode tc
+                JOIN TicketCodeMaster m ON m.tickid = tc.tickid
+                WHERE tc.code = @code
+            `);
+
+        const ticket = result.recordset[0];
+
+        if (!ticket) {
+            return res.status(404).json({
+                result: 'invalid',
+                message: 'ไม่พบโค้ดนี้ในระบบ กรุณาตรวจสอบตั๋วอีกครั้ง',
+            });
+        }
+
+        if (ticket.status === true || ticket.status === 1) {
+            return res.status(409).json({
+                result: 'not_sold',
+                message: `โค้ดนี้ยังไม่ถูกขาย (${ticket.eventName}) ไม่สามารถรับตั๋วได้`,
+                ticket: { code: ticket.code, eventName: ticket.eventName },
+            });
+        }
+
+        if (ticket.myticket === true || ticket.myticket === 1) {
+            return res.status(409).json({
+                result: 'already_used',
+                message: `ตั๋วใบนี้ถูกรับไปแล้วก่อนหน้านี้ (${ticket.eventName})`,
+                ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
+            });
+        }
+
+        // ขายแล้ว ยังไม่รับ -> พร้อมให้กดยืนยันรับตั๋วในหน้าถัดไป
+        return res.json({
+            result: 'ok',
+            message: `พบข้อมูลตั๋ว: ${ticket.eventName}`,
+            ticket: {
+                code: ticket.code,
+                eventName: ticket.eventName,
+                owner: ticket.owner,
+                tranid: ticket.tranid,
+            },
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ result: 'error', message: 'ตรวจสอบไม่สำเร็จ', error: err.message });
+    }
+}
+
+// POST /api/public/receive-ticket -> ใช้หลังพนักงานกดปุ่มยืนยันในหน้ารายละเอียด มาร์คว่ารับตั๋วแล้วจริง
+// body: { code: "<รหัสตั๋วเดียวกับที่เช็คไปตอน check-ticket>" }
+async function receiveTicket(req, res) {
+    try {
+        const { code } = req.body;
+        if (!code) {
+            return res.status(400).json({ result: 'invalid', message: 'ไม่พบข้อมูลโค้ดที่จะยืนยัน' });
+        }
+
+        const pool = await getPool();
+        const result = await pool.request()
+            .input('code', sql.NVarChar(50), code.trim())
+            .query(`
+                SELECT tc.id, tc.code, tc.status, tc.myticket, tc.owner, m.Title AS eventName
+                FROM TicketCode tc
+                JOIN TicketCodeMaster m ON m.tickid = tc.tickid
+                WHERE tc.code = @code
+            `);
+
+        const ticket = result.recordset[0];
+
+        if (!ticket) {
+            return res.status(404).json({ result: 'invalid', message: 'ไม่พบโค้ดนี้ในระบบ' });
+        }
+        if (ticket.status === true || ticket.status === 1) {
+            return res.status(409).json({ result: 'not_sold', message: 'โค้ดนี้ยังไม่ถูกขาย ไม่สามารถรับตั๋วได้' });
+        }
+        if (ticket.myticket === true || ticket.myticket === 1) {
+            return res.status(409).json({ result: 'already_used', message: 'ตั๋วใบนี้ถูกรับไปแล้วก่อนหน้านี้' });
+        }
+
+        await pool.request()
+            .input('id', sql.Int, ticket.id)
+            .query(`
+                UPDATE TicketCode
+                SET myticket = 1, getTicket_date = GETDATE(), updated = GETDATE()
+                WHERE id = @id
+            `);
+
+        res.json({
+            result: 'success',
+            message: `ยืนยันรับตั๋วสำเร็จ: ${ticket.eventName}`,
+            ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ result: 'error', message: 'ยืนยันรับตั๋วไม่สำเร็จ', error: err.message });
+    }
+}
+
+module.exports = { getEvents, getEventById, checkout, checkTicket, receiveTicket };

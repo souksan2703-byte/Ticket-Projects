@@ -7,4 +7,10 @@ router.get('/events', publicController.getEvents);
 router.get('/events/:id', publicController.getEventById);
 router.post('/checkout', publicController.checkout);
 
+// สำหรับเครื่องสแกน QR หน้างานโดยเฉพาะ (ไม่ต้อง login) แบ่งเป็น 2 ขั้นตอน:
+// 1) check-ticket   -> สแกนแล้วเช็คสถานะอย่างเดียว ไม่มาร์คว่ารับตั๋ว
+// 2) receive-ticket -> พนักงานกดยืนยันในหน้ารายละเอียดแล้วค่อยมาร์คว่ารับตั๋วจริง
+router.post('/check-ticket', publicController.checkTicket);
+router.post('/receive-ticket', publicController.receiveTicket);
+
 module.exports = router;
