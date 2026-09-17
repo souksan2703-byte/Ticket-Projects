@@ -4,8 +4,6 @@ import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import ManageTicketsPage from "./pages/ManageTicketsPage.jsx";
 import TicketCodesPage from "./pages/TicketCodesPage.jsx";
-import ScanPage from "./pages/ScanPage.jsx";
-import SellTicketPage from "./pages/SellTicketPage.jsx";
 import ReportsPage from "./pages/ReportsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import MyProfilePage from "./pages/MyProfilePage.jsx";
@@ -18,8 +16,6 @@ const PAGES = {
   dashboard: DashboardPage,
   tickets: ManageTicketsPage,
   codes: TicketCodesPage,
-  sell: SellTicketPage,
-  scan: ScanPage,
   reports: ReportsPage,
   users: AdminUsersPage,
   profile: MyProfilePage,

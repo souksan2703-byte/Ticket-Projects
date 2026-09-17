@@ -6,16 +6,12 @@ import {
   Users,
   UserRound,
   LogOut,
-  ScanLine,
-  ShoppingCart,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, adminOnly: false },
   { key: "tickets", label: "Manage tickets", icon: Ticket, adminOnly: true },
   { key: "codes", label: "Ticket codes", icon: KeyRound, adminOnly: false },
-  { key: "sell", label: "Sell ticket", icon: ShoppingCart, adminOnly: false },
-  { key: "scan", label: "Scan ticket", icon: ScanLine, adminOnly: false },
   { key: "reports", label: "Reports", icon: BarChart3, adminOnly: false },
   { key: "users", label: "Admin users", icon: Users, adminOnly: true },
   { key: "profile", label: "My profile", icon: UserRound, adminOnly: false },
