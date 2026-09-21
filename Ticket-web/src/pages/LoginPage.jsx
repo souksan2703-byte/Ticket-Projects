@@ -21,7 +21,7 @@ export default function LoginPage({ onSignIn }) {
       const user = await login(username, password);
       onSignIn(user);
     } catch (err) {
-      setError(err.message || "เข้าสู่ระบบไม่สำเร็จ");
+      setError(err.message || "ເຂົ້າສູ່ລະບົບບໍ່ສຳເລັດ");
     } finally {
       setLoading(false);
     }
@@ -30,9 +30,9 @@ export default function LoginPage({ onSignIn }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-10 shadow-sm">
-        <h1 className="text-center text-2xl font-semibold text-neutral-900">Ticket admin</h1>
+        <h1 className="text-center text-2xl font-semibold text-neutral-900">ລະບົບຈັດການປີ້</h1>
         <p className="mt-2 text-center text-sm text-neutral-500">
-          Sign in to manage events and tickets
+          ເຂົ້າສູ່ລະບົບເພື່ອຈັດການງານອີເວັນຕ໌ ແລະ ປີ້
         </p>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
@@ -43,23 +43,23 @@ export default function LoginPage({ onSignIn }) {
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">Username</label>
+            <label className="mb-1.5 block text-sm text-neutral-700">ຊື່ຜູ້ໃຊ້</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              placeholder="Enter your username"
+              placeholder="ປ້ອນຊື່ຜູ້ໃຊ້"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">Password</label>
+            <label className="mb-1.5 block text-sm text-neutral-700">ລະຫັດຜ່ານ</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              placeholder="Enter your password"
+              placeholder="ປ້ອນລະຫັດຜ່ານ"
             />
           </div>
           <button
@@ -67,7 +67,7 @@ export default function LoginPage({ onSignIn }) {
             disabled={loading}
             className="w-full rounded-lg bg-red-600 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60"
           >
-            {loading ? "กำลังเข้าสู่ระบบ..." : "Sign in"}
+            {loading ? "ກຳລັງເຂົ້າສູ່ລະບົບ..." : "ເຂົ້າສູ່ລະບົບ"}
           </button>
         </form>
       </div>

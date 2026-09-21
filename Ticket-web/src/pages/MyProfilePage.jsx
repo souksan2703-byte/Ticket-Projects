@@ -15,26 +15,26 @@ export default function MyProfilePage({ currentUser }) {
     setSuccess(null);
 
     if (!newPassword || !confirmPassword) {
-      setError("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      setError("ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບທຸກຊ່ອງ");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน");
+      setError("ລະຫັດຜ່ານໃໝ່ ແລະ ການຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ");
       return;
     }
     if (newPassword.length < 6) {
-      setError("รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร");
+      setError("ລະຫັດຜ່ານໃໝ່ຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ");
       return;
     }
 
     setSaving(true);
     try {
       await changeOwnPassword(newPassword);
-      setSuccess("เปลี่ยนรหัสผ่านเรียบร้อยแล้ว");
+      setSuccess("ປ່ຽນລະຫັດຜ່ານສຳເລັດແລ້ວ");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      setError(err.message || "เปลี่ยนรหัสผ่านไม่สำเร็จ");
+      setError(err.message || "ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ");
     } finally {
       setSaving(false);
     }
@@ -42,7 +42,7 @@ export default function MyProfilePage({ currentUser }) {
 
   return (
     <div>
-      <PageHeader title="My profile" />
+      <PageHeader title="ໂປຣໄຟລ໌ຂອງຂ້ອຍ" />
 
       <div className="mx-auto max-w-xl space-y-6">
         <div className="flex items-center gap-4 rounded-xl border border-neutral-200 bg-white p-5">
@@ -57,7 +57,7 @@ export default function MyProfilePage({ currentUser }) {
 
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
           <h2 className="mb-4 text-center text-base font-medium text-neutral-900">
-            Change password
+            ປ່ຽນລະຫັດຜ່ານ
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +73,7 @@ export default function MyProfilePage({ currentUser }) {
             )}
 
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">New password</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">ລະຫັດຜ່ານໃໝ່</label>
               <input
                 type="password"
                 value={newPassword}
@@ -82,7 +82,7 @@ export default function MyProfilePage({ currentUser }) {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Confirm new password</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">ຢືນຢັນລະຫັດຜ່ານໃໝ່</label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -95,7 +95,7 @@ export default function MyProfilePage({ currentUser }) {
               disabled={saving}
               className="w-full rounded-lg bg-red-600 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "กำลังบันทึก..." : "Update password"}
+              {saving ? "ກຳລັງບັນທຶກ..." : "ອັບເດດລະຫັດຜ່ານ"}
             </button>
           </form>
         </div>

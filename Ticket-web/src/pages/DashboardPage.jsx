@@ -70,34 +70,34 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" />
+      <PageHeader title="ໜ້າຫຼັກ" />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2">
-        <DateField label="Transaction date" value={from} onChange={setFrom} />
-        <DateField label="To date" value={to} onChange={setTo} />
+        <DateField label="ວັນທີທຸລະກຳ" value={from} onChange={setFrom} />
+        <DateField label="ຮອດວັນທີ" value={to} onChange={setTo} />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          โหลดข้อมูลไม่สำเร็จ: {error}
+          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
           <button onClick={loadAll} className="ml-3 underline">
-            ลองใหม่
+            ລອງໃໝ່
           </button>
         </div>
       )}
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard
-          label="Today's sales"
+          label="ຍອດຂາຍມື້ນີ້"
           value={currency(summary.todaysSales)}
           className="bg-gradient-to-br from-violet-200 to-violet-300 text-violet-900"
         />
         <StatCard
-          label="Tickets sold this month"
+          label="ປີ້ທີ່ຂາຍໄດ້ໃນເດືອນນີ້"
           value={summary.ticketsSoldThisMonth.toLocaleString()}
           className="bg-cyan-200 text-cyan-900"
         />
-        <StatCard label="Active" value={summary.active} className="bg-lime-200 text-lime-900" />
+        <StatCard label="ເປີດໃຊ້ງານ" value={summary.active} className="bg-lime-200 text-lime-900" />
         <StatCard label="OFF" value={summary.off} className="bg-red-200 text-red-900" />
       </div>
 
@@ -106,7 +106,7 @@ export default function DashboardPage() {
           Tickets sold by event ({totalSold === 1 && soldByEvent.length === 0 ? 0 : totalSold} total)
         </p>
         {soldByEvent.length === 0 ? (
-          <p className="text-sm text-neutral-400">ยังไม่มีข้อมูลยอดขายในช่วงเวลานี้</p>
+          <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້</p>
         ) : (
           <>
             <div className="flex h-3 w-full overflow-hidden rounded-full">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
           <p className="mb-4 text-sm font-medium text-neutral-800">Ticket mix (top 2 events)</p>
           {ticketMix.length === 0 ? (
-            <p className="text-sm text-neutral-400">ยังไม่มีข้อมูล</p>
+            <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນ</p>
           ) : (
             <div style={{ width: "100%", height: 260 }}>
               <ResponsiveContainer>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
           <p className="mb-4 text-sm font-medium text-neutral-800">Transaction (daily)</p>
           {txData.series.length === 0 ? (
-            <p className="text-sm text-neutral-400">ยังไม่มีข้อมูล</p>
+            <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນ</p>
           ) : (
             <div style={{ width: "100%", height: 260 }}>
               <ResponsiveContainer>

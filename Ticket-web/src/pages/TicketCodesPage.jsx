@@ -25,7 +25,7 @@ export default function TicketCodesPage() {
       const data = await getTickets();
       setEvents(data);
     } catch {
-      // ถ้าโหลด events ไม่สำเร็จ ยังใช้หน้านี้ต่อได้ แค่ dropdown จะว่าง
+      // ถ้าโหลด events ບໍ່ສຳເລັດ ยังใช้หน้านี้ต่อได้ แค่ dropdown จะว่าง
     }
   }
 
@@ -70,19 +70,19 @@ export default function TicketCodesPage() {
   }
 
   async function handleMarkReceived(code) {
-    if (!confirm(`ยืนยันว่า "${code.owner || code.code}" มารับตั๋วแล้วใช่ไหม?`)) return;
+    if (!confirm(`ຢືນຢັນວ່າ "${code.owner || code.code}" ໄດ້ມາຮັບປີ້ແລ້ວແມ່ນບໍ?`)) return;
     try {
       await markTicketCodeReceived(code.id);
       await loadCodes();
     } catch (err) {
-      alert(`บันทึกไม่สำเร็จ: ${err.message}`);
+      alert(`ບັນທຶກບໍ່ສຳເລັດ: ${err.message}`);
     }
   }
 
   return (
     <div>
       <PageHeader
-        title="Ticket codes"
+        title="ລະຫັດປີ້"
         action={
           <button
             onClick={() => setModalOpen(true)}
@@ -99,7 +99,7 @@ export default function TicketCodesPage() {
           onChange={(e) => setEventFilter(e.target.value)}
           className="rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-700 outline-none"
         >
-          <option value="">Event: All events</option>
+          <option value="">ງານອີເວັນຕ໌: ທັງໝົດ</option>
           {events.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
@@ -111,10 +111,10 @@ export default function TicketCodesPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-700 outline-none"
         >
-          <option value="All">Status: All</option>
-          <option value="Sold">Sold</option>
-          <option value="Available">Available</option>
-          <option value="Used">Used</option>
+          <option value="All">ສະຖານະ: ທັງໝົດ</option>
+          <option value="Sold">ຂາຍແລ້ວ</option>
+          <option value="Available">ຍັງມີ</option>
+          <option value="Used">ໃຊ້ແລ້ວ</option>
         </select>
         <div className="flex flex-1 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5">
           <Search className="h-4 w-4 text-neutral-400" />
@@ -122,23 +122,23 @@ export default function TicketCodesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full text-sm text-neutral-700 outline-none placeholder:text-neutral-400"
-            placeholder="Search owner / transaction ID"
+            placeholder="ຄົ້ນຫາຜູ້ຖືປີ້ / ເລກທຸລະກຳ"
           />
         </div>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Total codes" value={stats.total} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="Sold" value={stats.sold} className="bg-neutral-100 text-red-600" />
-        <StatCard label="Remaining" value={stats.remaining} className="bg-neutral-100 text-green-700" />
-        <StatCard label="Received (picked up)" value={stats.received} className="bg-neutral-100 text-amber-700" />
+        <StatCard label="ລະຫັດທັງໝົດ" value={stats.total} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="ຂາຍແລ້ວ" value={stats.sold} className="bg-neutral-100 text-red-600" />
+        <StatCard label="ເຫຼືອ" value={stats.remaining} className="bg-neutral-100 text-green-700" />
+        <StatCard label="ຮັບແລ້ວ" value={stats.received} className="bg-neutral-100 text-amber-700" />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          โหลดข้อมูลไม่สำเร็จ: {error}
+          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
           <button onClick={loadCodes} className="ml-3 underline">
-            ลองใหม่
+            ລອງໃໝ່
           </button>
         </div>
       )}
@@ -147,12 +147,12 @@ export default function TicketCodesPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">Code</th>
-              <th className="px-5 py-3 font-normal">Event</th>
-              <th className="px-5 py-3 font-normal">Owner</th>
-              <th className="px-5 py-3 font-normal">Transaction ID</th>
-              <th className="px-5 py-3 font-normal">Ticket received</th>
-              <th className="px-5 py-3 font-normal">Status</th>
+              <th className="px-5 py-3 font-normal">ລະຫັດ</th>
+              <th className="px-5 py-3 font-normal">ງານອີເວັນຕ໌</th>
+              <th className="px-5 py-3 font-normal">ຜູ້ຖືປີ້</th>
+              <th className="px-5 py-3 font-normal">ເລກທຸລະກຳ</th>
+              <th className="px-5 py-3 font-normal">ຮັບປີ້ແລ້ວ</th>
+              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
               <th className="px-5 py-3 font-normal">QR</th>
             </tr>
           </thead>
@@ -160,13 +160,13 @@ export default function TicketCodesPage() {
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  กำลังโหลด...
+                  ກຳລັງໂຫຼດ...
                 </td>
               </tr>
             ) : codes.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ยังไม่มีโค้ดตั๋ว กด "Generate codes" เพื่อสร้างชุดแรก
+                  ຍັງບໍ່ມີລະຫັດປີ້ ກົດ "Generate codes" ເພື່ອສ້າງຊຸດທຳອິດ
                 </td>
               </tr>
             ) : (
@@ -195,7 +195,7 @@ export default function TicketCodesPage() {
                     <button
                       onClick={() => setQrCode(c.code)}
                       className="text-neutral-600 hover:text-neutral-900"
-                      title="ดู/ดาวน์โหลด QR code"
+                      title="ເບິ່ງ/ດາວໂຫຼດ QR"
                     >
                       <QrCode className="h-4 w-4" />
                     </button>

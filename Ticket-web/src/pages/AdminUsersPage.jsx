@@ -46,13 +46,13 @@ export default function AdminUsersPage() {
   }
 
   async function handleReset(user) {
-    const newPassword = prompt(`ตั้งรหัสผ่านใหม่สำหรับ "${user.username}"`);
+    const newPassword = prompt(`ຕັ້ງລະຫັດຜ່ານໃໝ່ສຳລັບ "${user.username}"`);
     if (!newPassword) return; // กดยกเลิกหรือเว้นว่างไว้
     try {
       await resetAdminUserPassword(user.id, newPassword);
-      alert("รีเซ็ตรหัสผ่านเรียบร้อยแล้ว");
+      alert("ຣີເຊັດລະຫັດຜ່ານສຳເລັດແລ້ວ");
     } catch (err) {
-      alert(`รีเซ็ตรหัสผ่านไม่สำเร็จ: ${err.message}`);
+      alert(`ຣີເຊັດລະຫັດຜ່ານບໍ່ສຳເລັດ: ${err.message}`);
     }
   }
 
@@ -62,14 +62,14 @@ export default function AdminUsersPage() {
       await toggleAdminUserStatus(user.id, nextStatus);
       await loadUsers();
     } catch (err) {
-      alert(`เปลี่ยนสถานะไม่สำเร็จ: ${err.message}`);
+      alert(`ປ່ຽນສະຖານະບໍ່ສຳເລັດ: ${err.message}`);
     }
   }
 
   return (
     <div>
       <PageHeader
-        title="Admin users"
+        title="ຜູ້ໃຊ້ແອັດມິນ"
         action={
           <button
             onClick={() => {
@@ -85,9 +85,9 @@ export default function AdminUsersPage() {
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          โหลดข้อมูลไม่สำเร็จ: {error}
+          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
           <button onClick={loadUsers} className="ml-3 underline">
-            ลองใหม่
+            ລອງໃໝ່
           </button>
         </div>
       )}
@@ -96,27 +96,27 @@ export default function AdminUsersPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">Name</th>
-              <th className="px-5 py-3 font-normal">Username</th>
-              <th className="px-5 py-3 font-normal">Role</th>
-              <th className="px-5 py-3 font-normal">Status</th>
-              <th className="px-5 py-3 font-normal">Last login</th>
-              <th className="px-5 py-3 font-normal">Edit</th>
-              <th className="px-5 py-3 font-normal">Reset PW</th>
-              <th className="px-5 py-3 font-normal">Enable/Disable</th>
+              <th className="px-5 py-3 font-normal">ຊື່</th>
+              <th className="px-5 py-3 font-normal">ຊື່ຜູ້ໃຊ້</th>
+              <th className="px-5 py-3 font-normal">ບົດບາດ</th>
+              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
+              <th className="px-5 py-3 font-normal">ເຂົ້າໃຊ້ງານຫຼ້າສຸດ</th>
+              <th className="px-5 py-3 font-normal">ແກ້ໄຂ</th>
+              <th className="px-5 py-3 font-normal">ຕັ້ງລະຫັດຜ່ານ</th>
+              <th className="px-5 py-3 font-normal">ເປີດ/ປິດໃຊ້ງານ</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={8} className="px-5 py-8 text-center text-neutral-400">
-                  กำลังโหลด...
+                  ກຳລັງໂຫຼດ...
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-5 py-8 text-center text-neutral-400">
-                  ยังไม่มีผู้ใช้ กด "Add admin user" เพื่อเพิ่มรายการแรก
+                  ຍັງບໍ່ມີຜູ້ໃຊ້ ກົດ "ເພີ່ມຜູ້ໃຊ້ແອັດມິນ" ເພື່ອເພີ່ມລາຍການທຳອິດ
                 </td>
               </tr>
             ) : (
@@ -159,7 +159,7 @@ export default function AdminUsersPage() {
                           : "text-green-700 hover:text-green-800"
                       }
                     >
-                      {u.status === "Active" ? "Disable" : "Enable"}
+                      {u.status === "Active" ? "ປິດໃຊ້ງານ" : "ເປີດໃຊ້ງານ"}
                     </button>
                   </td>
                 </tr>

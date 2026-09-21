@@ -16,7 +16,7 @@ export default function QrCodeModal({ code, onClose }) {
 
         <img
           src={qrUrl}
-          alt={`QR code สำหรับ ${code}`}
+          alt={`QR code ສຳລັບ ${code}`}
           className="mx-auto mb-4 h-56 w-56 rounded-lg border border-neutral-200"
         />
         <p className="mb-6 font-mono text-sm text-neutral-600">{code}</p>
@@ -27,7 +27,7 @@ export default function QrCodeModal({ code, onClose }) {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
         >
           <Download className="h-4 w-4" />
-          ดาวน์โหลด QR
+          ດາວໂຫຼດ QR
         </a>
       </div>
     </div>

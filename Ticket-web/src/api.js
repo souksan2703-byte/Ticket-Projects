@@ -21,7 +21,7 @@ async function request(path, options = {}) {
   try {
     data = await res.json();
   } catch {
-    // response ไม่มี body (เช่น 204) ไม่เป็นไร
+
   }
 
   if (!res.ok) {
@@ -32,11 +32,6 @@ async function request(path, options = {}) {
   return data;
 }
 
-// ---------- Tickets (Manage tickets page) ----------
-// หมายเหตุ: ตาราง SQL Server (TicketCodeMaster) ใช้ชื่อ field แบบ PascalCase
-// (tickid, Title, Price, Stock, Location, DateEvent, Status)
-// แต่ฝั่ง UI ใช้ camelCase (id, name, price, stock, location, date, status)
-// เลย mapping ให้ที่นี่ที่เดียว component จะได้ไม่ต้องรู้เรื่อง backend
 
 function fromBackend(row) {
   return {

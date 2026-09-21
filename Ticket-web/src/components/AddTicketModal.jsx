@@ -24,7 +24,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     setError(null);
 
     if (!form.name.trim() || form.price === "" || form.stock === "") {
-      setError("กรุณากรอก Event title, Price และ Stock ให้ครบ");
+      setError("ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ");
       return;
     }
 
@@ -32,7 +32,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     try {
       await onSave(form);
     } catch (err) {
-      setError(err.message || "บันทึกไม่สำเร็จ");
+      setError(err.message || "ບັນທຶກບໍ່ສຳເລັດ");
     } finally {
       setSaving(false);
     }
@@ -43,7 +43,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {isEditing ? "Edit ticket" : "Add ticket"}
+            {isEditing ? "ແກ້ໄຂປີ້" : "ເພີ່ມປີ້"}
           </h2>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">
             <X className="h-5 w-5" />
@@ -57,7 +57,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
             <p className="mt-1 text-xs text-neutral-400">
               Drag and drop or click to browse. JPG or PNG, up to 5 MB.
             </p>
-            {/* TODO: ยังไม่ได้ทำอัปโหลดรูปจริง — ต้องเพิ่ม endpoint แยกสำหรับอัปโหลดไฟล์ */}
           </div>
 
           {error && (
@@ -98,7 +97,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                 />
                 {!isEditing && (
                   <p className="mt-1 text-xs text-neutral-400">
-                    ระบบจะสร้างโค้ดตั๋วให้อัตโนมัติตามจำนวนนี้ (สูงสุด 1000 ใบ)
+                    ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)
                   </p>
                 )}
               </div>
@@ -130,8 +129,8 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   onChange={(e) => update("status", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                 >
-                  <option value="Open">Open</option>
-                  <option value="OFF">OFF</option>
+                  <option value="Open">ເປີດ</option>
+                  <option value="OFF">ປິດ</option>
                 </select>
               </div>
             )}
@@ -150,7 +149,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
               disabled={saving}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "กำลังบันทึก..." : "Save ticket"}
+              {saving ? "ກຳລັງບັນທຶກ..." : "ບັນທຶກປີ້"}
             </button>
           </div>
         </form>

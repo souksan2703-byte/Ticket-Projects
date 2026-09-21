@@ -26,9 +26,9 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-neutral-50">
         <Navbar />
         <main className="mx-auto max-w-3xl px-4 py-16 text-center text-neutral-400 sm:px-6">
-          ตะกร้าว่างเปล่า —{" "}
+          ກະຕ່າສິນຄ້າວ່າງເປົ່າ —{" "}
           <Link to="/" className="font-medium text-red-600 hover:underline">
-            ไปเลือกคอนเสิร์ต
+            ໄປເລືອກຄອນເສີດ
           </Link>
         </main>
       </div>
@@ -40,11 +40,11 @@ export default function CheckoutPage() {
     setError(null);
 
     if (!buyerName.trim() || !buyerPhone.trim()) {
-      setError("กรุณากรอกชื่อและเบอร์โทรผู้ซื้อ");
+      setError("ກະລຸນາປ້ອນຊື່ ແລະ ເບີໂທຜູ້ຊື້");
       return;
     }
     if (!cardNumber.trim() || !expiry.trim() || !cvv.trim()) {
-      setError("กรุณากรอกข้อมูลบัตรให้ครบ (จำลองการชำระเงินเท่านั้น ไม่มีการตัดเงินจริง)");
+      setError("ກະລຸນາປ້ອນຂໍ້ມູນບັດໃຫ້ຄົບ (ເປັນພຽງການຈຳລອງການຊຳລະເງິນ ບໍ່ມີການຕັດເງິນຈິງ)");
       return;
     }
 
@@ -59,7 +59,7 @@ export default function CheckoutPage() {
       clearCart();
       navigate("/confirmation", { state: result });
     } catch (err) {
-      setError(err.message || "ชำระเงินไม่สำเร็จ");
+      setError(err.message || "ຊຳລະເງິນບໍ່ສຳເລັດ");
     } finally {
       setPaying(false);
     }
@@ -72,10 +72,10 @@ export default function CheckoutPage() {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <Link to="/cart" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800">
           <ArrowLeft className="h-4 w-4" />
-          กลับไปตะกร้า
+          ກັບໄປກະຕ່າສິນຄ້າ
         </Link>
 
-        <h1 className="mb-6 text-2xl font-bold text-neutral-900">ชำระเงิน</h1>
+        <h1 className="mb-6 text-2xl font-bold text-neutral-900">ຊຳລະເງິນ</h1>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <form onSubmit={handlePay} className="space-y-6 lg:col-span-2">
@@ -86,19 +86,19 @@ export default function CheckoutPage() {
             )}
 
             <div className="rounded-xl border border-neutral-200 bg-white p-6">
-              <h2 className="mb-4 text-base font-medium text-neutral-900">ข้อมูลผู้ซื้อ</h2>
+              <h2 className="mb-4 text-base font-medium text-neutral-900">ຂໍ້ມູນຜູ້ຊື້</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1.5 block text-sm text-neutral-700">ชื่อ-นามสกุล</label>
+                  <label className="mb-1.5 block text-sm text-neutral-700">ຊື່-ນາມສກຸນ</label>
                   <input
                     value={buyerName}
                     onChange={(e) => setBuyerName(e.target.value)}
                     className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                    placeholder="สมชาย ใจดี"
+                    placeholder="ຊື່ ນາມສະກຸນ"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm text-neutral-700">เบอร์โทร</label>
+                  <label className="mb-1.5 block text-sm text-neutral-700">ເບີໂທ</label>
                   <input
                     value={buyerPhone}
                     onChange={(e) => setBuyerPhone(e.target.value)}
@@ -112,15 +112,15 @@ export default function CheckoutPage() {
             <div className="rounded-xl border border-neutral-200 bg-white p-6">
               <h2 className="mb-1 flex items-center gap-2 text-base font-medium text-neutral-900">
                 <CreditCard className="h-4 w-4" />
-                ข้อมูลบัตร
+                ຂໍ້ມູນບັດ
               </h2>
               <p className="mb-4 flex items-center gap-1.5 text-xs text-neutral-400">
                 <Lock className="h-3 w-3" />
-                นี่คือฟอร์มจำลอง ไม่มีการเชื่อมต่อระบบชำระเงินจริงหรือตัดเงินจริง
+                ນີ້ແມ່ນແບບຟອມຈຳລອງ. ບໍ່ມີການເຊື່ອມຕໍ່ກັບລະບົບການຈ່າຍເງິນຕົວຈິງ ຫຼື ການຫັກເງິນຕົວຈິງໃດໆ.
               </p>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1.5 block text-sm text-neutral-700">หมายเลขบัตร</label>
+                  <label className="mb-1.5 block text-sm text-neutral-700">ໝາຍເລກບັດ</label>
                   <input
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
@@ -131,7 +131,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-1.5 block text-sm text-neutral-700">วันหมดอายุ</label>
+                    <label className="mb-1.5 block text-sm text-neutral-700">ມື້ໝົດອາຍຸ</label>
                     <input
                       value={expiry}
                       onChange={(e) => setExpiry(e.target.value)}
@@ -158,12 +158,12 @@ export default function CheckoutPage() {
               disabled={paying}
               className="w-full rounded-lg bg-red-600 py-3 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {paying ? "กำลังดำเนินการชำระเงิน..." : `ชำระเงิน ${currency(totalPrice)}`}
+              {paying ? "ກຳລັງດຳເນີນການຊຳລະເງິນ..." : `ຊຳລະເງິນ ${currency(totalPrice)}`}
             </button>
           </form>
 
           <div className="h-fit rounded-xl border border-neutral-200 bg-white p-6">
-            <h2 className="mb-4 text-base font-medium text-neutral-900">สรุปคำสั่งซื้อ</h2>
+            <h2 className="mb-4 text-base font-medium text-neutral-900">ສະຫຼຸບຄຳສັ່ງຊື້</h2>
             <div className="space-y-3 border-b border-neutral-100 pb-4 text-sm">
               {items.map((i) => (
                 <div key={i.tickid} className="flex justify-between text-neutral-600">
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
               ))}
             </div>
             <div className="mt-4 flex justify-between font-semibold text-neutral-900">
-              <span>รวม ({totalQuantity} ใบ)</span>
+              <span>ລວມ ({totalQuantity} ໃບ)</span>
               <span className="text-red-600">{currency(totalPrice)}</span>
             </div>
           </div>

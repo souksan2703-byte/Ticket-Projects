@@ -22,11 +22,11 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
     setError(null);
 
     if (!form.name.trim() || !form.username.trim()) {
-      setError("กรุณากรอก Name และ Username ให้ครบ");
+      setError("ກະລຸນາປ້ອນຊື່ ແລະ ຊື່ຜູ້ໃຊ້ໃຫ້ຄົບ");
       return;
     }
     if (!isEditing && !form.password.trim()) {
-      setError("กรุณากำหนดรหัสผ่านสำหรับผู้ใช้ใหม่");
+      setError("ກະລຸນາກຳນົດລະຫັດຜ່ານສຳລັບຜູ້ໃຊ້ໃໝ່");
       return;
     }
 
@@ -34,7 +34,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
     try {
       await onSave(form);
     } catch (err) {
-      setError(err.message || "บันทึกไม่สำเร็จ");
+      setError(err.message || "ບັນທຶກບໍ່ສຳເລັດ");
     } finally {
       setSaving(false);
     }
@@ -45,7 +45,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {isEditing ? "Edit admin user" : "Add admin user"}
+            {isEditing ? "ແກ້ໄຂຜູ້ໃຊ້ແອັດມິນ" : "ເພີ່ມຜູ້ໃຊ້ແອັດມິນ"}
           </h2>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">
             <X className="h-5 w-5" />
@@ -74,7 +74,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
               <input
                 value={form.username}
                 onChange={(e) => update("username", e.target.value)}
-                disabled={isEditing} // เปลี่ยน username ทีหลังไม่ได้ กันงงเรื่อง unique constraint
+                disabled={isEditing}
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 disabled:opacity-60"
                 placeholder="e.g. bounmy"
               />
@@ -87,7 +87,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                  placeholder="ตั้งรหัสผ่านเริ่มต้น"
+                  placeholder="ກຳນົດລະຫັດຜ່ານເລີ່ມຕົ້ນ"
                 />
               </div>
             )}
@@ -98,8 +98,8 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
                 onChange={(e) => update("role", e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               >
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
+                <option value="User">ຜູ້ໃຊ້</option>
+                <option value="Admin">ແອັດມິນ</option>
               </select>
             </div>
           </div>
@@ -117,7 +117,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
               disabled={saving}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "กำลังบันทึก..." : "Save"}
+              {saving ? "ກຳລັງບັນທຶກ..." : "ບັນທຶກ"}
             </button>
           </div>
         </form>
