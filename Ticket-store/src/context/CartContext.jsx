@@ -70,6 +70,6 @@ export function CartProvider({ children }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart ต้องถูกใช้ภายใน <CartProvider>");
+  if (!ctx) throw new Error("useCart ຕ້ອງຖືກໃຊ້ພາຍໃນ <CartProvider>");
   return ctx;
 }

@@ -10,7 +10,6 @@ async function request(path, options = {}) {
   try {
     data = await res.json();
   } catch {
-    // ไม่มี body ก็ไม่เป็นไร
   }
 
   if (!res.ok) {

@@ -9,12 +9,12 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, adminOnly: false },
-  { key: "tickets", label: "Manage tickets", icon: Ticket, adminOnly: true },
-  { key: "codes", label: "Ticket codes", icon: KeyRound, adminOnly: false },
-  { key: "reports", label: "Reports", icon: BarChart3, adminOnly: false },
-  { key: "users", label: "Admin users", icon: Users, adminOnly: true },
-  { key: "profile", label: "My profile", icon: UserRound, adminOnly: false },
+  { key: "dashboard", label: "ໜ້າຫຼັກ", icon: LayoutDashboard, adminOnly: false },
+  { key: "tickets", label: "ຈັດການປີ້", icon: Ticket, adminOnly: true },
+  { key: "codes", label: "ລະຫັດປີ້", icon: KeyRound, adminOnly: false },
+  { key: "reports", label: "ລາຍງານ", icon: BarChart3, adminOnly: false },
+  { key: "users", label: "ຜູ້ໃຊ້ແອັດມິນ", icon: Users, adminOnly: true },
+  { key: "profile", label: "ໂປຣໄຟລ໌ຂອງຂ້ອຍ", icon: UserRound, adminOnly: false },
 ];
 
 export default function Sidebar({ page, setPage, user, onLogout }) {
@@ -23,7 +23,7 @@ export default function Sidebar({ page, setPage, user, onLogout }) {
 
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-neutral-200 bg-white px-4 py-6">
-      <div className="mb-6 px-2 text-lg font-semibold text-neutral-900">Ticket admin</div>
+      <div className="mb-6 px-2 text-lg font-semibold text-neutral-900">ລະບົບຈັດການປີ້</div>
       <nav className="flex-1 space-y-1">
         {visibleItems.map(({ key, label, icon: Icon }) => {
           const active = page === key;
@@ -49,7 +49,7 @@ export default function Sidebar({ page, setPage, user, onLogout }) {
           <div className="mb-2 px-3">
             <p className="truncate text-sm font-medium text-neutral-900">{user.name}</p>
             <p className="truncate text-xs text-neutral-500">
-              {user.role} · {user.username}
+              {user.role === "Admin" ? "ແອັດມິນ" : "ຜູ້ໃຊ້"} · {user.username}
             </p>
           </div>
           <button

@@ -12,7 +12,7 @@ function currency(n) {
 
 // สร้างไฟล์ CSV จากข้อมูลที่โหลดมาแล้วในเบราว์เซอร์ ไม่ต้องมี endpoint แยกฝั่ง backend
 function downloadCsv(rows) {
-  const header = ["Code", "Event", "Owner", "Transaction ID", "Price"];
+  const header = ["ລະຫັດ", "ງານອີເວັນຕ໌", "ຜູ້ຖືປີ້", "ເລກທຸລະກຳ", "ລາຄາ"];
   const lines = rows.map((r) => [r.code, r.eventName, r.owner, r.tranid, r.price].join(","));
   const csv = [header.join(","), ...lines].join("\n");
 
@@ -62,11 +62,11 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <PageHeader title="Reports" />
+      <PageHeader title="ລາຍງານ" />
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-2">
-        <DateField label="Transaction date" value={from} onChange={setFrom} />
-        <DateField label="To date" value={to} onChange={setTo} />
+        <DateField label="ວັນທີທຸລະກຳ" value={from} onChange={setFrom} />
+        <DateField label="ຮອດວັນທີ" value={to} onChange={setTo} />
       </div>
 
       <button
@@ -80,24 +80,24 @@ export default function ReportsPage() {
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          โหลดข้อมูลไม่สำเร็จ: {error}
+          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
           <button onClick={loadReport} className="ml-3 underline">
-            ลองใหม่
+            ລອງໃໝ່
           </button>
         </div>
       )}
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Total revenue" value={currency(summary.totalRevenue)} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="Total buyers" value={summary.totalBuyers.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="Tickets sold" value={summary.ticketsSold.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="Best-selling event" value={summary.bestSellingEvent} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="ລາຍຮັບລວມ" value={currency(summary.totalRevenue)} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="ຈຳນວນຜູ້ຊື້" value={summary.totalBuyers.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="ປີ້ທີ່ຂາຍໄດ້" value={summary.ticketsSold.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="ງານທີ່ຂາຍດີທີ່ສຸດ" value={summary.bestSellingEvent} className="bg-neutral-100 text-neutral-900" />
       </div>
 
       <div className="mb-6 rounded-xl border border-neutral-200 bg-white p-5">
-        <p className="mb-5 text-sm font-medium text-neutral-800">Revenue by event</p>
+        <p className="mb-5 text-sm font-medium text-neutral-800">ລາຍຮັບຕາມງານອີເວັນຕ໌</p>
         {revenueByEvent.length === 0 ? (
-          <p className="text-sm text-neutral-400">ยังไม่มีข้อมูลยอดขายในช่วงเวลานี้</p>
+          <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້</p>
         ) : (
           <div className="space-y-4">
             {revenueByEvent.map((r) => (
@@ -122,25 +122,25 @@ export default function ReportsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">Code</th>
-              <th className="px-5 py-3 font-normal">Event</th>
-              <th className="px-5 py-3 font-normal">Owner</th>
-              <th className="px-5 py-3 font-normal">Transaction ID</th>
-              <th className="px-5 py-3 font-normal">Price</th>
-              <th className="px-5 py-3 font-normal">Status</th>
+              <th className="px-5 py-3 font-normal">ລະຫັດ</th>
+              <th className="px-5 py-3 font-normal">ງານອີເວັນຕ໌</th>
+              <th className="px-5 py-3 font-normal">ຜູ້ຖືປີ້</th>
+              <th className="px-5 py-3 font-normal">ເລກທຸລະກຳ</th>
+              <th className="px-5 py-3 font-normal">ລາຄາ</th>
+              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-neutral-400">
-                  กำลังโหลด...
+                  ກຳລັງໂຫຼດ...
                 </td>
               </tr>
             ) : transactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-neutral-400">
-                  ยังไม่มีรายการขายในช่วงเวลานี้
+                  ຍັງບໍ່ມີລາຍການຂາຍໃນຊ່ວງເວລານີ້
                 </td>
               </tr>
             ) : (

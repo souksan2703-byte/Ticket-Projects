@@ -13,11 +13,11 @@ export default function GenerateCodesModal({ events, onClose, onGenerate }) {
     setError(null);
 
     if (!tickid) {
-      setError("กรุณาเลือกอีเวนต์");
+      setError("ກະລຸນາເລືອກງານອີເວັນຕ໌");
       return;
     }
     if (!quantity || quantity < 1) {
-      setError("กรุณาระบุจำนวนโค้ดที่ต้องการสร้าง");
+      setError("ກະລຸນາລະບຸຈຳນວນລະຫັດທີ່ຕ້ອງການສ້າງ");
       return;
     }
 
@@ -25,7 +25,7 @@ export default function GenerateCodesModal({ events, onClose, onGenerate }) {
     try {
       await onGenerate({ tickid, quantity: Number(quantity), prefix });
     } catch (err) {
-      setError(err.message || "สร้างโค้ดไม่สำเร็จ");
+      setError(err.message || "ສ້າງລະຫັດບໍ່ສຳເລັດ");
     } finally {
       setSaving(false);
     }
@@ -76,7 +76,7 @@ export default function GenerateCodesModal({ events, onClose, onGenerate }) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-neutral-700">
-                Code prefix (ไม่บังคับ)
+                Code prefix (ບໍ່ບັງຄັບ)
               </label>
               <input
                 value={prefix}
@@ -85,7 +85,7 @@ export default function GenerateCodesModal({ events, onClose, onGenerate }) {
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               />
               <p className="mt-1 text-xs text-neutral-400">
-                โค้ดที่ได้จะมีรูปแบบ เช่น "{prefix || "TIX"}-8F2K91"
+                ລະຫັດທີ່ໄດ້ຈະມີຮູບແບບ ເຊັ່ນ "{prefix || "TIX"}-8F2K91"
               </p>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function GenerateCodesModal({ events, onClose, onGenerate }) {
               disabled={saving}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "กำลังสร้าง..." : "Generate"}
+              {saving ? "ກຳລັງສ້າງ..." : "ສ້າງ"}
             </button>
           </div>
         </form>

@@ -18,17 +18,17 @@ export default function CartPage() {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <Link to="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800">
           <ArrowLeft className="h-4 w-4" />
-          เลือกซื้อเพิ่ม
+          ເລືອກຊື້ເພິ່ມ
         </Link>
 
-        <h1 className="mb-6 text-2xl font-bold text-neutral-900">ตะกร้าของคุณ</h1>
+        <h1 className="mb-6 text-2xl font-bold text-neutral-900">ກະຕ່າສິນຄ້າ</h1>
 
         {items.length === 0 ? (
           <div className="rounded-xl border border-neutral-200 bg-white p-10 text-center text-neutral-400">
-            ตะกร้าว่างเปล่า
+            ກະຕ່າສິນຄ້າຂອງທ່ານຍັງຫວ່າງ
             <div className="mt-4">
               <Link to="/" className="text-sm font-medium text-red-600 hover:underline">
-                ไปเลือกคอนเสิร์ต
+                ໄປເລືອກຄອນເສີດ
               </Link>
             </div>
           </div>
@@ -76,18 +76,18 @@ export default function CartPage() {
 
             <div className="rounded-xl border border-neutral-200 bg-white p-5">
               <div className="mb-4 flex items-center justify-between text-sm text-neutral-600">
-                <span>จำนวนตั๋วทั้งหมด</span>
-                <span>{totalQuantity} ใบ</span>
+                <span>ຈຳນວນປີ້ທັ່ງໝົດ</span>
+                <span>{totalQuantity}  ໃບ</span>
               </div>
               <div className="mb-5 flex items-center justify-between text-lg font-bold text-neutral-900">
-                <span>ยอดรวม</span>
+                <span>ຍອດລວມ</span>
                 <span className="text-red-600">{currency(totalPrice)}</span>
               </div>
               <button
                 onClick={() => navigate("/checkout")}
                 className="w-full rounded-lg bg-red-600 py-3 text-sm font-medium text-white hover:bg-red-700"
               >
-                ดำเนินการชำระเงิน
+                ດຳເນີນການຊຳລະເງິນ
               </button>
             </div>
           </div>

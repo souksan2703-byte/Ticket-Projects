@@ -46,11 +46,11 @@ export default function EventDetailPage() {
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link to="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800">
           <ArrowLeft className="h-4 w-4" />
-          กลับไปหน้ารายการ
+          ກັບໄປໜ້າຫຼັກ
         </Link>
 
         {loading ? (
-          <p className="text-center text-neutral-400">กำลังโหลด...</p>
+          <p className="text-center text-neutral-400">ກຳລັງໂຫຼດ...</p>
         ) : error ? (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
@@ -86,9 +86,9 @@ export default function EventDetailPage() {
 
               <div className="flex flex-wrap items-center justify-between gap-4 border-t border-neutral-100 pt-6">
                 <div>
-                  <p className="text-xs text-neutral-500">ราคาต่อใบ</p>
+                  <p className="text-xs text-neutral-500">ລາຄາຕໍ່ໃບ</p>
                   <p className="text-2xl font-bold text-red-600">{currency(event.Price)}</p>
-                  <p className="mt-1 text-xs text-neutral-400">เหลือ {event.Stock} ใบ</p>
+                  <p className="mt-1 text-xs text-neutral-400">ເຫຼືອ {event.Stock} ໃບ</p>
                 </div>
 
                 <div className="flex items-center gap-3 rounded-lg border border-neutral-200 px-2 py-1.5">
@@ -114,14 +114,14 @@ export default function EventDetailPage() {
                   disabled={event.Stock < 1}
                   className="flex-1 rounded-lg border border-red-600 py-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
                 >
-                  {added ? "เพิ่มลงตะกร้าแล้ว ✓" : "เพิ่มลงตะกร้า"}
+                  {added ? "ເພີ່ມເຂົ້າກະຕ່າແລ້ວ ✓" : "ເພີ່ມເຂົ້າກະຕ່າ"}
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={event.Stock < 1}
                   className="flex-1 rounded-lg bg-red-600 py-3 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
                 >
-                  {event.Stock < 1 ? "ตั๋วหมด" : "ซื้อทันที"}
+                  {event.Stock < 1 ? "ປີ້ໝົດ" : "ຊື້ທັນທີ"}
                 </button>
               </div>
             </div>

@@ -26,7 +26,7 @@ export default function EventCard({ event }) {
         </p>
         <div className="flex items-center justify-between pt-2">
           <span className="text-lg font-bold text-red-600">{currency(event.Price)}</span>
-          <span className="text-xs text-neutral-400">เหลือ {event.Stock} ใบ</span>
+          <span className="text-xs text-neutral-400">ເຫຼືອ {event.Stock} ໃບ</span>
         </div>
       </div>
     </Link>

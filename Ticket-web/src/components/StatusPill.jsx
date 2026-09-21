@@ -11,6 +11,19 @@ const STYLES = {
   Success: "bg-green-100 text-green-700",
 };
 
+const LABELS = {
+  Open: "ເປີດ",
+  OFF: "ປິດ",
+  Sold: "ຂາຍແລ້ວ",
+  Available: "ຍັງມີ",
+  Used: "ໃຊ້ແລ້ວ",
+  Active: "ເປີດໃຊ້ງານ",
+  Disabled: "ປິດໃຊ້ງານ",
+  Admin: "ແອັດມິນ",
+  User: "ຜູ້ໃຊ້",
+  Success: "ສຳເລັດ",
+};
+
 export default function StatusPill({ status }) {
   return (
     <span
@@ -18,7 +31,7 @@ export default function StatusPill({ status }) {
         STYLES[status] || "bg-neutral-100 text-neutral-600"
       }`}
     >
-      {status}
+      {LABELS[status] || status}
     </span>
   );
 }
