@@ -3,11 +3,11 @@ const router = express.Router();
 const ticketCodeController = require('../controllers/ticketCodeController');
 const { requireAuth } = require('../middleware/auth');
 
-// QR code image ไม่ต้อง login ก่อนดู เพราะแค่ re-encode โค้ดที่รู้อยู่แล้วเป็นรูปภาพ
-// (ใช้กับ <img src> โดยตรงจากฝั่ง client ซึ่งแนบ Authorization header ไม่ได้)
+// QR code image ບໍ່ຕ້ອງ login ກ່ອນເບິ່ງ ເພາະພຽງແຕ່ re-encode ລະຫັດທີ່ຮູ້ຢູ່ແລ້ວເປັນຮູບພາບ
+// (ໃຊ້ກັບ <img src> ໂດຍກົງຈາກຝັ່ງ client ເຊິ່ງແນບ Authorization header ບໍ່ໄດ້)
 router.get('/qrcode/:code', ticketCodeController.getQrCode);
 
-router.use(requireAuth); // ที่เหลือต้อง login ก่อนถึงจะดู/สร้าง/สแกนโค้ดตั๋วได้
+router.use(requireAuth); // ທີ່ເຫຼືອຕ້ອງ login ກ່ອນຈຶ່ງຈະເບິ່ງ/ສ້າງ/ສະແກນລະຫັດຕົ໋ວໄດ້
 
 router.get('/', ticketCodeController.getAllCodes);
 router.get('/stats', ticketCodeController.getStats);

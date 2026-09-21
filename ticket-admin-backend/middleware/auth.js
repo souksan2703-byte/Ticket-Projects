@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-// ตรวจสอบว่ามี token ที่ถูกต้องแนบมาไหม (ใส่ใน header: Authorization: Bearer <token>)
+// ກວດສອບວ່າມີ token ທີ່ຖືກຕ້ອງແນບມາບໍ (ໃສ່ໃນ header: Authorization: Bearer <token>)
 function requireAuth(req, res, next) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'กรุณาเข้าสู่ระบบก่อนใช้งาน' });
+        return res.status(401).json({ message: 'ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນນຳໃຊ້' });
     }
 
     const token = authHeader.split(' ')[1];
@@ -13,14 +13,14 @@ function requireAuth(req, res, next) {
         req.user = decoded; // { id, username, role }
         next();
     } catch (err) {
-        return res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุ กรุณาเข้าสู่ระบบใหม่' });
+        return res.status(401).json({ message: 'Token ບໍ່ຖືກຕ້ອງ ຫຼືໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່' });
     }
 }
 
-// ใช้ต่อจาก requireAuth เพื่อจำกัดเฉพาะ role Admin เท่านั้น
+// ໃຊ້ຕໍ່ຈາກ requireAuth ເພື່ອຈຳກັດສະເພາະ role Admin ເທົ່ານັ້ນ
 function requireAdmin(req, res, next) {
     if (req.user?.role !== 'Admin') {
-        return res.status(403).json({ message: 'ต้องเป็นผู้ดูแลระบบ (Admin) เท่านั้นถึงจะทำรายการนี้ได้' });
+        return res.status(403).json({ message: 'ຕ້ອງເປັນຜູ້ດູແລລະບົບ (Admin) ເທົ່ານັ້ນຈຶ່ງຈະເຮັດລາຍການນີ້ໄດ້' });
     }
     next();
 }

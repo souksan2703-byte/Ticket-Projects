@@ -10,8 +10,8 @@ function formatLastLogin(date) {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMins < 1) return 'เมื่อสักครู่';
-    if (diffHours < 1) return `${diffMins} นาทีที่แล้ว`;
+    if (diffMins < 1) return 'ບໍ່ດົນມານີ້';
+    if (diffHours < 1) return `${diffMins} ນາທີທີ່ຜ່ານມາ`;
     if (diffDays < 1) return `Today, ${d.toTimeString().slice(0, 5)}`;
     if (diffDays === 1) return `Yesterday, ${d.toTimeString().slice(0, 5)}`;
     if (diffDays < 14) return `${diffDays} days ago`;
@@ -36,17 +36,17 @@ async function getAllUsers(req, res) {
         res.json(users);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูล admin users ไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນ admin users ບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// POST /api/admin-users -> เพิ่ม admin user ใหม่
+// POST /api/admin-users -> ເພີ່ມ admin user ໃໝ່
 async function createUser(req, res) {
     try {
         const { name, username, password, role } = req.body;
 
         if (!name || !username || !password) {
-            return res.status(400).json({ message: 'กรุณากรอก Name, Username และ Password ให้ครบ' });
+            return res.status(400).json({ message: 'ກະລຸນາປ້ອນ Name, Username ແລະ Password ໃຫ້ຄົບ' });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
@@ -67,13 +67,13 @@ async function createUser(req, res) {
     } catch (err) {
         console.error(err);
         if (err.message.includes('IX_AdminUsers_username')) {
-            return res.status(409).json({ message: 'Username นี้ถูกใช้ไปแล้ว กรุณาใช้ชื่ออื่น' });
+            return res.status(409).json({ message: 'Username ນີ້ຖືກໃຊ້ໄປແລ້ວ ກະລຸນາໃຊ້ຊື່ອື່ນ' });
         }
-        res.status(500).json({ message: 'เพิ่ม admin user ไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ເພີ່ມ admin user ບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// PUT /api/admin-users/:id -> แก้ไขข้อมูล (name, role)
+// PUT /api/admin-users/:id -> ແກ້ໄຂຂໍ້ມູນ (name, role)
 async function updateUser(req, res) {
     try {
         const { name, role } = req.body;
@@ -91,12 +91,12 @@ async function updateUser(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบผู้ใช้ที่ต้องการแก้ไข' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຜູ້ໃຊ້ທີ່ຕ້ອງການແກ້ໄຂ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'แก้ไขข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ແກ້ໄຂຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -105,7 +105,7 @@ async function resetPassword(req, res) {
     try {
         const { newPassword } = req.body;
         if (!newPassword) {
-            return res.status(400).json({ message: 'กรุณากำหนดรหัสผ่านใหม่' });
+            return res.status(400).json({ message: 'ກະລຸນາກຳນົດລະຫັດຜ່ານໃໝ່' });
         }
 
         const passwordHash = await bcrypt.hash(newPassword, 10);
@@ -121,19 +121,19 @@ async function resetPassword(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบผู้ใช้ที่ต้องการ' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຜູ້ໃຊ້ທີ່ຕ້ອງການ' });
         }
-        res.json({ message: 'รีเซ็ตรหัสผ่านเรียบร้อยแล้ว' });
+        res.json({ message: 'ຣີເຊັດລະຫັດຜ່ານຮຽບຮ້ອຍແລ້ວ' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'รีเซ็ตรหัสผ่านไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ຣີເຊັດລະຫັດຜ່ານບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
 // PATCH /api/admin-users/:id/status -> toggle Active/Disabled
 async function toggleStatus(req, res) {
     try {
-        const { status } = req.body; // "Active" หรือ "Disabled"
+        const { status } = req.body; // "Active" ຫຼື "Disabled"
 
         const pool = await getPool();
         const result = await pool.request()
@@ -146,27 +146,27 @@ async function toggleStatus(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบผู้ใช้ที่ต้องการ' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຜູ້ໃຊ້ທີ່ຕ້ອງການ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'เปลี่ยนสถานะไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ປ່ຽນສະຖານະບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// PATCH /api/admin-users/me/password -> ผู้ใช้เปลี่ยนรหัสผ่านของตัวเอง
-// (ไม่บังคับใส่รหัสเดิม เพราะยืนยันตัวตนผ่าน JWT token อยู่แล้วว่า login เป็นคนนี้จริง)
+// PATCH /api/admin-users/me/password -> ຜູ້ໃຊ້ປ່ຽນລະຫັດຜ່ານຂອງຕົນເອງ
+// (ບໍ່ບັງຄັບໃສ່ລະຫັດເກົ່າ ເພາະຢືນຢັນຕົວຕົນຜ່ານ JWT token ຢູ່ແລ້ວວ່າ login ເປັນຄົນນີ້ແທ້)
 async function changeOwnPassword(req, res) {
     try {
         const { newPassword } = req.body;
-        const userId = req.user.id; // มาจาก JWT token ที่ผ่าน requireAuth แล้ว
+        const userId = req.user.id; // ມາຈາກ JWT token ທີ່ຜ່ານ requireAuth ແລ້ວ
 
         if (!newPassword) {
-            return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
+            return res.status(400).json({ message: 'ກະລຸນາປ້ອນລະຫັດຜ່ານໃໝ່' });
         }
         if (newPassword.length < 6) {
-            return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร' });
+            return res.status(400).json({ message: 'ລະຫັດຜ່ານໃໝ່ຕ້ອງມີຢ່າງໜ້ອຍ 6 ໂຕອັກສອນ' });
         }
 
         const pool = await getPool();
@@ -181,13 +181,13 @@ async function changeOwnPassword(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบบัญชีผู้ใช้' });
+            return res.status(404).json({ message: 'ບໍ່ພົບບັນຊີຜູ້ໃຊ້' });
         }
 
-        res.json({ message: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว' });
+        res.json({ message: 'ປ່ຽນລະຫັດຜ່ານຮຽບຮ້ອຍແລ້ວ' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'เปลี่ยนรหัสผ่านไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ', error: err.message });
     }
 }
 

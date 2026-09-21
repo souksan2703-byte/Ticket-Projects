@@ -1,6 +1,6 @@
 const { sql, getPool } = require('../config/db');
 
-// GET /api/public/events -> รายการอีเวนต์ที่เปิดขายอยู่ (สำหรับหน้าโฮมเพจ)
+// GET /api/public/events -> ລາຍການອີເວັນທີ່ເປີດຂາຍຢູ່ (ສຳລັບໜ້າໂຮມເພຈ)
 async function getEvents(req, res) {
     try {
         const pool = await getPool();
@@ -13,11 +13,11 @@ async function getEvents(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลอีเวนต์ไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນອີເວັນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/public/events/:id -> รายละเอียดอีเวนต์เดียว (สำหรับหน้ารายละเอียด)
+// GET /api/public/events/:id -> ລາຍລະອຽດອີເວັນດຽວ (ສຳລັບໜ້າລາຍລະອຽດ)
 async function getEventById(req, res) {
     try {
         const pool = await getPool();
@@ -30,12 +30,12 @@ async function getEventById(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบอีเวนต์นี้ หรือปิดการขายแล้ว' });
+            return res.status(404).json({ message: 'ບໍ່ພົບອີເວັນນີ້ ຫຼືປິດການຂາຍແລ້ວ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลอีเวนต์ไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນອີເວັນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -46,19 +46,19 @@ function generateTransactionId() {
     return `TXN-${datePart}-${randomPart}`;
 }
 
-// POST /api/public/checkout -> จำลองการชำระเงินสำเร็จแล้วออกตั๋วจริง
+// POST /api/public/checkout -> ຈຳລອງການຊຳລະເງິນສຳເລັດແລ້ວອອກຕົ໋ວແທ້
 // body: { buyerName, buyerPhone, items: [{ tickid, quantity }] }
 async function checkout(req, res) {
     try {
         const { buyerName, buyerPhone, items } = req.body;
 
         if (!buyerName || !buyerPhone || !Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: 'ข้อมูลไม่ครบ กรุณากรอกชื่อ เบอร์โทร และเลือกตั๋วอย่างน้อย 1 รายการ' });
+            return res.status(400).json({ message: 'ຂໍ້ມູນບໍ່ຄົບ ກະລຸນາປ້ອນຊື່ ເບີໂທ ແລະເລືອກຕົ໋ວຢ່າງໜ້ອຍ 1 ລາຍການ' });
         }
 
         const totalQty = items.reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
         if (totalQty < 1 || totalQty > 20) {
-            return res.status(400).json({ message: 'จำนวนตั๋วต่อคำสั่งซื้อต้องอยู่ระหว่าง 1-20 ใบ' });
+            return res.status(400).json({ message: 'ຈຳນວນຕົ໋ວຕໍ່ຄຳສັ່ງຊື້ຕ້ອງຢູ່ລະຫວ່າງ 1-20 ໃບ' });
         }
 
         const pool = await getPool();
@@ -85,7 +85,7 @@ async function checkout(req, res) {
 
                 if (result.recordset.length === 0) {
                     return res.status(409).json({
-                        message: 'ขออภัย ตั๋วบางรายการหมดระหว่างทำรายการ กรุณาลองใหม่อีกครั้ง',
+                        message: 'ຂໍອະໄພ ຕົ໋ວບາງລາຍການໝົດໄລຍະເຮັດລາຍການ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ',
                         partialTickets: tickets,
                     });
                 }
@@ -109,17 +109,17 @@ async function checkout(req, res) {
         res.status(201).json({ tranid, buyerName, buyerPhone, tickets });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ทำรายการไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ເຮັດລາຍການບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// POST /api/public/check-ticket -> ใช้ตอนสแกน QR ครั้งแรก แค่เช็คสถานะ ไม่มาร์คว่ารับตั๋ว
-// body: { code: "<ค่าที่สแกนได้จาก QR>" }
+// POST /api/public/check-ticket -> ໃຊ້ຕອນສະແກນ QR ຄັ້ງທຳອິດ ພຽງແຕ່ກວດສະຖານະ ບໍ່ໝາຍວ່າຮັບຕົ໋ວ
+// body: { code: "<ຄ່າທີ່ສະແກນໄດ້ຈາກ QR>" }
 async function checkTicket(req, res) {
     try {
         const { code } = req.body;
         if (!code) {
-            return res.status(400).json({ result: 'invalid', message: 'ไม่พบข้อมูลโค้ดที่สแกน' });
+            return res.status(400).json({ result: 'invalid', message: 'ບໍ່ພົບຂໍ້ມູນລະຫັດທີ່ສະແກນ' });
         }
 
         const pool = await getPool();
@@ -137,14 +137,14 @@ async function checkTicket(req, res) {
         if (!ticket) {
             return res.status(404).json({
                 result: 'invalid',
-                message: 'ไม่พบโค้ดนี้ในระบบ กรุณาตรวจสอบตั๋วอีกครั้ง',
+                message: 'ບໍ່ພົບລະຫັດນີ້ໃນລະບົບ ກະລຸນາກວດສອບຕົ໋ວອີກຄັ້ງ',
             });
         }
 
         if (ticket.status === true || ticket.status === 1) {
             return res.status(409).json({
                 result: 'not_sold',
-                message: `โค้ดนี้ยังไม่ถูกขาย (${ticket.eventName}) ไม่สามารถรับตั๋วได้`,
+                message: `ລະຫັດນີ້ຍັງບໍ່ໄດ້ຂາຍ (${ticket.eventName}) ບໍ່ສາມາດຮັບຕົ໋ວໄດ້`,
                 ticket: { code: ticket.code, eventName: ticket.eventName },
             });
         }
@@ -152,15 +152,15 @@ async function checkTicket(req, res) {
         if (ticket.myticket === true || ticket.myticket === 1) {
             return res.status(409).json({
                 result: 'already_used',
-                message: `ตั๋วใบนี้ถูกรับไปแล้วก่อนหน้านี้ (${ticket.eventName})`,
+                message: `ຕົ໋ວໃບນີ້ຖືກຮັບໄປແລ້ວກ່ອນໜ້ານີ້ (${ticket.eventName})`,
                 ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
             });
         }
 
-        // ขายแล้ว ยังไม่รับ -> พร้อมให้กดยืนยันรับตั๋วในหน้าถัดไป
+        // ຂາຍແລ້ວ ຍັງບໍ່ຮັບ -> ພ້ອມໃຫ້ກົດຢືນຢັນຮັບຕົ໋ວໃນໜ້າຖັດໄປ
         return res.json({
             result: 'ok',
-            message: `พบข้อมูลตั๋ว: ${ticket.eventName}`,
+            message: `ພົບຂໍ້ມູນຕົ໋ວ: ${ticket.eventName}`,
             ticket: {
                 code: ticket.code,
                 eventName: ticket.eventName,
@@ -170,17 +170,17 @@ async function checkTicket(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ result: 'error', message: 'ตรวจสอบไม่สำเร็จ', error: err.message });
+        res.status(500).json({ result: 'error', message: 'ກວດສອບບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// POST /api/public/receive-ticket -> ใช้หลังพนักงานกดปุ่มยืนยันในหน้ารายละเอียด มาร์คว่ารับตั๋วแล้วจริง
-// body: { code: "<รหัสตั๋วเดียวกับที่เช็คไปตอน check-ticket>" }
+// POST /api/public/receive-ticket -> ໃຊ້ຫຼັງພະນັກງານກົດປຸ່ມຢືນຢັນໃນໜ້າລາຍລະອຽດ ໝາຍວ່າຮັບຕົ໋ວແລ້ວແທ້
+// body: { code: "<ລະຫັດຕົ໋ວດຽວກັບທີ່ກວດໄປຕອນ check-ticket>" }
 async function receiveTicket(req, res) {
     try {
         const { code } = req.body;
         if (!code) {
-            return res.status(400).json({ result: 'invalid', message: 'ไม่พบข้อมูลโค้ดที่จะยืนยัน' });
+            return res.status(400).json({ result: 'invalid', message: 'ບໍ່ພົບຂໍ້ມູນລະຫັດທີ່ຈະຢືນຢັນ' });
         }
 
         const pool = await getPool();
@@ -196,13 +196,13 @@ async function receiveTicket(req, res) {
         const ticket = result.recordset[0];
 
         if (!ticket) {
-            return res.status(404).json({ result: 'invalid', message: 'ไม่พบโค้ดนี้ในระบบ' });
+            return res.status(404).json({ result: 'invalid', message: 'ບໍ່ພົບລະຫັດນີ້ໃນລະບົບ' });
         }
         if (ticket.status === true || ticket.status === 1) {
-            return res.status(409).json({ result: 'not_sold', message: 'โค้ดนี้ยังไม่ถูกขาย ไม่สามารถรับตั๋วได้' });
+            return res.status(409).json({ result: 'not_sold', message: 'ລະຫັດນີ້ຍັງບໍ່ໄດ້ຂາຍ ບໍ່ສາມາດຮັບຕົ໋ວໄດ້' });
         }
         if (ticket.myticket === true || ticket.myticket === 1) {
-            return res.status(409).json({ result: 'already_used', message: 'ตั๋วใบนี้ถูกรับไปแล้วก่อนหน้านี้' });
+            return res.status(409).json({ result: 'already_used', message: 'ຕົ໋ວໃບນີ້ຖືກຮັບໄປແລ້ວກ່ອນໜ້ານີ້' });
         }
 
         await pool.request()
@@ -215,21 +215,21 @@ async function receiveTicket(req, res) {
 
         res.json({
             result: 'success',
-            message: `ยืนยันรับตั๋วสำเร็จ: ${ticket.eventName}`,
+            message: `ຢືນຢັນຮັບຕົ໋ວສຳເລັດ: ${ticket.eventName}`,
             ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ result: 'error', message: 'ยืนยันรับตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ result: 'error', message: 'ຢືນຢັນຮັບຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/public/tickets-not-received?tickid=24 -> รายชื่อคนที่ซื้อแล้วแต่ยังไม่มารับตั๋ว ของอีเวนต์นั้นๆ
+// GET /api/public/tickets-not-received?tickid=24 -> ລາຍຊື່ຄົນທີ່ຊື້ແລ້ວແຕ່ຍັງບໍ່ມາຮັບຕົ໋ວ ຂອງອີເວັນນັ້ນໆ
 async function getNotReceived(req, res) {
     try {
         const { tickid } = req.query;
         if (!tickid) {
-            return res.status(400).json({ status: false, message: 'กรุณาระบุ tickid' });
+            return res.status(400).json({ status: false, message: 'ກະລຸນາລະບຸ tickid' });
         }
 
         const pool = await getPool();
@@ -252,16 +252,16 @@ async function getNotReceived(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ status: false, message: 'ดึงข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ status: false, message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/public/tickets-received?tickid=24 -> รายชื่อคนที่รับตั๋วไปแล้ว ของอีเวนต์นั้นๆ
+// GET /api/public/tickets-received?tickid=24 -> ລາຍຊື່ຄົນທີ່ຮັບຕົ໋ວໄປແລ້ວ ຂອງອີເວັນນັ້ນໆ
 async function getReceived(req, res) {
     try {
         const { tickid } = req.query;
         if (!tickid) {
-            return res.status(400).json({ status: false, message: 'กรุณาระบุ tickid' });
+            return res.status(400).json({ status: false, message: 'ກະລຸນາລະບຸ tickid' });
         }
 
         const pool = await getPool();
@@ -284,7 +284,7 @@ async function getReceived(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ status: false, message: 'ดึงข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ status: false, message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 

@@ -16,8 +16,8 @@ function buildDateFilter(request, from, to, dateExpr = SOLD_DATE_SQL) {
 }
 
 // GET /api/dashboard/summary
-// การ์ดสรุป 4 อัน: Today's sales, Tickets sold this month, Active, OFF
-// (ค่านี้ตรึงกับ "วันนี้"/"เดือนนี้" จริงๆ เสมอ ไม่ผูกกับตัวกรองวันที่บนหน้า Dashboard)
+// ກາດສະຫຼຸບ 4 ອັນ: Today's sales, Tickets sold this month, Active, OFF
+// (ຄ່ານີ້ຕຶງກັບ "ມື້ນີ້"/"ເດືອນນີ້" ແທ້ໆສະເໝີ ບໍ່ຜູກກັບຕົວກອງວັນທີ່ເທິງໜ້າ Dashboard)
 async function getSummary(req, res) {
     try {
         const pool = await getPool();
@@ -53,11 +53,11 @@ async function getSummary(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลสรุปไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນສະຫຼຸບບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/dashboard/sold-by-event?from=&to= -> จำนวนตั๋วที่ขายได้ แยกตามอีเวนต์ (สำหรับแถบสีด้านบน)
+// GET /api/dashboard/sold-by-event?from=&to= -> ຈຳນວນຕົ໋ວທີ່ຂາຍໄດ້ ແຍກຕາມອີເວັນ (ສຳລັບແຖບສີດ້ານເທິງ)
 async function getSoldByEvent(req, res) {
     try {
         const { from, to } = req.query;
@@ -77,11 +77,11 @@ async function getSoldByEvent(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/dashboard/ticket-mix?from=&to= -> เอาแค่ 2 อีเวนต์ที่ขายดีที่สุด มาคิดเป็น % เทียบกันเอง (สำหรับ pie chart)
+// GET /api/dashboard/ticket-mix?from=&to= -> ເອົາແຕ່ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດ ມາຄິດເປັນ % ທຽບກັນເອງ (ສຳລັບ pie chart)
 async function getTicketMix(req, res) {
     try {
         const { from, to } = req.query;
@@ -111,12 +111,12 @@ async function getTicketMix(req, res) {
         );
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/dashboard/transactions?from=&to= -> รายได้รายวันของ 2 อีเวนต์ที่ขายดีที่สุด (สำหรับ line chart)
-// ถ้าไม่ระบุช่วงวันที่ จะใช้ 7 วันล่าสุดเป็นค่าเริ่มต้น
+// GET /api/dashboard/transactions?from=&to= -> ລາຍຮັບລາຍວັນຂອງ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດ (ສຳລັບ line chart)
+// ຖ້າບໍ່ລະບຸໄລຍະວັນທີ່ ຈະໃຊ້ 7 ວັນຫຼ້າສຸດເປັນຄ່າເລີ່ມຕົ້ນ
 async function getTransactionSeries(req, res) {
     try {
         let { from, to } = req.query;
@@ -130,7 +130,7 @@ async function getTransactionSeries(req, res) {
             to = to || today.toISOString().slice(0, 10);
         }
 
-        // หา 2 อีเวนต์ที่ขายดีที่สุดในช่วงนี้ก่อน
+        // ຫາ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດໃນຊ່ວງນີ້ກ່ອນ
         const topEventsResult = await pool.request()
             .input('from', sql.Date, from)
             .input('to', sql.Date, to)
@@ -165,7 +165,7 @@ async function getTransactionSeries(req, res) {
             GROUP BY CONVERT(varchar(10), ${SOLD_DATE_SQL}, 23), m.Title
         `);
 
-        // เติมทุกวันในช่วงให้ครบ (แม้วันไหนไม่มีการขายเลย ก็ให้เป็น 0 จะได้กราฟเส้นต่อเนื่องไม่ขาดช่วง)
+        // ຕື່ມທຸກວັນໃນຊ່ວງໃຫ້ຄົບ (ແມ່ນວັນໃດບໍ່ມີການຂາຍເລີຍ ກໍ່ໃຫ້ເປັນ 0 ຈະໄດ້ກຣາບເສັ້ນຕໍ່ເນື່ອງບໍ່ຂາດຊ່ວງ)
         const byDate = {};
         dataResult2.recordset.forEach((row) => {
             const dateKey = row.date;
@@ -189,7 +189,7 @@ async function getTransactionSeries(req, res) {
         res.json({ events: topEvents, series });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
