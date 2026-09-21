@@ -20,12 +20,12 @@ function getPool() {
         poolPromise = new sql.ConnectionPool(config)
             .connect()
             .then((pool) => {
-                console.log('เชื่อมต่อ SQL Server สำเร็จ');
+                console.log('ເຊື່ອມຕໍ່ SQL Server ສຳເລັດ');
                 return pool;
             })
             .catch((err) => {
-                console.error('เชื่อมต่อ SQL Server ไม่สำเร็จ:', err);
-                poolPromise = null; // เผื่อ retry รอบถัดไป
+                console.error('ເຊື່ອມຕໍ່ SQL Server ບໍ່ສຳເລັດ:', err);
+                poolPromise = null; // ເຜື່ອ retry ຮອບຖັດໄປ
                 throw err;
             });
     }

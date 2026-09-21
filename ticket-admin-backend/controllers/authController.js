@@ -8,7 +8,7 @@ async function login(req, res) {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            return res.status(400).json({ message: 'กรุณากรอก Username และ Password' });
+            return res.status(400).json({ message: 'ກະລຸນາປ້ອນ Username ແລະ Password' });
         }
 
         const pool = await getPool();
@@ -19,19 +19,19 @@ async function login(req, res) {
         const user = result.recordset[0];
 
         if (!user) {
-            return res.status(401).json({ message: 'Username หรือ Password ไม่ถูกต้อง' });
+            return res.status(401).json({ message: 'Username ຫຼື Password ບໍ່ຖືກຕ້ອງ' });
         }
 
         if (user.status === 'Disabled') {
-            return res.status(403).json({ message: 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ' });
+            return res.status(403).json({ message: 'ບັນຊີນີ້ຖືກໂຈະການນຳໃຊ້ ກະລຸນາຕິດຕໍ່ຜູ້ດູແລລະບົບ' });
         }
 
         const passwordMatches = await bcrypt.compare(password, user.passwordHash);
         if (!passwordMatches) {
-            return res.status(401).json({ message: 'Username หรือ Password ไม่ถูกต้อง' });
+            return res.status(401).json({ message: 'Username ຫຼື Password ບໍ່ຖືກຕ້ອງ' });
         }
 
-        // อัปเดตเวลา login ล่าสุด
+        // ອັບເດດເວລາ login ຫຼ້າສຸດ
         await pool.request()
             .input('id', sql.Int, user.id)
             .query('UPDATE AdminUsers SET lastLogin = GETDATE() WHERE id = @id');
@@ -53,7 +53,7 @@ async function login(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'เข้าสู่ระบบไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ເຂົ້າສູ່ລະບົບບໍ່ສຳເລັດ', error: err.message });
     }
 }
 

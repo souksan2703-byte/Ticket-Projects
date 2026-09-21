@@ -1,6 +1,6 @@
 const { sql, getPool } = require('../config/db');
 
-// ใช้ soldAt เป็นหลัก ถ้าไม่มี (ข้อมูลเก่า) ให้ fallback ไปที่ created แทน
+// ໃຊ້ soldAt ເປັນຫຼັກ ຖ້າບໍ່ມີ (ຂໍ້ມູນເກົ່າ) ໃຫ້ fallback ໄປທີ່ created ແທນ
 const SOLD_DATE_SQL = 'COALESCE(tc.soldAt, tc.created)';
 
 function buildDateFilter(request, from, to) {
@@ -11,7 +11,7 @@ function buildDateFilter(request, from, to) {
     }
     if (to) {
         request.input('to', sql.Date, to);
-        // รวมทั้งวันของ "to" ด้วย เลยบวกไป 1 วันแล้วใช้ '<'
+        // ລວມທັງມື້ຂອງ "to" ນຳ ເລີຍບວກໄປ 1 ມື້ແລ້ວໃຊ້ '<'
         where += ` AND ${SOLD_DATE_SQL} < DATEADD(day, 1, @to)`;
     }
     return where;
@@ -58,7 +58,7 @@ async function getSummary(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลสรุปไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນສະຫຼຸບບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -82,7 +82,7 @@ async function getRevenueByEvent(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลรายได้แยกตามอีเวนต์ไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນລາຍຮັບແຍກຕາມອີເວັນບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -106,7 +106,7 @@ async function getTransactions(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลรายการขายไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນລາຍການຂາຍບໍ່ສຳເລັດ', error: err.message });
     }
 }
 

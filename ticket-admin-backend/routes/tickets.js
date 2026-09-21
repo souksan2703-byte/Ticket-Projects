@@ -3,12 +3,12 @@ const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-router.use(requireAuth); // ต้อง login ก่อนถึงจะดูรายการอีเวนต์ได้ (User หรือ Admin ก็ได้)
+router.use(requireAuth); // ຕ້ອງ login ກ່ອນຈຶ່ງຈະເບິ່ງລາຍການອີເວັນໄດ້ (User ຫຼື Admin ກໍ່ໄດ້)
 
 router.get('/', ticketController.getAllTickets);
 router.get('/:id', ticketController.getTicketById);
 
-// สร้าง/แก้ไข/ลบอีเวนต์ เป็นสิทธิ์เชิงโครงสร้าง จำกัดเฉพาะ Admin เท่านั้น
+// ສ້າງ/ແກ້ໄຂ/ລຶບອີເວັນ ເປັນສິດທິ໌ເຊິງໂຄງສ້າງ ຈຳກັດສະເພາະ Admin ເທົ່ານັ້ນ
 router.post('/', requireAdmin, ticketController.createTicket);
 router.put('/:id', requireAdmin, ticketController.updateTicket);
 router.patch('/:id/status', requireAdmin, ticketController.toggleTicketStatus);

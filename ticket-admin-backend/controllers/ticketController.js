@@ -1,7 +1,7 @@
 const { sql, getPool } = require('../config/db');
 const { generateCodesForEvent, prefixFromTitle } = require('../utils/ticketCodeGenerator');
 
-// GET /api/tickets  -> รายการทั้งหมด (หน้า Manage tickets)
+// GET /api/tickets  -> ລາຍການທັງໝົດ (ໜ້າ Manage tickets)
 async function getAllTickets(req, res) {
     try {
         const pool = await getPool();
@@ -14,11 +14,11 @@ async function getAllTickets(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// GET /api/tickets/:id -> รายละเอียดตั๋วใบเดียว (หน้า View)
+// GET /api/tickets/:id -> ລາຍລະອຽດຕົ໋ວໃບດຽວ (ໜ້າ View)
 async function getTicketById(req, res) {
     try {
         const pool = await getPool();
@@ -27,18 +27,18 @@ async function getTicketById(req, res) {
             .query('SELECT * FROM TicketCodeMaster WHERE tickid = @id');
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบตั๋วที่ต้องการ' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຕົ໋ວທີ່ຕ້ອງການ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ดึงข้อมูลตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// POST /api/tickets -> เพิ่มตั๋วใหม่ (หน้า Add ticket)
-// สร้างโค้ดตั๋วจำนวน = Stock ให้อัตโนมัติทันที (สถานะ Available ทั้งหมด)
-// เพื่อให้หน้า Ticket codes มีโค้ดครบตามจำนวนที่ตั้งไว้ ไม่ต้องมากดปุ่ม Generate codes แยกอีกที
+// POST /api/tickets -> ເພີ່ມຕົ໋ວໃໝ່ (ໜ້າ Add ticket)
+// ສ້າງລະຫັດຕົ໋ວຈຳນວນ = Stock ໃຫ້ອັດຕະໂນມັດທັນທີ (ສະຖານະ Available ທັງໝົດ)
+// ເພື່ອໃຫ້ໜ້າ Ticket codes ມີລະຫັດຄົບຕາມຈຳນວນທີ່ຕັ້ງໄວ້ ບໍ່ຕ້ອງມາກົດປຸ່ມ Generate codes ແຍກອີກເທື່ອ
 async function createTicket(req, res) {
     try {
         const {
@@ -47,16 +47,16 @@ async function createTicket(req, res) {
         } = req.body;
 
         if (!title || price == null || stock == null) {
-            return res.status(400).json({ message: 'กรุณากรอก Title, Price และ Stock ให้ครบ' });
+            return res.status(400).json({ message: 'ກະລຸນາປ້ອນ Title, Price ແລະ Stock ໃຫ້ຄົບ' });
         }
         if (stock > 1000) {
-            return res.status(400).json({ message: 'สร้างได้ครั้งละไม่เกิน 1000 ใบ (Stock ต้องไม่เกิน 1000)' });
+            return res.status(400).json({ message: 'ສ້າງໄດ້ຄັ້ງລະບໍ່ເກີນ 1000 ໃບ (Stock ຕ້ອງບໍ່ເກີນ 1000)' });
         }
 
         const pool = await getPool();
 
-        // สร้าง master record ก่อน โดยตั้ง Stock = 0 ไว้ก่อน
-        // (ค่า Stock จริงจะถูกปรับให้ตรงกับจำนวนโค้ดที่ generate ด้านล่างโดย trigger InsertTicketStock โดยอัตโนมัติ)
+        // ສ້າງ master record ກ່ອນ ໂດຍຕັ້ງ Stock = 0 ໄວ້ກ່ອນ
+        // (ຄ່າ Stock ແທ້ຈິງຈະຖືກປັບໃຫ້ກົງກັບຈຳນວນລະຫັດທີ່ generate ຢູ່ລຸ່ມນີ້ໂດຍ trigger InsertTicketStock ໂດຍອັດຕະໂນມັດ)
         const insertResult = await pool.request()
             .input('Title', sql.NVarChar(100), title)
             .input('Price', sql.Int, price)
@@ -78,12 +78,12 @@ async function createTicket(req, res) {
 
         const newTickid = insertResult.recordset[0].tickid;
 
-        // สร้างโค้ดตั๋วให้ครบตามจำนวน Stock ที่ตั้งไว้ (ถ้า Stock = 0 ก็แค่ไม่สร้างโค้ดเลย ไม่ error)
+        // ສ້າງລະຫັດຕົ໋ວໃຫ້ຄົບຕາມຈຳນວນ Stock ທີ່ຕັ້ງໄວ້ (ຖ້າ Stock = 0 ກໍ່ພຽງແຕ່ບໍ່ສ້າງລະຫັດເລີຍ ບໍ່ error)
         if (stock > 0) {
             await generateCodesForEvent(pool, newTickid, stock, prefixFromTitle(title));
         }
 
-        // ดึงข้อมูลล่าสุดกลับไปแสดง (Stock ตอนนี้จะถูกอัปเดตโดย trigger แล้วให้ตรงกับจำนวนโค้ดที่สร้างจริง)
+        // ດຶງຂໍ້ມູນຫຼ້າສຸດກັບໄປສະແດງ (Stock ຕອນນີ້ຈະຖືກອັບເດດໂດຍ trigger ແລ້ວໃຫ້ກົງກັບຈຳນວນລະຫັດທີ່ສ້າງແທ້ຈິງ)
         const finalResult = await pool.request()
             .input('id', sql.Int, newTickid)
             .query('SELECT * FROM TicketCodeMaster WHERE tickid = @id');
@@ -91,11 +91,11 @@ async function createTicket(req, res) {
         res.status(201).json(finalResult.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'เพิ่มตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ເພີ່ມຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// PUT /api/tickets/:id -> แก้ไขตั๋ว (หน้า Edit)
+// PUT /api/tickets/:id -> ແກ້ໄຂຕົ໋ວ (ໜ້າ Edit)
 async function updateTicket(req, res) {
     try {
         const { title, price, stock, location, dateEvent, description, status } = req.body;
@@ -124,19 +124,19 @@ async function updateTicket(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบตั๋วที่ต้องการแก้ไข' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຕົ໋ວທີ່ຕ້ອງການແກ້ໄຂ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'แก้ไขตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ແກ້ໄຂຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// PATCH /api/tickets/:id/status -> เปิด/ปิดการขาย (toggle Open/OFF)
+// PATCH /api/tickets/:id/status -> ເປີດ/ປິດການຂາຍ (toggle Open/OFF)
 async function toggleTicketStatus(req, res) {
     try {
-        const { status } = req.body; // "Open" หรือ "OFF"
+        const { status } = req.body; // "Open" ຫຼື "OFF"
 
         const pool = await getPool();
         const result = await pool.request()
@@ -150,16 +150,16 @@ async function toggleTicketStatus(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบตั๋วที่ต้องการ' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຕົ໋ວທີ່ຕ້ອງການ' });
         }
         res.json(result.recordset[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'เปลี่ยนสถานะไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ປ່ຽນສະຖານະບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// DELETE /api/tickets/:id -> ลบตั๋ว
+// DELETE /api/tickets/:id -> ລຶບຕົ໋ວ
 async function deleteTicket(req, res) {
     try {
         const pool = await getPool();
@@ -168,12 +168,12 @@ async function deleteTicket(req, res) {
             .query('DELETE FROM TicketCodeMaster WHERE tickid = @id');
 
         if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ message: 'ไม่พบตั๋วที่ต้องการลบ' });
+            return res.status(404).json({ message: 'ບໍ່ພົບຕົ໋ວທີ່ຕ້ອງການລຶບ' });
         }
-        res.json({ message: 'ลบตั๋วเรียบร้อยแล้ว' });
+        res.json({ message: 'ລຶບຕົ໋ວຮຽບຮ້ອຍແລ້ວ' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ลบตั๋วไม่สำเร็จ', error: err.message });
+        res.status(500).json({ message: 'ລຶບຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
     }
 }
 

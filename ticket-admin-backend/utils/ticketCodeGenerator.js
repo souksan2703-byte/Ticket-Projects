@@ -1,8 +1,8 @@
 const { sql } = require('../config/db');
 
-// สุ่มโค้ดตั๋ว เช่น "TESTC-8F2K91" จาก prefix ที่กำหนด
+// ສຸ່ມລະຫັດຕົ໋ວ ເຊັ່ນ "TESTC-8F2K91" ຈາກ prefix ທີ່ກຳນົດ
 function randomCode(prefix) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // ตัดตัวที่สับสนง่ายออก (0,O,1,I)
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // ຕັດໂຕທີ່ສັບສົນງ່າຍອອກ (0,O,1,I)
     let suffix = '';
     for (let i = 0; i < 6; i++) {
         suffix += chars[Math.floor(Math.random() * chars.length)];
@@ -10,15 +10,15 @@ function randomCode(prefix) {
     return `${prefix}-${suffix}`;
 }
 
-// สร้าง prefix อัตโนมัติจากชื่ออีเวนต์ เช่น "Test Concert" -> "TESTCO"
+// ສ້າງ prefix ອັດຕະໂນມັດຈາກຊື່ອີເວັນ ເຊັ່ນ "Test Concert" -> "TESTCO"
 function prefixFromTitle(title) {
     const alnum = (title || 'TIX').toUpperCase().replace(/[^A-Z0-9]/g, '');
     return alnum.slice(0, 6) || 'TIX';
 }
 
-// สร้างโค้ดตั๋วเป็นชุด (bulk) ผูกกับ tickid ที่กำหนด
-// การ insert แต่ละแถวจะไปสั่ง trigger InsertTicketStock ให้ Stock ใน TicketCodeMaster +1 ให้อัตโนมัติ
-// คืนค่าเป็น array ของโค้ดที่สร้างสำเร็จ
+// ສ້າງລະຫັດຕົ໋ວເປັນຊຸດ (bulk) ຜູກກັບ tickid ທີ່ກຳນົດ
+// ການ insert ແຕ່ລະແຖວຈະໄປສັ່ງ trigger InsertTicketStock ໃຫ້ Stock ໃນ TicketCodeMaster +1 ໃຫ້ອັດຕະໂນມັດ
+// ສົ່ງຄືນຄ່າເປັນ array ຂອງລະຫັດທີ່ສ້າງສຳເລັດ
 async function generateCodesForEvent(pool, tickid, quantity, prefix) {
     const createdCodes = [];
     const safePrefix = prefix || 'TIX';
@@ -27,7 +27,7 @@ async function generateCodesForEvent(pool, tickid, quantity, prefix) {
         let inserted = false;
         let attempts = 0;
 
-        // ลองใหม่กรณีสุ่มโค้ดชนกับที่มีอยู่แล้ว (unique constraint)
+        // ລອງໃໝ່ກໍລະນີສຸ່ມລະຫັດຊົນກັບທີ່ມີຢູ່ແລ້ວ (unique constraint)
         while (!inserted && attempts < 5) {
             attempts++;
             const code = randomCode(safePrefix);
@@ -42,8 +42,8 @@ async function generateCodesForEvent(pool, tickid, quantity, prefix) {
                 createdCodes.push(code);
                 inserted = true;
             } catch (err) {
-                if (!err.message.includes('IX_TicketCode')) throw err; // error อื่นที่ไม่ใช่โค้ดชนกัน ให้โยนต่อ
-                // ถ้าชนกัน วน loop สุ่มใหม่
+                if (!err.message.includes('IX_TicketCode')) throw err; // error ອື່ນທີ່ບໍ່ແມ່ນລະຫັດຊົນກັນ ໃຫ້ໂຍນຕໍ່
+                // ຖ້າຊົນກັນ ວົນ loop ສຸ່ມໃໝ່
             }
         }
     }
