@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // 1. เพิ่ม useEffect ตรงนี้
+import { useState, useEffect } from "react";
 import { login } from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -9,7 +9,6 @@ export default function LoginPage({ onSignIn }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 2. เคลียร์ Session เก่าทิ้งทันทีที่เปิดเข้าหน้านี้ ป้องกันการ Redirect วนกลับ
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
