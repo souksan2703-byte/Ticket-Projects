@@ -6,8 +6,10 @@ import StatusPill from "../components/StatusPill.jsx";
 import GenerateCodesModal from "../components/GenerateCodesModal.jsx";
 import QrCodeModal from "../components/QrCodeModal.jsx";
 import { getTickets, getTicketCodes, getTicketCodeStats, generateTicketCodes, markTicketCodeReceived } from "../api.js";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function TicketCodesPage() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState([]);
   const [codes, setCodes] = useState([]);
   const [stats, setStats] = useState({ total: 0, sold: 0, remaining: 0, received: 0 });
@@ -70,25 +72,26 @@ export default function TicketCodesPage() {
   }
 
   async function handleMarkReceived(code) {
-    if (!confirm(`ຢືນຢັນວ່າ "${code.owner || code.code}" ໄດ້ມາຮັບປີ້ແລ້ວແມ່ນບໍ?`)) return;
+    const msg = t("confirmMarkReceived").replace("{name}", code.owner || code.code);
+    if (!confirm(msg)) return;
     try {
       await markTicketCodeReceived(code.id);
       await loadCodes();
     } catch (err) {
-      alert(`ບັນທຶກບໍ່ສຳເລັດ: ${err.message}`);
+      alert(`${t("saveFailed")}: ${err.message}`);
     }
   }
 
   return (
     <div>
       <PageHeader
-        title="ລະຫັດປີ້"
+        title={t("ticketCodes")}
         action={
           <button
             onClick={() => setModalOpen(true)}
             className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
-            Generate codes
+            {t("generateCodes")}
           </button>
         }
       />
@@ -99,7 +102,7 @@ export default function TicketCodesPage() {
           onChange={(e) => setEventFilter(e.target.value)}
           className="rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-700 outline-none"
         >
-          <option value="">ງານອີເວັນຕ໌: ທັງໝົດ</option>
+          <option value="">{t("filterAllEvents")}</option>
           {events.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
@@ -111,10 +114,10 @@ export default function TicketCodesPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-700 outline-none"
         >
-          <option value="All">ສະຖານະ: ທັງໝົດ</option>
-          <option value="Sold">ຂາຍແລ້ວ</option>
-          <option value="Available">ຍັງມີ</option>
-          <option value="Used">ໃຊ້ແລ້ວ</option>
+          <option value="All">{t("filterStatusAll")}</option>
+          <option value="Sold">{t("statusSold")}</option>
+          <option value="Available">{t("statusAvailable")}</option>
+          <option value="Used">{t("statusUsed")}</option>
         </select>
         <div className="flex flex-1 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5">
           <Search className="h-4 w-4 text-neutral-400" />
@@ -122,23 +125,23 @@ export default function TicketCodesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full text-sm text-neutral-700 outline-none placeholder:text-neutral-400"
-            placeholder="ຄົ້ນຫາຜູ້ຖືປີ້ / ເລກທຸລະກຳ"
+            placeholder={t("searchOwnerTranId")}
           />
         </div>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="ລະຫັດທັງໝົດ" value={stats.total} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="ຂາຍແລ້ວ" value={stats.sold} className="bg-neutral-100 text-red-600" />
-        <StatCard label="ເຫຼືອ" value={stats.remaining} className="bg-neutral-100 text-green-700" />
-        <StatCard label="ຮັບແລ້ວ" value={stats.received} className="bg-neutral-100 text-amber-700" />
+        <StatCard label={t("totalCodes")} value={stats.total} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("statusSold")} value={stats.sold} className="bg-neutral-100 text-red-600" />
+        <StatCard label={t("remaining")} value={stats.remaining} className="bg-neutral-100 text-green-700" />
+        <StatCard label={t("receivedPickedUp")} value={stats.received} className="bg-neutral-100 text-amber-700" />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
+          {t("loadFailed")}: {error}
           <button onClick={loadCodes} className="ml-3 underline">
-            ລອງໃໝ່
+            {t("retry")}
           </button>
         </div>
       )}
@@ -147,26 +150,26 @@ export default function TicketCodesPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">ລະຫັດ</th>
-              <th className="px-5 py-3 font-normal">ງານອີເວັນຕ໌</th>
-              <th className="px-5 py-3 font-normal">ຜູ້ຖືປີ້</th>
-              <th className="px-5 py-3 font-normal">ເລກທຸລະກຳ</th>
-              <th className="px-5 py-3 font-normal">ຮັບປີ້ແລ້ວ</th>
-              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
-              <th className="px-5 py-3 font-normal">QR</th>
+              <th className="px-5 py-3 font-normal">{t("colCode")}</th>
+              <th className="px-5 py-3 font-normal">{t("colEvent")}</th>
+              <th className="px-5 py-3 font-normal">{t("colOwner")}</th>
+              <th className="px-5 py-3 font-normal">{t("colTransactionId")}</th>
+              <th className="px-5 py-3 font-normal">{t("colTicketReceived")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStatus")}</th>
+              <th className="px-5 py-3 font-normal">{t("colQr")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ກຳລັງໂຫຼດ...
+                  {t("loadingEllipsis")}
                 </td>
               </tr>
             ) : codes.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ຍັງບໍ່ມີລະຫັດປີ້ ກົດ "Generate codes" ເພື່ອສ້າງຊຸດທຳອິດ
+                  {t("noCodesYet").replace("{generateCodes}", t("generateCodes"))}
                 </td>
               </tr>
             ) : (
@@ -195,7 +198,7 @@ export default function TicketCodesPage() {
                     <button
                       onClick={() => setQrCode(c.code)}
                       className="text-neutral-600 hover:text-neutral-900"
-                      title="ເບິ່ງ/ດາວໂຫຼດ QR"
+                      title={t("viewDownloadQr")}
                     >
                       <QrCode className="h-4 w-4" />
                     </button>

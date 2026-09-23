@@ -5,6 +5,7 @@ import DateField from "../components/DateField.jsx";
 import StatCard from "../components/StatCard.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import { getReportSummary, getRevenueByEvent, getReportTransactions } from "../api.js";
+import { useLanguage } from "../i18n/LanguageContext";
 
 function currency(n) {
   return `${Number(n || 0).toLocaleString()} LAK`;
@@ -26,6 +27,7 @@ function downloadCsv(rows) {
 }
 
 export default function ReportsPage() {
+  const { t } = useLanguage();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [summary, setSummary] = useState({ totalRevenue: 0, totalBuyers: 0, ticketsSold: 0, bestSellingEvent: "-" });
@@ -62,11 +64,11 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <PageHeader title="ລາຍງານ" />
+      <PageHeader title={t("reports")} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-2">
-        <DateField label="ວັນທີທຸລະກຳ" value={from} onChange={setFrom} />
-        <DateField label="ຮອດວັນທີ" value={to} onChange={setTo} />
+        <DateField label={t("transactionDate")} value={from} onChange={setFrom} />
+        <DateField label={t("toDate")} value={to} onChange={setTo} />
       </div>
 
       <button
@@ -75,29 +77,29 @@ export default function ReportsPage() {
         className="mb-6 flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
       >
         <Download className="h-4 w-4" />
-        Export CSV
+        {t("exportCsv")}
       </button>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
+          {t("loadFailed")}: {error}
           <button onClick={loadReport} className="ml-3 underline">
-            ລອງໃໝ່
+            {t("retry")}
           </button>
         </div>
       )}
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="ລາຍຮັບລວມ" value={currency(summary.totalRevenue)} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="ຈຳນວນຜູ້ຊື້" value={summary.totalBuyers.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="ປີ້ທີ່ຂາຍໄດ້" value={summary.ticketsSold.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="ງານທີ່ຂາຍດີທີ່ສຸດ" value={summary.bestSellingEvent} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("totalRevenue")} value={currency(summary.totalRevenue)} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("totalBuyers")} value={summary.totalBuyers.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("ticketsSold")} value={summary.ticketsSold.toLocaleString()} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("bestSellingEvent")} value={summary.bestSellingEvent} className="bg-neutral-100 text-neutral-900" />
       </div>
 
       <div className="mb-6 rounded-xl border border-neutral-200 bg-white p-5">
-        <p className="mb-5 text-sm font-medium text-neutral-800">ລາຍຮັບຕາມງານອີເວັນຕ໌</p>
+        <p className="mb-5 text-sm font-medium text-neutral-800">{t("revenueByEvent")}</p>
         {revenueByEvent.length === 0 ? (
-          <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້</p>
+          <p className="text-sm text-neutral-400">{t("noSalesDataInRange")}</p>
         ) : (
           <div className="space-y-4">
             {revenueByEvent.map((r) => (
@@ -122,35 +124,35 @@ export default function ReportsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">ລະຫັດ</th>
-              <th className="px-5 py-3 font-normal">ງານອີເວັນຕ໌</th>
-              <th className="px-5 py-3 font-normal">ຜູ້ຖືປີ້</th>
-              <th className="px-5 py-3 font-normal">ເລກທຸລະກຳ</th>
-              <th className="px-5 py-3 font-normal">ລາຄາ</th>
-              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
+              <th className="px-5 py-3 font-normal">{t("colCode")}</th>
+              <th className="px-5 py-3 font-normal">{t("colEvent")}</th>
+              <th className="px-5 py-3 font-normal">{t("colOwner")}</th>
+              <th className="px-5 py-3 font-normal">{t("colTransactionId")}</th>
+              <th className="px-5 py-3 font-normal">{t("colPrice")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStatus")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-neutral-400">
-                  ກຳລັງໂຫຼດ...
+                  {t("loadingEllipsis")}
                 </td>
               </tr>
             ) : transactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-neutral-400">
-                  ຍັງບໍ່ມີລາຍການຂາຍໃນຊ່ວງເວລານີ້
+                  {t("noSalesInRange")}
                 </td>
               </tr>
             ) : (
-              transactions.map((t) => (
-                <tr key={t.code} className="border-b border-neutral-100 last:border-0">
-                  <td className="px-5 py-4 font-medium text-neutral-900">{t.code}</td>
-                  <td className="px-5 py-4 text-neutral-700">{t.eventName}</td>
-                  <td className="px-5 py-4 text-neutral-700">{t.owner || "-"}</td>
-                  <td className="px-5 py-4 text-neutral-700">{t.tranid || "-"}</td>
-                  <td className="px-5 py-4 text-neutral-700">{currency(t.price)}</td>
+              transactions.map((tx) => (
+                <tr key={tx.code} className="border-b border-neutral-100 last:border-0">
+                  <td className="px-5 py-4 font-medium text-neutral-900">{tx.code}</td>
+                  <td className="px-5 py-4 text-neutral-700">{tx.eventName}</td>
+                  <td className="px-5 py-4 text-neutral-700">{tx.owner || "-"}</td>
+                  <td className="px-5 py-4 text-neutral-700">{tx.tranid || "-"}</td>
+                  <td className="px-5 py-4 text-neutral-700">{currency(tx.price)}</td>
                   <td className="px-5 py-4">
                     <StatusPill status="Success" />
                   </td>

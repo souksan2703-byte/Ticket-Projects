@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { X, Upload } from "lucide-react";
+import { useState, useRef } from "react";
+import { X, Upload, Loader2 } from "lucide-react";
+import { uploadImage, getImageUrl } from "../api.js";
 
 export default function AddTicketModal({ onClose, onSave, initialData }) {
   const isEditing = Boolean(initialData);
+  const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
     name: initialData?.name || "",
@@ -11,12 +13,31 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     location: initialData?.location || "",
     date: initialData?.date || "",
     status: initialData?.status || "Open",
+    logo: initialData?.logo || "", // เก็บ path ของรูปที่อัปโหลดแล้ว (เช่น "/uploads/xxx.jpg")
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  async function handleFileSelect(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setUploading(true);
+    try {
+      const path = await uploadImage(file);
+      update("logo", path);
+    } catch (err) {
+      setError(err.message || "อัปโหลดรูปไม่สำเร็จ");
+    } finally {
+      setUploading(false);
+      e.target.value = ""; // เคลียร์ input เผื่ออยากเลือกไฟล์เดิมซ้ำได้
+    }
   }
 
   async function handleSubmit(e) {
@@ -24,7 +45,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     setError(null);
 
     if (!form.name.trim() || form.price === "" || form.stock === "") {
-      setError("ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ");
+      setError("กรุณากรอก Event title, Price และ Stock ให้ครบ");
       return;
     }
 
@@ -32,7 +53,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     try {
       await onSave(form);
     } catch (err) {
-      setError(err.message || "ບັນທຶກບໍ່ສຳເລັດ");
+      setError(err.message || "บันทึกไม่สำเร็จ");
     } finally {
       setSaving(false);
     }
@@ -43,7 +64,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {isEditing ? "ແກ້ໄຂປີ້" : "ເພີ່ມປີ້"}
+            {isEditing ? "Edit ticket" : "Add ticket"}
           </h2>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">
             <X className="h-5 w-5" />
@@ -51,13 +72,44 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-5 flex flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-6 py-8 text-center">
-            <Upload className="mb-2 h-5 w-5 text-neutral-400" />
-            <p className="text-sm font-medium text-neutral-700">Upload event photo</p>
-            <p className="mt-1 text-xs text-neutral-400">
-              Drag and drop or click to browse. JPG or PNG, up to 5 MB.
-            </p>
-          </div>
+          {/* กล่องอัปโหลดรูป - คลิกที่ไหนก็ได้ในกล่องนี้เพื่อเลือกไฟล์ */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="mb-5 flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-6 py-8 text-center transition hover:bg-neutral-100 disabled:opacity-60"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="mb-2 h-5 w-5 animate-spin text-neutral-400" />
+                <p className="text-sm font-medium text-neutral-700">กำลังอัปโหลด...</p>
+              </>
+            ) : form.logo ? (
+              <>
+                <img
+                  src={getImageUrl(form.logo)}
+                  alt="ตัวอย่างรูปอีเวนต์"
+                  className="mb-3 h-32 w-32 rounded-lg object-cover"
+                />
+                <p className="text-xs text-neutral-500">คลิกเพื่อเปลี่ยนรูป</p>
+              </>
+            ) : (
+              <>
+                <Upload className="mb-2 h-5 w-5 text-neutral-400" />
+                <p className="text-sm font-medium text-neutral-700">Upload event photo</p>
+                <p className="mt-1 text-xs text-neutral-400">
+                  Drag and drop or click to browse. JPG, PNG, WEBP or GIF, up to 5 MB.
+                </p>
+              </>
+            )}
+          </button>
 
           {error && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
@@ -97,7 +149,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                 />
                 {!isEditing && (
                   <p className="mt-1 text-xs text-neutral-400">
-                    ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)
+                    ระบบจะสร้างโค้ดตั๋วให้อัตโนมัติตามจำนวนนี้ (สูงสุด 1000 ใบ)
                   </p>
                 )}
               </div>
@@ -129,8 +181,8 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   onChange={(e) => update("status", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                 >
-                  <option value="Open">ເປີດ</option>
-                  <option value="OFF">ປິດ</option>
+                  <option value="Open">Open</option>
+                  <option value="OFF">OFF</option>
                 </select>
               </div>
             )}
@@ -146,10 +198,10 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
             </button>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploading}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "ກຳລັງບັນທຶກ..." : "ບັນທຶກປີ້"}
+              {saving ? "กำลังบันทึก..." : "Save ticket"}
             </button>
           </div>
         </form>

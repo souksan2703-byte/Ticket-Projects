@@ -5,8 +5,10 @@ import StatusPill from "../components/StatusPill.jsx";
 import AddTicketModal from "../components/AddTicketModal.jsx";
 import { currency } from "../data/sampleData.js";
 import { getTickets, createTicket, updateTicket, deleteTicket } from "../api.js";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function ManageTicketsPage() {
+  const { t } = useLanguage();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,7 +44,7 @@ export default function ManageTicketsPage() {
   }
 
   async function handleDelete(id) {
-    if (!confirm("ຕ້ອງການລຶບປີ້ນີ້ແທ້ບໍ?")) return;
+    if (!confirm(t("confirmDeleteTicket"))) return;
     await deleteTicket(id);
     await loadTickets();
   }
@@ -52,7 +54,7 @@ export default function ManageTicketsPage() {
   return (
     <div>
       <PageHeader
-        title="ຈັດການປີ້"
+        title={t("manageTickets")}
         action={
           <button
             onClick={() => {
@@ -61,21 +63,21 @@ export default function ManageTicketsPage() {
             }}
             className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
-            Add ticket
+            {t("addTicket")}
           </button>
         }
       />
 
       <div className="mb-6 grid grid-cols-2 gap-4">
-        <StatCard label="ປີ້ທັງໝົດ" value={tickets.length} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="ພ້ອມຂາຍ" value={openCount} className="bg-neutral-100 text-green-700" />
+        <StatCard label={t("totalTickets")} value={tickets.length} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label={t("openForSale")} value={openCount} className="bg-neutral-100 text-green-700" />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
+          {t("loadFailed")}: {error}
           <button onClick={loadTickets} className="ml-3 underline">
-            ລອງໃໝ່
+            {t("retry")}
           </button>
         </div>
       )}
@@ -84,26 +86,26 @@ export default function ManageTicketsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">ງານອີເວັນຕ໌</th>
-              <th className="px-5 py-3 font-normal">ລາຄາ</th>
-              <th className="px-5 py-3 font-normal">ຈຳນວນປີ້</th>
-              <th className="px-5 py-3 font-normal">ວັນທີ ແລະ ເວລາ</th>
-              <th className="px-5 py-3 font-normal">ສະຖານະ</th>
-              <th className="px-5 py-3 font-normal">ແກ້ໄຂ</th>
-              <th className="px-5 py-3 font-normal">ລຶບ</th>
+              <th className="px-5 py-3 font-normal">{t("colEvent")}</th>
+              <th className="px-5 py-3 font-normal">{t("colPrice")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStock")}</th>
+              <th className="px-5 py-3 font-normal">{t("colDateTime")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStatus")}</th>
+              <th className="px-5 py-3 font-normal">{t("colEdit")}</th>
+              <th className="px-5 py-3 font-normal">{t("colDelete")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ກຳລັງໂຫຼດ...
+                  {t("loadingEllipsis")}
                 </td>
               </tr>
             ) : tickets.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ຍັງບໍ່ມີປີ້ ກົດ "ເພີ່ມປີ້" ເພື່ອເພີ່ມລາຍການທຳອິດ
+                  {t("noTicketsYet")}
                 </td>
               </tr>
             ) : (
@@ -132,7 +134,7 @@ export default function ManageTicketsPage() {
                       }}
                       className="text-neutral-600 hover:text-neutral-900"
                     >
-                      Edit
+                      {t("colEdit")}
                     </button>
                   </td>
                   <td className="px-5 py-4">
@@ -140,7 +142,7 @@ export default function ManageTicketsPage() {
                       onClick={() => handleDelete(e.id)}
                       className="text-red-600 hover:text-red-800"
                     >
-                      Delete
+                      {t("colDelete")}
                     </button>
                   </td>
                 </tr>
