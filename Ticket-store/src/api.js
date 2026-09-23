@@ -36,3 +36,10 @@ export function checkout(payload) {
 export function getQrCodeUrl(code) {
   return `${API_URL}/ticket-codes/qrcode/${encodeURIComponent(code)}`;
 }
+
+export function getImageUrl(path) {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  const baseUrl = API_URL.replace(/\/api$/, "");
+  return `${baseUrl}${path}`;
+}
