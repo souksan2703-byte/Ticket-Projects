@@ -4,11 +4,9 @@ import StatCard from "../components/StatCard.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddTicketModal from "../components/AddTicketModal.jsx";
 import { currency } from "../data/sampleData.js";
-import { getTickets, createTicket, updateTicket, deleteTicket } from "../api.js";
-import { useLanguage } from "../i18n/LanguageContext";
+import { getTickets, createTicket, updateTicket, deleteTicket, getImageUrl } from "../api.js";
 
 export default function ManageTicketsPage() {
-  const { t } = useLanguage();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +42,7 @@ export default function ManageTicketsPage() {
   }
 
   async function handleDelete(id) {
-    if (!confirm(t("confirmDeleteTicket"))) return;
+    if (!confirm("ต้องการลบตั๋วนี้ใช่ไหม?")) return;
     await deleteTicket(id);
     await loadTickets();
   }
@@ -54,7 +52,7 @@ export default function ManageTicketsPage() {
   return (
     <div>
       <PageHeader
-        title={t("manageTickets")}
+        title="Manage tickets"
         action={
           <button
             onClick={() => {
@@ -63,21 +61,21 @@ export default function ManageTicketsPage() {
             }}
             className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
-            {t("addTicket")}
+            Add ticket
           </button>
         }
       />
 
       <div className="mb-6 grid grid-cols-2 gap-4">
-        <StatCard label={t("totalTickets")} value={tickets.length} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label={t("openForSale")} value={openCount} className="bg-neutral-100 text-green-700" />
+        <StatCard label="Total tickets" value={tickets.length} className="bg-neutral-100 text-neutral-900" />
+        <StatCard label="Open for sale" value={openCount} className="bg-neutral-100 text-green-700" />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {t("loadFailed")}: {error}
+          โหลดข้อมูลไม่สำเร็จ: {error}
           <button onClick={loadTickets} className="ml-3 underline">
-            {t("retry")}
+            ลองใหม่
           </button>
         </div>
       )}
@@ -86,26 +84,26 @@ export default function ManageTicketsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">{t("colEvent")}</th>
-              <th className="px-5 py-3 font-normal">{t("colPrice")}</th>
-              <th className="px-5 py-3 font-normal">{t("colStock")}</th>
-              <th className="px-5 py-3 font-normal">{t("colDateTime")}</th>
-              <th className="px-5 py-3 font-normal">{t("colStatus")}</th>
-              <th className="px-5 py-3 font-normal">{t("colEdit")}</th>
-              <th className="px-5 py-3 font-normal">{t("colDelete")}</th>
+              <th className="px-5 py-3 font-normal">Event</th>
+              <th className="px-5 py-3 font-normal">Price</th>
+              <th className="px-5 py-3 font-normal">Stock</th>
+              <th className="px-5 py-3 font-normal">Date &amp; time</th>
+              <th className="px-5 py-3 font-normal">Status</th>
+              <th className="px-5 py-3 font-normal">Edit</th>
+              <th className="px-5 py-3 font-normal">Delete</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  {t("loadingEllipsis")}
+                  กำลังโหลด...
                 </td>
               </tr>
             ) : tickets.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  {t("noTicketsYet")}
+                  ยังไม่มีตั๋ว กด "Add ticket" เพื่อเพิ่มรายการแรก
                 </td>
               </tr>
             ) : (
@@ -113,7 +111,15 @@ export default function ManageTicketsPage() {
                 <tr key={e.id} className="border-b border-neutral-100 last:border-0">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 rounded-md bg-neutral-200" />
+                      {e.logo ? (
+                        <img
+                          src={getImageUrl(e.logo)}
+                          alt={e.name}
+                          className="h-9 w-9 shrink-0 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="h-9 w-9 shrink-0 rounded-md bg-neutral-200" />
+                      )}
                       <div>
                         <p className="font-medium text-neutral-900">{e.name}</p>
                         <p className="text-xs text-neutral-500">{e.location}</p>
@@ -134,7 +140,7 @@ export default function ManageTicketsPage() {
                       }}
                       className="text-neutral-600 hover:text-neutral-900"
                     >
-                      {t("colEdit")}
+                      Edit
                     </button>
                   </td>
                   <td className="px-5 py-4">
@@ -142,7 +148,7 @@ export default function ManageTicketsPage() {
                       onClick={() => handleDelete(e.id)}
                       className="text-red-600 hover:text-red-800"
                     >
-                      {t("colDelete")}
+                      Delete
                     </button>
                   </td>
                 </tr>

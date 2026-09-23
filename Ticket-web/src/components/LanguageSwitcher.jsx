@@ -2,18 +2,53 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 
+// ธง UK แบบ SVG จริง (ไม่ใช่ emoji) เพื่อให้แสดงผลเหมือนกันทุกเครื่อง
+// รวมถึง Windows ที่บาง font ไม่รองรับ emoji ธงชาติ (ขึ้นเป็นตัวอักษรแทน)
+function FlagGB({ size }) {
+  return (
+    <svg viewBox="0 0 60 60" width={size} height={size}>
+      <clipPath id="gb-circle">
+        <circle cx="30" cy="30" r="30" />
+      </clipPath>
+      <g clipPath="url(#gb-circle)">
+        <rect width="60" height="60" fill="#00247d" />
+        <path d="M0 0L60 60M60 0L0 60" stroke="#fff" strokeWidth="12" />
+        <path d="M0 0L60 60M60 0L0 60" stroke="#cf142b" strokeWidth="4" />
+        <path d="M30 0V60M0 30H60" stroke="#fff" strokeWidth="20" />
+        <path d="M30 0V60M0 30H60" stroke="#cf142b" strokeWidth="12" />
+      </g>
+    </svg>
+  );
+}
+
+// ธงลาวแบบ SVG จริง: แถบแดง-น้ำเงิน-แดง พร้อมวงกลมขาวตรงกลาง
+function FlagLA({ size }) {
+  return (
+    <svg viewBox="0 0 60 60" width={size} height={size}>
+      <clipPath id="la-circle">
+        <circle cx="30" cy="30" r="30" />
+      </clipPath>
+      <g clipPath="url(#la-circle)">
+        <rect width="60" height="60" fill="#ce1126" />
+        <rect y="15" width="60" height="30" fill="#002868" />
+        <circle cx="30" cy="30" r="11" fill="#fff" />
+      </g>
+    </svg>
+  );
+}
+
 const LANGUAGES = [
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "lo", label: "Lao", flag: "🇱🇦" },
+  { code: "en", label: "English", Flag: FlagGB },
+  { code: "lo", label: "Lao", Flag: FlagLA },
 ];
 
-function FlagBadge({ flag, size = 28 }) {
+function FlagBadge({ Flag, size = 28 }) {
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100"
-      style={{ width: size, height: size, fontSize: size * 0.68, lineHeight: 1 }}
+      className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full"
+      style={{ width: size, height: size }}
     >
-      {flag}
+      <Flag size={size} />
     </span>
   );
 }
@@ -41,7 +76,7 @@ export default function LanguageSwitcher() {
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-neutral-50"
       >
-        <FlagBadge flag={current.flag} size={26} />
+        <FlagBadge Flag={current.Flag} size={26} />
         <span className="text-sm font-semibold text-neutral-900">
           {current.code.toUpperCase()}
         </span>
@@ -65,7 +100,7 @@ export default function LanguageSwitcher() {
                 l.code === language ? "bg-neutral-50" : ""
               }`}
             >
-              <FlagBadge flag={l.flag} size={30} />
+              <FlagBadge Flag={l.Flag} size={30} />
               <span className="text-base text-neutral-800">{l.label}</span>
             </button>
           ))}

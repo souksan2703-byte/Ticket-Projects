@@ -13,7 +13,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     location: initialData?.location || "",
     date: initialData?.date || "",
     status: initialData?.status || "Open",
-    logo: initialData?.logo || "", // เก็บ path ของรูปที่อัปโหลดแล้ว (เช่น "/uploads/xxx.jpg")
+    logo: initialData?.logo || "", 
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -36,7 +36,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       setError(err.message || "อัปโหลดรูปไม่สำเร็จ");
     } finally {
       setUploading(false);
-      e.target.value = ""; // เคลียร์ input เผื่ออยากเลือกไฟล์เดิมซ้ำได้
+      e.target.value = ""; 
     }
   }
 
@@ -72,7 +72,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* กล่องอัปโหลดรูป - คลิกที่ไหนก็ได้ในกล่องนี้เพื่อเลือกไฟล์ */}
           <input
             ref={fileInputRef}
             type="file"
