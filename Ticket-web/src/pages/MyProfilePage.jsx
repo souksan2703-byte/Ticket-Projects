@@ -1,8 +1,10 @@
 import { useState } from "react";
 import PageHeader from "../components/PageHeader.jsx";
 import { changeOwnPassword } from "../api.js";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function MyProfilePage({ currentUser }) {
+  const { t } = useLanguage();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
@@ -15,26 +17,26 @@ export default function MyProfilePage({ currentUser }) {
     setSuccess(null);
 
     if (!newPassword || !confirmPassword) {
-      setError("ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບທຸກຊ່ອງ");
+      setError(t("fillAllFields"));
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("ລະຫັດຜ່ານໃໝ່ ແລະ ການຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ");
+      setError(t("passwordsDontMatch"));
       return;
     }
     if (newPassword.length < 6) {
-      setError("ລະຫັດຜ່ານໃໝ່ຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ");
+      setError(t("passwordTooShort"));
       return;
     }
 
     setSaving(true);
     try {
       await changeOwnPassword(newPassword);
-      setSuccess("ປ່ຽນລະຫັດຜ່ານສຳເລັດແລ້ວ");
+      setSuccess(t("passwordChangedSuccess"));
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      setError(err.message || "ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ");
+      setError(err.message || t("passwordChangeFailed"));
     } finally {
       setSaving(false);
     }
@@ -42,7 +44,7 @@ export default function MyProfilePage({ currentUser }) {
 
   return (
     <div>
-      <PageHeader title="ໂປຣໄຟລ໌ຂອງຂ້ອຍ" />
+      <PageHeader title={t("myProfile")} />
 
       <div className="mx-auto max-w-xl space-y-6">
         <div className="flex items-center gap-4 rounded-xl border border-neutral-200 bg-white p-5">
@@ -57,7 +59,7 @@ export default function MyProfilePage({ currentUser }) {
 
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
           <h2 className="mb-4 text-center text-base font-medium text-neutral-900">
-            ປ່ຽນລະຫັດຜ່ານ
+            {t("changePassword")}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +75,7 @@ export default function MyProfilePage({ currentUser }) {
             )}
 
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">ລະຫັດຜ່ານໃໝ່</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("newPassword")}</label>
               <input
                 type="password"
                 value={newPassword}
@@ -82,7 +84,7 @@ export default function MyProfilePage({ currentUser }) {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">ຢືນຢັນລະຫັດຜ່ານໃໝ່</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("confirmNewPassword")}</label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -95,7 +97,7 @@ export default function MyProfilePage({ currentUser }) {
               disabled={saving}
               className="w-full rounded-lg bg-red-600 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "ກຳລັງບັນທຶກ..." : "ອັບເດດລະຫັດຜ່ານ"}
+              {saving ? t("savingEllipsis") : t("updatePassword")}
             </button>
           </form>
         </div>

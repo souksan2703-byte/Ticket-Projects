@@ -56,6 +56,7 @@ function toBackend(payload) {
     dateEvent: payload.date,
     description: payload.description,
     status: payload.status,
+    logo: payload.logo,
   };
 }
 
@@ -256,4 +257,33 @@ export function getDashboardTicketMix(from, to) {
 export function getDashboardTransactions(from, to) {
   const qs = buildDateParams(from, to);
   return request(`/dashboard/transactions${qs ? `?${qs}` : ""}`);
+}
+
+export async function uploadImage(file) {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await fetch(`${API_URL}/upload/image`, {
+    method: "POST",
+    headers: {
+      // ห้ามใส่ Content-Type เอง! เบราว์เซอร์ต้องเป็นคนตั้ง boundary ของ multipart ให้อัตโนมัติ
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: formData,
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.message || "อัปโหลดรูปไม่สำเร็จ");
+  }
+  return data.path; // เช่น "/uploads/abc123.jpg"
+}
+
+// ฟังก์ชันช่วยแปลง path ที่เก็บใน DB (เช่น "/uploads/abc123.jpg") ให้เป็น URL เต็มสำหรับแสดงรูป
+export function getImageUrl(path) {
+  if (!path) return null;
+  if (path.startsWith("http")) return path; // เผื่อเก็บเป็น URL เต็มไว้อยู่แล้ว
+  const baseUrl = API_URL.replace(/\/api$/, ""); // ตัด /api ออก เพราะรูปอยู่ที่ root ไม่ใช่ใต้ /api
+  return `${baseUrl}${path}`;
 }

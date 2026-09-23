@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"; // 1. เพิ่ม useEffect ตรงนี้
 import { login } from "../api.js";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function LoginPage({ onSignIn }) {
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -21,7 +23,7 @@ export default function LoginPage({ onSignIn }) {
       const user = await login(username, password);
       onSignIn(user);
     } catch (err) {
-      setError(err.message || "ເຂົ້າສູ່ລະບົບບໍ່ສຳເລັດ");
+      setError(err.message || t("loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -30,9 +32,9 @@ export default function LoginPage({ onSignIn }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-10 shadow-sm">
-        <h1 className="text-center text-2xl font-semibold text-neutral-900">ລະບົບຈັດການປີ້</h1>
+        <h1 className="text-center text-2xl font-semibold text-neutral-900">{t("appTitle")}</h1>
         <p className="mt-2 text-center text-sm text-neutral-500">
-          ເຂົ້າສູ່ລະບົບເພື່ອຈັດການງານອີເວັນຕ໌ ແລະ ປີ້
+          {t("signInSubtitle")}
         </p>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
@@ -43,23 +45,23 @@ export default function LoginPage({ onSignIn }) {
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">ຊື່ຜູ້ໃຊ້</label>
+            <label className="mb-1.5 block text-sm text-neutral-700">{t("username")}</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              placeholder="ປ້ອນຊື່ຜູ້ໃຊ້"
+              placeholder={t("usernamePlaceholder")}
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">ລະຫັດຜ່ານ</label>
+            <label className="mb-1.5 block text-sm text-neutral-700">{t("password")}</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              placeholder="ປ້ອນລະຫັດຜ່ານ"
+              placeholder={t("passwordPlaceholder")}
             />
           </div>
           <button
@@ -67,7 +69,7 @@ export default function LoginPage({ onSignIn }) {
             disabled={loading}
             className="w-full rounded-lg bg-red-600 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60"
           >
-            {loading ? "ກຳລັງເຂົ້າສູ່ລະບົບ..." : "ເຂົ້າສູ່ລະບົບ"}
+            {loading ? t("signingIn") : t("signIn")}
           </button>
         </form>
       </div>
