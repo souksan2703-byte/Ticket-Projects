@@ -11,7 +11,7 @@ export default function ManageTicketsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingTicket, setEditingTicket] = useState(null); // null = โหมดเพิ่มใหม่
+  const [editingTicket, setEditingTicket] = useState(null); 
 
   async function loadTickets() {
     setLoading(true);
@@ -38,7 +38,7 @@ export default function ManageTicketsPage() {
     }
     setModalOpen(false);
     setEditingTicket(null);
-    await loadTickets(); // โหลดใหม่ให้ตรงกับฐานข้อมูลเสมอ
+    await loadTickets(); 
   }
 
   async function handleDelete(id) {
