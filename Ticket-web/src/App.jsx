@@ -8,6 +8,7 @@ import ReportsPage from "./pages/ReportsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import MyProfilePage from "./pages/MyProfilePage.jsx";
 import { isLoggedIn, getCurrentUser, logout } from "./api.js";
+import { useLanguage } from "./i18n/LanguageContext";
 
 const STORE_URL = import.meta.env.VITE_STORE_URL || "http://localhost:5174";
 
@@ -56,7 +57,7 @@ export default function App() {
   if (user.role === "User") {
     return (
       <div className="flex h-screen items-center justify-center bg-neutral-50 text-neutral-500">
-        ກຳລັງນຳທ່ານໄປທີ່ຮ້ານຂາຍປີ້...
+        {t("redirectingToStore")}
       </div>
     );
   }

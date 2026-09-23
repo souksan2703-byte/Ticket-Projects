@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { X, Upload } from "lucide-react";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function AddTicketModal({ onClose, onSave, initialData }) {
+  const { t } = useLanguage();
   const isEditing = Boolean(initialData);
 
   const [form, setForm] = useState({
@@ -24,7 +26,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     setError(null);
 
     if (!form.name.trim() || form.price === "" || form.stock === "") {
-      setError("ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ");
+      setError(t("fillEventPriceStock"));
       return;
     }
 
@@ -32,7 +34,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     try {
       await onSave(form);
     } catch (err) {
-      setError(err.message || "ບັນທຶກບໍ່ສຳເລັດ");
+      setError(err.message || t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -43,7 +45,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {isEditing ? "ແກ້ໄຂປີ້" : "ເພີ່ມປີ້"}
+            {isEditing ? t("editTicket") : t("addTicket")}
           </h2>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">
             <X className="h-5 w-5" />
@@ -53,9 +55,9 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
         <form onSubmit={handleSubmit}>
           <div className="mb-5 flex flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-6 py-8 text-center">
             <Upload className="mb-2 h-5 w-5 text-neutral-400" />
-            <p className="text-sm font-medium text-neutral-700">Upload event photo</p>
+            <p className="text-sm font-medium text-neutral-700">{t("uploadEventPhoto")}</p>
             <p className="mt-1 text-xs text-neutral-400">
-              Drag and drop or click to browse. JPG or PNG, up to 5 MB.
+              {t("dragDropHint")}
             </p>
           </div>
 
@@ -67,7 +69,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Event title</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("eventTitle")}</label>
               <input
                 value={form.name}
                 onChange={(e) => update("name", e.target.value)}
@@ -77,7 +79,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">Price (LAK)</label>
+                <label className="mb-1.5 block text-sm text-neutral-700">{t("priceLak")}</label>
                 <input
                   type="number"
                   value={form.price}
@@ -87,7 +89,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">Stock</label>
+                <label className="mb-1.5 block text-sm text-neutral-700">{t("colStock")}</label>
                 <input
                   type="number"
                   value={form.stock}
@@ -97,13 +99,13 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                 />
                 {!isEditing && (
                   <p className="mt-1 text-xs text-neutral-400">
-                    ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)
+                    {t("autoGenCodesHint")}
                   </p>
                 )}
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Location</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("location")}</label>
               <input
                 value={form.location}
                 onChange={(e) => update("location", e.target.value)}
@@ -112,7 +114,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Date and time</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("colDateTime")}</label>
               <input
                 value={form.date}
                 onChange={(e) => update("date", e.target.value)}
@@ -123,14 +125,14 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
             {isEditing && (
               <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">Status</label>
+                <label className="mb-1.5 block text-sm text-neutral-700">{t("colStatus")}</label>
                 <select
                   value={form.status}
                   onChange={(e) => update("status", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                 >
-                  <option value="Open">ເປີດ</option>
-                  <option value="OFF">ປິດ</option>
+                  <option value="Open">{t("statusOpen")}</option>
+                  <option value="OFF">{t("statusOff")}</option>
                 </select>
               </div>
             )}
@@ -142,14 +144,14 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
               onClick={onClose}
               className="rounded-lg border border-neutral-200 px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "ກຳລັງບັນທຶກ..." : "ບັນທຶກປີ້"}
+              {saving ? t("savingEllipsis") : t("saveTicket")}
             </button>
           </div>
         </form>

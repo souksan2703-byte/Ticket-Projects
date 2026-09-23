@@ -15,6 +15,7 @@ import {
 import PageHeader from "../components/PageHeader.jsx";
 import DateField from "../components/DateField.jsx";
 import StatCard from "../components/StatCard.jsx";
+import { useLanguage } from "../i18n/LanguageContext";
 import {
   getDashboardSummary,
   getDashboardSoldByEvent,
@@ -30,6 +31,7 @@ const BAR_COLORS = ["#DC2626", "#F59E0B", "#7C2D12", "#D1D5DB", "#059669", "#933
 const LINE_COLORS = ["#F97316", "#2563EB"];
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
@@ -70,43 +72,43 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageHeader title="ໜ້າຫຼັກ" />
+      <PageHeader title={t("dashboard")} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2">
-        <DateField label="ວັນທີທຸລະກຳ" value={from} onChange={setFrom} />
-        <DateField label="ຮອດວັນທີ" value={to} onChange={setTo} />
+        <DateField label={t("transactionDate")} value={from} onChange={setFrom} />
+        <DateField label={t("toDate")} value={to} onChange={setTo} />
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ: {error}
+          {t("loadFailed")}: {error}
           <button onClick={loadAll} className="ml-3 underline">
-            ລອງໃໝ່
+            {t("retry")}
           </button>
         </div>
       )}
 
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard
-          label="ຍອດຂາຍມື້ນີ້"
+          label={t("todaysSales")}
           value={currency(summary.todaysSales)}
           className="bg-gradient-to-br from-violet-200 to-violet-300 text-violet-900"
         />
         <StatCard
-          label="ປີ້ທີ່ຂາຍໄດ້ໃນເດືອນນີ້"
+          label={t("ticketsSoldThisMonth")}
           value={summary.ticketsSoldThisMonth.toLocaleString()}
           className="bg-cyan-200 text-cyan-900"
         />
-        <StatCard label="ເປີດໃຊ້ງານ" value={summary.active} className="bg-lime-200 text-lime-900" />
-        <StatCard label="OFF" value={summary.off} className="bg-red-200 text-red-900" />
+        <StatCard label={t("active")} value={summary.active} className="bg-lime-200 text-lime-900" />
+        <StatCard label={t("off")} value={summary.off} className="bg-red-200 text-red-900" />
       </div>
 
       <div className="mb-6 rounded-xl border border-neutral-200 bg-white p-5">
         <p className="mb-4 text-sm font-medium text-neutral-800">
-          Tickets sold by event ({totalSold === 1 && soldByEvent.length === 0 ? 0 : totalSold} total)
+          {t("ticketsSoldByEvent")} ({totalSold === 1 && soldByEvent.length === 0 ? 0 : totalSold} {t("total")})
         </p>
         {soldByEvent.length === 0 ? (
-          <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້</p>
+          <p className="text-sm text-neutral-400">{t("noSalesDataInRange")}</p>
         ) : (
           <>
             <div className="flex h-3 w-full overflow-hidden rounded-full">
@@ -131,9 +133,9 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="mb-4 text-sm font-medium text-neutral-800">Ticket mix (top 2 events)</p>
+          <p className="mb-4 text-sm font-medium text-neutral-800">{t("ticketMixTop2")}</p>
           {ticketMix.length === 0 ? (
-            <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນ</p>
+            <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
           ) : (
             <div style={{ width: "100%", height: 260 }}>
               <ResponsiveContainer>
@@ -152,9 +154,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="mb-4 text-sm font-medium text-neutral-800">Transaction (daily)</p>
+          <p className="mb-4 text-sm font-medium text-neutral-800">{t("transactionDaily")}</p>
           {txData.series.length === 0 ? (
-            <p className="text-sm text-neutral-400">ຍັງບໍ່ມີຂໍ້ມູນ</p>
+            <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
           ) : (
             <div style={{ width: "100%", height: 260 }}>
               <ResponsiveContainer>

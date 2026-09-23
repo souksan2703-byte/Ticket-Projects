@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function AddAdminUserModal({ onClose, onSave, initialData }) {
+  const { t } = useLanguage();
   const isEditing = Boolean(initialData);
 
   const [form, setForm] = useState({
@@ -22,11 +24,11 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
     setError(null);
 
     if (!form.name.trim() || !form.username.trim()) {
-      setError("ກະລຸນາປ້ອນຊື່ ແລະ ຊື່ຜູ້ໃຊ້ໃຫ້ຄົບ");
+      setError(t("fillNameUsername"));
       return;
     }
     if (!isEditing && !form.password.trim()) {
-      setError("ກະລຸນາກຳນົດລະຫັດຜ່ານສຳລັບຜູ້ໃຊ້ໃໝ່");
+      setError(t("setPasswordForNewUser"));
       return;
     }
 
@@ -34,7 +36,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
     try {
       await onSave(form);
     } catch (err) {
-      setError(err.message || "ບັນທຶກບໍ່ສຳເລັດ");
+      setError(err.message || t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -45,7 +47,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {isEditing ? "ແກ້ໄຂຜູ້ໃຊ້ແອັດມິນ" : "ເພີ່ມຜູ້ໃຊ້ແອັດມິນ"}
+            {isEditing ? t("editAdminUser") : t("addAdminUser")}
           </h2>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">
             <X className="h-5 w-5" />
@@ -61,7 +63,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Name</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("colName")}</label>
               <input
                 value={form.name}
                 onChange={(e) => update("name", e.target.value)}
@@ -70,7 +72,7 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Username</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("colUsername")}</label>
               <input
                 value={form.username}
                 onChange={(e) => update("username", e.target.value)}
@@ -81,25 +83,25 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
             </div>
             {!isEditing && (
               <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">Password</label>
+                <label className="mb-1.5 block text-sm text-neutral-700">{t("password")}</label>
                 <input
                   type="password"
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                  placeholder="ກຳນົດລະຫັດຜ່ານເລີ່ມຕົ້ນ"
+                  placeholder={t("setInitialPassword")}
                 />
               </div>
             )}
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">Role</label>
+              <label className="mb-1.5 block text-sm text-neutral-700">{t("colRole")}</label>
               <select
                 value={form.role}
                 onChange={(e) => update("role", e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               >
-                <option value="User">ຜູ້ໃຊ້</option>
-                <option value="Admin">ແອັດມິນ</option>
+                <option value="User">{t("roleUser")}</option>
+                <option value="Admin">{t("roleAdmin")}</option>
               </select>
             </div>
           </div>
@@ -110,14 +112,14 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
               onClick={onClose}
               className="rounded-lg border border-neutral-200 px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
-              {saving ? "ກຳລັງບັນທຶກ..." : "ບັນທຶກ"}
+              {saving ? t("savingEllipsis") : t("save")}
             </button>
           </div>
         </form>
