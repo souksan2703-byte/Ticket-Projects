@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Lato', 'Noto Sans Lao', 'sans-serif'],
+        sans: ['Google Sans Flex', 'Lato', 'Noto Sans Lao', 'sans-serif'],
       },
     },
   },
