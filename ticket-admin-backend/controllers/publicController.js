@@ -126,7 +126,8 @@ async function checkTicket(req, res) {
         const result = await pool.request()
             .input('code', sql.NVarChar(50), code.trim())
             .query(`
-                SELECT tc.id, tc.code, tc.status, tc.myticket, tc.owner, tc.tranid, m.Title AS eventName
+                SELECT tc.id, tc.code, tc.status, tc.myticket, tc.owner, tc.tranid,
+                       m.Title AS eventName, m.Location AS eventLocation, m.DateEvent AS eventDate
                 FROM TicketCode tc
                 JOIN TicketCodeMaster m ON m.tickid = tc.tickid
                 WHERE tc.code = @code
@@ -166,6 +167,8 @@ async function checkTicket(req, res) {
                 eventName: ticket.eventName,
                 owner: ticket.owner,
                 tranid: ticket.tranid,
+                eventLocation: ticket.eventLocation,
+                eventDate: ticket.eventDate,
             },
         });
     } catch (err) {
