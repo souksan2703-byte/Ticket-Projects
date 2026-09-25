@@ -38,10 +38,10 @@ app.use('/api/public', publicRoutes);         // หน้าร้านสำ�
 app.use('/api/upload', uploadRoutes);         // อัปโหลดรูปภาพ (ใช้ Multer)
 
 app.get('/', (req, res) => {
-    res.json({ message: 'Ticket Admin API กำลังทำงานอยู่' });
+    res.json({ message: 'Ticket Admin API ກຳລັງໃຊ້ງານຢູ່' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server รันอยู่ที่ http://localhost:${PORT}`);
+    console.log(`Server ລັນຢູ່ທີ່ http://localhost:${PORT}`);
 });
