@@ -4,7 +4,8 @@ import StatCard from "../components/StatCard.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddTicketModal from "../components/AddTicketModal.jsx";
 import { currency } from "../data/sampleData.js";
-import { getTickets, createTicket, updateTicket, deleteTicket } from "../api.js";
+import {getTickets,createTicket,updateTicket,deleteTicket, getImageUrl,
+} from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
 export default function ManageTicketsPage() {
@@ -69,8 +70,16 @@ export default function ManageTicketsPage() {
       />
 
       <div className="mb-6 grid grid-cols-2 gap-4">
-        <StatCard label={t("totalTickets")} value={tickets.length} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label={t("openForSale")} value={openCount} className="bg-neutral-100 text-green-700" />
+        <StatCard
+          label={t("totalTickets")}
+          value={tickets.length}
+          className="bg-neutral-100 text-neutral-900"
+        />
+        <StatCard
+          label={t("openForSale")}
+          value={openCount}
+          className="bg-neutral-100 text-green-700"
+        />
       </div>
 
       {error && (
@@ -98,30 +107,51 @@ export default function ManageTicketsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
+                <td
+                  colSpan={7}
+                  className="px-5 py-8 text-center text-neutral-400"
+                >
                   {t("loadingEllipsis")}
                 </td>
               </tr>
             ) : tickets.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
+                <td
+                  colSpan={7}
+                  className="px-5 py-8 text-center text-neutral-400"
+                >
                   {t("noTicketsYet")}
                 </td>
               </tr>
             ) : (
               tickets.map((e) => (
-                <tr key={e.id} className="border-b border-neutral-100 last:border-0">
+                <tr
+                  key={e.id}
+                  className="border-b border-neutral-100 last:border-0"
+                >
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 rounded-md bg-neutral-200" />
+                      <div className="h-9 w-9 shrink-0 overflow-hidden rounded-md bg-neutral-200">
+                        {e.logo ? (
+                          <img
+                            src={getImageUrl(e.logo)}
+                            alt={e.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </div>
                       <div>
                         <p className="font-medium text-neutral-900">{e.name}</p>
                         <p className="text-xs text-neutral-500">{e.location}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-neutral-700">{currency(e.price)}</td>
-                  <td className="px-5 py-4 text-neutral-700">{e.stock?.toLocaleString()}</td>
+                  <td className="px-5 py-4 text-neutral-700">
+                    {currency(e.price)}
+                  </td>
+                  <td className="px-5 py-4 text-neutral-700">
+                    {e.stock?.toLocaleString()}
+                  </td>
                   <td className="px-5 py-4 text-neutral-700">{e.date}</td>
                   <td className="px-5 py-4">
                     <StatusPill status={e.status} />

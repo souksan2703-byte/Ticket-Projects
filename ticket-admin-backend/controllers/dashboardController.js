@@ -116,7 +116,7 @@ async function getTicketMix(req, res) {
 }
 
 // GET /api/dashboard/transactions?from=&to= -> ລາຍຮັບລາຍວັນຂອງ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດ (ສຳລັບ line chart)
-// ຖ້າບໍ່ລະບຸໄລຍະວັນທີ່ ຈະໃຊ້ 7 ວັນຫຼ້າສຸດເປັນຄ່າເລີ່ມຕົ້ນ
+// ຖ້າບໍ່ລະບຸໄລຍະວັນທີ່ ຈະໃຊ້ "ເດືອນນີ້" (ວັນທີ 1 ເຖິງວັນສຸດທ້າຍຂອງເດືອນ) ເປັນຄ່າເລີ່ມຕົ້ນ
 async function getTransactionSeries(req, res) {
     try {
         let { from, to } = req.query;
@@ -124,10 +124,10 @@ async function getTransactionSeries(req, res) {
 
         if (!from || !to) {
             const today = new Date();
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(today.getDate() - 6);
-            from = from || sevenDaysAgo.toISOString().slice(0, 10);
-            to = to || today.toISOString().slice(0, 10);
+            const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            from = from || firstOfMonth.toISOString().slice(0, 10);
+            to = to || lastOfMonth.toISOString().slice(0, 10);
         }
 
         // ຫາ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດໃນຊ່ວງນີ້ກ່ອນ
