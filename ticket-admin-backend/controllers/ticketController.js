@@ -98,7 +98,7 @@ async function createTicket(req, res) {
 // ถ้ากรอกน้อยกว่าเดิม จะไม่ลดอะไร (ไม่ลบโค้ดที่มีอยู่แล้ว เพราะบางใบอาจขายไปแล้ว) ตัวเลขจะกลับไปเป็นค่าจริงตามเดิม
 async function updateTicket(req, res) {
     try {
-        const { title, price, stock, location, dateEvent, description, status } = req.body;
+        const { title, price, stock, location, dateEvent, description, status, logo } = req.body;
 
         const pool = await getPool();
 
@@ -114,6 +114,7 @@ async function updateTicket(req, res) {
         const requestedStock = Number(stock);
 
         // 2. อัปเดตข้อมูลทั่วไป (ไม่แตะ Stock ตรงๆ ในคำสั่งนี้ ปล่อยให้ trigger เป็นคนดูแลค่า Stock จริง)
+        //    เพิ่ม Logo เข้ามาด้วย (เดิมหายไป ทำให้รูปที่อัปโหลดตอนแก้ไขไม่ถูกบันทึกเลย)
         await pool.request()
             .input('id', sql.Int, req.params.id)
             .input('Title', sql.NVarChar(100), title)
@@ -121,6 +122,7 @@ async function updateTicket(req, res) {
             .input('Location', sql.NVarChar(100), location || null)
             .input('DateEvent', sql.NVarChar(100), dateEvent || null)
             .input('Description', sql.NVarChar(200), description || null)
+            .input('Logo', sql.NVarChar(255), logo || null)
             .input('Status', sql.Char(100), status)
             .query(`
                 UPDATE TicketCodeMaster
@@ -129,6 +131,7 @@ async function updateTicket(req, res) {
                     Location = @Location,
                     DateEvent = @DateEvent,
                     Description = @Description,
+                    Logo = @Logo,
                     Status = @Status
                 WHERE tickid = @id
             `);

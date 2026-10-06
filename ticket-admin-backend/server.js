@@ -37,6 +37,7 @@ app.use('/api/dashboard', dashboardRoutes);   // Dashboard
 app.use('/api/public', publicRoutes);         // หน้าร้านสำหรับลูกค้า (ไม่ต้อง login)
 app.use('/api/upload', uploadRoutes);         // อัปโหลดรูปภาพ (ใช้ Multer)
 
+
 app.get('/', (req, res) => {
     res.json({ message: 'Ticket Admin API ກຳລັງໃຊ້ງານຢູ່' });
 });
