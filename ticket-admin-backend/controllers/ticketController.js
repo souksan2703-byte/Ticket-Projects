@@ -93,28 +93,74 @@ async function createTicket(req, res) {
     }
 }
 
-// PUT /api/tickets/:id -> แก้ไขตั๋ว (หน้า Edit)
-// ถ้าตัวเลข Stock ที่กรอกใหม่ "มากกว่า" ค่าปัจจุบัน จะสร้างโค้ดตั๋วเพิ่มให้เท่ากับส่วนต่างอัตโนมัติ
-// ถ้ากรอกน้อยกว่าเดิม จะไม่ลดอะไร (ไม่ลบโค้ดที่มีอยู่แล้ว เพราะบางใบอาจขายไปแล้ว) ตัวเลขจะกลับไปเป็นค่าจริงตามเดิม
+// PUT /api/tickets/:id -> ແກ້ໄຂຕັ໋ວ (ໜ້າ Edit)
+// ໃນໜ້າ Edit ຈະໃຊ້ additionalTickets ສຳລັບເພີ່ມປີ້ໃໝ່
+//
+// ຕົວຢ່າງ:
+// Stock ປັດຈຸບັນ = 50
+// Add Tickets = 100
+// -> ສ້າງ TicketCode ໃໝ່ 100 ໃບ
+// -> Stock ຈະເປັນ 150 ໃບ
+//
+// ຖ້າ Add Tickets = 0
+// -> ບໍ່ສ້າງປີ້ໃໝ່
+//
+// ບໍ່ມີການລົດ Stock ໂດຍກົງ
+// ເພາະ Stock ຖືກຄວບຄຸມຕາມ TicketCode ໂດຍ Trigger
+
 async function updateTicket(req, res) {
     try {
-        const { title, price, stock, location, dateEvent, description, status, logo } = req.body;
+        const {
+            title,
+            price,
+            location,
+            dateEvent,
+            description,
+            status,
+            logo,
+            additionalTickets,
+        } = req.body;
 
         const pool = await getPool();
 
-        // 1. เช็ค Stock ปัจจุบันก่อน (ค่าจริงที่ trigger ดูแลอยู่ ไม่ใช่ค่าที่ผู้ใช้พิมพ์)
+        // 1. ກວດສອບວ່າ Event ມີຢູ່ບໍ່
         const currentResult = await pool.request()
             .input('id', sql.Int, req.params.id)
-            .query('SELECT Stock, Title FROM TicketCodeMaster WHERE tickid = @id');
+            .query(`
+                SELECT Stock, Title
+                FROM TicketCodeMaster
+                WHERE tickid = @id
+            `);
 
         if (currentResult.recordset.length === 0) {
-            return res.status(404).json({ message: 'ບໍ່ພົບປີ້ທີ່ຕ້ອງການແກ້ໄຂ' });
+            return res.status(404).json({
+                message: 'ບໍ່ພົບປີ້ທີ່ຕ້ອງການແກ້ໄຂ',
+            });
         }
-        const currentStock = currentResult.recordset[0].Stock || 0;
-        const requestedStock = Number(stock);
 
-        // 2. อัปเดตข้อมูลทั่วไป (ไม่แตะ Stock ตรงๆ ในคำสั่งนี้ ปล่อยให้ trigger เป็นคนดูแลค่า Stock จริง)
-        //    เพิ่ม Logo เข้ามาด้วย (เดิมหายไป ทำให้รูปที่อัปโหลดตอนแก้ไขไม่ถูกบันทึกเลย)
+        const currentStock = Number(
+            currentResult.recordset[0].Stock || 0
+        );
+
+        // 2. ຈຳນວນປີ້ທີ່ຕ້ອງການເພີ່ມ
+        const addQuantity = Number(additionalTickets || 0);
+
+        // 3. ກວດສອບຄ່າ Add Tickets
+        if (!Number.isInteger(addQuantity) || addQuantity < 0) {
+            return res.status(400).json({
+                message: 'ຈຳນວນປີ້ທີ່ເພີ່ມຕ້ອງເປັນຈຳນວນເຕັມ 0 ຫຼືຫຼາຍກວ່າ',
+            });
+        }
+
+        // 4. ຈຳກັດການເພີ່ມສູງສຸດ 1000 ໃບຕໍ່ຄັ້ງ
+        if (addQuantity > 1000) {
+            return res.status(400).json({
+                message: 'ເພີ່ມປີ້ໄດ້ບໍ່ເກີນ 1000 ໃບຕໍ່ຄັ້ງ',
+            });
+        }
+
+        // 5. ອັບເດດຂໍ້ມູນ Event
+        // ບໍ່ແຕະ Stock ໂດຍກົງ
         await pool.request()
             .input('id', sql.Int, req.params.id)
             .input('Title', sql.NVarChar(100), title)
@@ -123,7 +169,7 @@ async function updateTicket(req, res) {
             .input('DateEvent', sql.NVarChar(100), dateEvent || null)
             .input('Description', sql.NVarChar(200), description || null)
             .input('Logo', sql.NVarChar(255), logo || null)
-            .input('Status', sql.Char(100), status)
+            .input('Status', sql.Char(100), status || 'Open')
             .query(`
                 UPDATE TicketCodeMaster
                 SET Title = @Title,
@@ -136,25 +182,50 @@ async function updateTicket(req, res) {
                 WHERE tickid = @id
             `);
 
-        // 3. ถ้าขอเพิ่มจำนวนตั๋ว (ตัวเลขใหม่ > ของเดิม) ให้สร้างโค้ดเพิ่มเท่าส่วนต่าง
-        if (requestedStock > currentStock) {
-            const additionalQty = requestedStock - currentStock;
-            if (additionalQty > 1000) {
-                return res.status(400).json({ message: 'ເພີ່ມໄດ້ບໍ່ເກີນ 1000 ໃບຕໍ່ຄັ້ງ' });
-            }
-            await generateCodesForEvent(pool, req.params.id, additionalQty, prefixFromTitle(title));
-        }
-        // ถ้า requestedStock <= currentStock จะไม่ทำอะไรเพิ่ม (ไม่ลดจำนวนโค้ดที่มีอยู่แล้ว)
+        // 6. ຖ້າມີການເພີ່ມປີ້
+        if (addQuantity > 0) {
 
-        // 4. ดึงข้อมูลล่าสุดกลับไปแสดง (Stock ตอนนี้ตรงกับจำนวนโค้ด Available จริงเสมอ)
+            console.log(
+                `Adding ${addQuantity} tickets to tickid=${req.params.id}`
+            );
+
+            await generateCodesForEvent(
+                pool,
+                req.params.id,
+                addQuantity,
+                prefixFromTitle(title)
+            );
+        }
+
+        // 7. ດຶງຂໍ້ມູນຫຼ້າສຸດຈາກ SQL Server
         const finalResult = await pool.request()
             .input('id', sql.Int, req.params.id)
-            .query('SELECT * FROM TicketCodeMaster WHERE tickid = @id');
+            .query(`
+                SELECT *
+                FROM TicketCodeMaster
+                WHERE tickid = @id
+            `);
+
+        const finalStock = Number(
+            finalResult.recordset[0]?.Stock || 0
+        );
+
+        console.log(
+            `Ticket updated: tickid=${req.params.id}, ` +
+            `oldStock=${currentStock}, ` +
+            `added=${addQuantity}, ` +
+            `newStock=${finalStock}`
+        );
 
         res.json(finalResult.recordset[0]);
+
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ແກ້ໄຂປີ້ບໍ່ສຳເລັດ', error: err.message });
+
+        res.status(500).json({
+            message: 'ແກ້ໄຂປີ້ບໍ່ສຳເລັດ',
+            error: err.message,
+        });
     }
 }
 
