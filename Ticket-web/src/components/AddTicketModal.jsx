@@ -11,11 +11,10 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     name: initialData?.name || "",
     price: initialData?.price ?? "",
     stock: initialData?.stock ?? "",
+    additionalTickets: "",
     location: initialData?.location || "",
     date: initialData?.date || "",
     status: initialData?.status || "Open",
-
-    // path ของรูปที่เก็บใน SQL Server
     logo: initialData?.logo || "",
   });
 
@@ -34,9 +33,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     }));
   }
 
-  // =========================
-  // Upload รูปภาพ
-  // =========================
   async function handleImageChange(e) {
     const file = e.target.files?.[0];
 
@@ -46,7 +42,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
     setError(null);
 
-    // ตรวจชนิดไฟล์
     const allowedTypes = [
       "image/jpeg",
       "image/png",
@@ -59,55 +54,65 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       return;
     }
 
-    // ตรวจขนาดไฟล์ 5MB
     if (file.size > 5 * 1024 * 1024) {
       setError("ไฟล์ใหญ่เกินไป (จำกัดไม่เกิน 5MB)");
       return;
     }
 
-    // แสดง Preview จากไฟล์ที่เลือกทันที
     const localPreview = URL.createObjectURL(file);
     setPreview(localPreview);
 
     try {
       setUploading(true);
 
-      // Upload ไป Node.js + Multer
       const imagePath = await uploadImage(file);
 
       console.log("Uploaded image:", imagePath);
 
-      // เก็บ path ไว้ใน form
-      // เช่น /uploads/abc123.jpg
       update("logo", imagePath);
-
-      // เปลี่ยน preview ให้ใช้ URL จาก backend
       setPreview(getImageUrl(imagePath));
     } catch (err) {
       console.error("Upload image error:", err);
-
       setError(err.message || "อัปโหลดรูปไม่สำเร็จ");
-
-      // ถ้า upload ไม่สำเร็จ ไม่เก็บ logo
       update("logo", "");
     } finally {
       setUploading(false);
     }
   }
 
-  // =========================
-  // Save Ticket
-  // =========================
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
 
-    if (!form.name.trim() || form.price === "" || form.stock === "") {
+    if (!form.name.trim() || form.price === "") {
       setError(t("fillEventPriceStock"));
       return;
     }
 
-    // ถ้ากำลัง upload อยู่ ห้าม Save
+    // ตอนสร้าง Event ใหม่ ต้องกรอก Stock
+    if (!isEditing && form.stock === "") {
+      setError(t("fillEventPriceStock"));
+      return;
+    }
+
+    // Add Tickets ต้องเป็นจำนวนเต็ม 0 ขึ้นไป
+    if (isEditing) {
+      const additionalTickets = Number(form.additionalTickets || 0);
+
+      if (
+        !Number.isInteger(additionalTickets) ||
+        additionalTickets < 0
+      ) {
+        setError(t("invalidAdditionalTickets"));
+        return;
+      }
+
+      if (additionalTickets > 1000) {
+        setError(t("maxAdditionalTickets"));
+        return;
+      }
+    }
+
     if (uploading) {
       setError("กรุณารอให้รูปภาพอัปโหลดเสร็จก่อน");
       return;
@@ -126,8 +131,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/40 px-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl max-h-[90vh] overflow-y-auto">
-
+      <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-8 shadow-xl">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-neutral-900">
@@ -136,19 +140,16 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-600"
+            disabled={saving || uploading}
+            className="text-neutral-400 hover:text-neutral-600 disabled:opacity-50"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-
-          {/* =========================
-              Upload Event Photo
-          ========================= */}
+          {/* Event Image */}
           <div className="mb-5">
-
             <label
               htmlFor="event-image"
               className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-6 py-8 text-center hover:bg-neutral-100"
@@ -193,7 +194,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
               className="hidden"
             />
 
-            {/* Path ที่จะส่งไป SQL Server */}
             {form.logo && (
               <p className="mt-2 break-all text-xs text-neutral-400">
                 {form.logo}
@@ -208,11 +208,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
             </div>
           )}
 
-          {/* =========================
-              Ticket Information
-          ========================= */}
           <div className="space-y-4">
-
             {/* Event Title */}
             <div>
               <label className="mb-1.5 block text-sm text-neutral-700">
@@ -227,23 +223,67 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
               />
             </div>
 
-            {/* Price + Stock */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Price - Full Width */}
+            <div>
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                {t("priceLak")}
+              </label>
 
-              <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">
-                  {t("priceLak")}
-                </label>
+              <input
+                type="number"
+                value={form.price}
+                onChange={(e) => update("price", e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                placeholder="690000"
+              />
+            </div>
 
-                <input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => update("price", e.target.value)}
-                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                  placeholder="690000"
-                />
+            {/* Tickets */}
+            {isEditing ? (
+              <div className="grid grid-cols-2 gap-4">
+                {/* Current Tickets */}
+                <div>
+                  <label className="mb-1.5 block text-sm text-neutral-700">
+                    {t("currentTickets")}
+                  </label>
+
+                  <input
+                    type="number"
+                    value={form.stock}
+                    readOnly
+                    className="w-full cursor-not-allowed rounded-lg border border-neutral-200 bg-neutral-100 px-3.5 py-2.5 text-sm text-neutral-500 outline-none"
+                  />
+
+                  <p className="mt-1 text-xs text-neutral-400">
+                    {t("currentTicketsHint")}
+                  </p>
+                </div>
+
+                {/* Add Tickets */}
+                <div>
+                  <label className="mb-1.5 block text-sm text-neutral-700">
+                    {t("addTickets")}
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    max="1000"
+                    value={form.additionalTickets}
+                    onChange={(e) =>
+                      update("additionalTickets", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                    placeholder="0"
+                  />
+
+                  <p className="mt-1 text-xs text-neutral-400">
+                    {t("addTicketsHint")}
+                  </p>
+                </div>
               </div>
-
+            ) : (
+              /* Add New Event */
               <div>
                 <label className="mb-1.5 block text-sm text-neutral-700">
                   {t("colStock")}
@@ -251,20 +291,18 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
                 <input
                   type="number"
+                  min="0"
                   value={form.stock}
                   onChange={(e) => update("stock", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                   placeholder="120"
                 />
 
-                {!isEditing && (
-                  <p className="mt-1 text-xs text-neutral-400">
-                    {t("autoGenCodesHint")}
-                  </p>
-                )}
+                <p className="mt-1 text-xs text-neutral-400">
+                  {t("autoGenCodesHint")}
+                </p>
               </div>
-
-            </div>
+            )}
 
             {/* Location */}
             <div>
@@ -306,22 +344,15 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   onChange={(e) => update("status", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                 >
-                  <option value="Open">
-                    {t("statusOpen")}
-                  </option>
-
-                  <option value="OFF">
-                    {t("statusOff")}
-                  </option>
+                  <option value="Open">{t("statusOpen")}</option>
+                  <option value="OFF">{t("statusOff")}</option>
                 </select>
               </div>
             )}
-
           </div>
 
           {/* Buttons */}
           <div className="mt-6 flex justify-end gap-3">
-
             <button
               type="button"
               onClick={onClose}
@@ -342,9 +373,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   ? t("savingEllipsis")
                   : t("saveTicket")}
             </button>
-
           </div>
-
         </form>
       </div>
     </div>

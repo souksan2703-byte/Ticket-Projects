@@ -126,21 +126,99 @@ export const translations = {
   updatePassword: { en: "Update password", lo: "ອັບເດດລະຫັດຜ່ານ" },
 
   // Add ticket modal
-  editTicket: { en: "Edit ticket", lo: "ແກ້ໄຂປີ້" },
-  uploadEventPhoto: { en: "Upload event photo", lo: "ອັບໂຫລດຮູບງານ" },
-  dragDropHint: { en: "Drag and drop or click to browse. JPG or PNG, up to 5 MB.", lo: "ລາກວາງ ຫຼື ກົດເພື່ອເລືອກໄຟລ໌. JPG ຫຼື PNG, ບໍ່ເກີນ 5 MB." },
-  fillEventPriceStock: { en: "Please fill in the event name, price, and stock", lo: "ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ" },
-  eventTitle: { en: "Event title", lo: "ຊື່ງານ" },
-  priceLak: { en: "Price (LAK)", lo: "ລາຄາ (LAK)" },
+   // Add ticket modal
+
+  editTicket: {
+    en: "Edit ticket",
+    lo: "ແກ້ໄຂປີ້"
+  },
+
+  uploadEventPhoto: {
+    en: "Upload event photo",
+    lo: "ອັບໂຫລດຮູບງານ"
+  },
+
+  dragDropHint: {
+    en: "Drag and drop or click to browse. JPG or PNG, up to 5 MB.",
+    lo: "ລາກວາງ ຫຼື ກົດເພື່ອເລືອກໄຟລ໌. JPG ຫຼື PNG, ບໍ່ເກີນ 5 MB."
+  },
+
+  fillEventPriceStock: {
+    en: "Please fill in the event name, price, and stock",
+    lo: "ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ"
+  },
+
+  eventTitle: {
+    en: "Event title",
+    lo: "ຊື່ງານ"
+  },
+
+  priceLak: {
+    en: "Price (LAK)",
+    lo: "ລາຄາ (LAK)"
+  },
+
   autoGenCodesHint: {
     en: "Ticket codes will be auto-generated based on this amount (up to 1000).",
     lo: "ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)",
   },
-  location: { en: "Location", lo: "ສະຖານທີ່" },
-  statusOpen: { en: "Open", lo: "ເປີດ" },
-  statusOff: { en: "OFF", lo: "ປິດ" },
-  cancel: { en: "Cancel", lo: "ຍົກເລີກ" },
-  saveTicket: { en: "Save ticket", lo: "ບັນທຶກປີ້" },
+
+  // ⭐ เพิ่มส่วนนี้
+
+  currentTickets: {
+    en: "Current Tickets",
+    lo: "ຈຳນວນປີ້ປັດຈຸບັນ",
+  },
+
+  currentTicketsHint: {
+    en: "Existing tickets cannot be reduced.",
+    lo: "ຈຳນວນປີ້ເກົ່າບໍ່ສາມາດຫຼຸດໄດ້",
+  },
+
+  addTickets: {
+    en: "Add Tickets",
+    lo: "ເພີ່ມປີ້",
+  },
+
+  addTicketsHint: {
+    en: "Add up to 1000 new tickets.",
+    lo: "ສາມາດເພີ່ມປີ້ໃໝ່ໄດ້ສູງສຸດ 1000 ໃບ",
+  },
+
+  invalidAdditionalTickets: {
+    en: "The number of tickets must be 0 or more.",
+    lo: "ຈຳນວນປີ້ຕ້ອງເປັນ 0 ຫຼືຫຼາຍກວ່າ",
+  },
+
+  maxAdditionalTickets: {
+    en: "You can add up to 1000 tickets at a time.",
+    lo: "ສາມາດເພີ່ມປີ້ໄດ້ສູງສຸດ 1000 ໃບຕໍ່ຄັ້ງ",
+  },
+
+  location: {
+    en: "Location",
+    lo: "ສະຖານທີ່"
+  },
+
+  statusOpen: {
+    en: "Open",
+    lo: "ເປີດ"
+  },
+
+  statusOff: {
+    en: "OFF",
+    lo: "ປິດ"
+  },
+
+  cancel: {
+    en: "Cancel",
+    lo: "ຍົກເລີກ"
+  },
+
+  saveTicket: {
+    en: "Save ticket",
+    lo: "ບັນທຶກປີ້"
+  },
 
   // Generate codes modal
   generateTicketCodes: { en: "Generate ticket codes", lo: "ສ້າງລະຫັດປີ້" },

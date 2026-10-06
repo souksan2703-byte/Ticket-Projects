@@ -58,6 +58,7 @@ function toBackend(payload) {
     title: payload.name,
     price: Number(payload.price),
     stock: Number(payload.stock),
+    additionalTickets: Number(payload.additionalTickets || 0),
     location: payload.location,
     dateEvent: payload.date,
     description: payload.description,
