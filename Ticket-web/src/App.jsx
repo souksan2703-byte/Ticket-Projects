@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar.jsx";
+import Header from "./components/Header.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import ManageTicketsPage from "./pages/ManageTicketsPage.jsx";
@@ -10,7 +11,8 @@ import MyProfilePage from "./pages/MyProfilePage.jsx";
 import { isLoggedIn, getCurrentUser, logout } from "./api.js";
 import { useLanguage } from "./i18n/LanguageContext";
 
-const STORE_URL = import.meta.env.VITE_STORE_URL || "http://localhost:5174";
+const STORE_URL =
+  import.meta.env.VITE_STORE_URL || "http://localhost:5174";
 
 const PAGES = {
   dashboard: DashboardPage,
@@ -24,6 +26,8 @@ const PAGES = {
 const ADMIN_ONLY_PAGES = ["tickets", "users"];
 
 export default function App() {
+  const { t } = useLanguage();
+
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [checked, setChecked] = useState(false);
@@ -32,6 +36,7 @@ export default function App() {
     if (isLoggedIn()) {
       setUser(getCurrentUser());
     }
+
     setChecked(true);
   }, []);
 
@@ -48,7 +53,9 @@ export default function App() {
     setPage("dashboard");
   }
 
-  if (!checked) return null;
+  if (!checked) {
+    return null;
+  }
 
   if (!user) {
     return <LoginPage onSignIn={setUser} />;
@@ -63,14 +70,29 @@ export default function App() {
   }
 
   const isAdmin = user.role === "Admin";
-  const safePage = ADMIN_ONLY_PAGES.includes(page) && !isAdmin ? "dashboard" : page;
+
+  const safePage =
+    ADMIN_ONLY_PAGES.includes(page) && !isAdmin
+      ? "dashboard"
+      : page;
 
   const Page = PAGES[safePage];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
-      <Sidebar page={safePage} setPage={setPage} user={user} onLogout={handleLogout} />
-      <main className="h-screen flex-1 overflow-y-auto overflow-x-auto p-8">
+    <div className="min-h-screen bg-neutral-50">
+      {/* Header */}
+      <Header />
+
+      {/* Sidebar */}
+      <Sidebar
+        page={safePage}
+        setPage={setPage}
+        user={user}
+        onLogout={handleLogout}
+      />
+
+      {/* Main Content */}
+      <main className="ml-60 min-h-screen overflow-y-auto overflow-x-auto p-8 pt-24">
         <Page currentUser={user} />
       </main>
     </div>
