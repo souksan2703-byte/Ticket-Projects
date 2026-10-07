@@ -154,36 +154,63 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="mb-4 text-sm font-medium text-neutral-800">{t("transactionDaily")}</p>
+          <p className="mb-4 text-sm font-medium text-neutral-800">{t("transactionMonthly")}</p>
           {txData.series.length === 0 ? (
             <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
           ) : (
-            <div style={{ width: "100%", height: 260 }}>
-              <ResponsiveContainer>
-                <LineChart data={txData.series} margin={{ left: 10, right: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F1EF" />
-                  <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                  <YAxis
-                    tick={{ fontSize: 11 }}
-                    tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
-                    width={45}
-                  />
-                  <Tooltip formatter={(v) => currency(v)} />
-                  <Legend />
-                  {txData.events.map((name, i) => (
-                    <Line
-                      key={name}
-                      type="monotone"
-                      dataKey={name}
-                      name={name}
-                      stroke={LINE_COLORS[i % LINE_COLORS.length]}
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
+            <>
+              <div className="mb-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-neutral-700">
+                {txData.events.map((name, i) => (
+                  <div key={name} className="flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: LINE_COLORS[i % LINE_COLORS.length] }}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+                    {name}
+                  </div>
+                ))}
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <div style={{ width: Math.max(600, txData.series.length * 48), height: 300 }}>
+                  <ResponsiveContainer>
+                    <LineChart data={txData.series} margin={{ top: 10, left: 10, right: 10, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#F1F1EF" />
+                      <XAxis
+                        dataKey="date"
+                        tick={{ fontSize: 11 }}
+                        tickFormatter={(v) => v.split("-")[2]}
+                        label={{ value: t("timeMonthly"), position: "insideBottom", offset: -12, fontSize: 12 }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 11 }}
+                        tickFormatter={(v) => v.toLocaleString()}
+                        width={70}
+                        label={{ value: t("amount"), angle: -90, position: "insideLeft", fontSize: 12 }}
+                      />
+                      <Tooltip
+                        formatter={(v) => currency(v)}
+                        labelFormatter={(v) => {
+                          const [y, m, d] = v.split("-");
+                          return `${d}/${m}/${y}`;
+                        }}
+                      />
+                      {txData.events.map((name, i) => (
+                        <Line
+                          key={name}
+                          type="monotone"
+                          dataKey={name}
+                          name={name}
+                          stroke={LINE_COLORS[i % LINE_COLORS.length]}
+                          strokeWidth={2}
+                          dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                          activeDot={{ r: 5, strokeWidth: 2, fill: "#fff" }}
+                        />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>

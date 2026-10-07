@@ -31,6 +31,10 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
       setError(t("setPasswordForNewUser"));
       return;
     }
+    if (isEditing && form.password.trim() && form.password.trim().length < 6) {
+      setError(t("passwordTooShort"));
+      return;
+    }
 
     setSaving(true);
     try {
@@ -76,23 +80,25 @@ export default function AddAdminUserModal({ onClose, onSave, initialData }) {
               <input
                 value={form.username}
                 onChange={(e) => update("username", e.target.value)}
-                disabled={isEditing}
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 disabled:opacity-60"
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                 placeholder="e.g. bounmy"
               />
             </div>
-            {!isEditing && (
-              <div>
-                <label className="mb-1.5 block text-sm text-neutral-700">{t("password")}</label>
-                <input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) => update("password", e.target.value)}
-                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                  placeholder={t("setInitialPassword")}
-                />
-              </div>
-            )}
+            <div>
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                {t("password")}
+                {isEditing && (
+                  <span className="ml-1 font-normal text-neutral-400">({t("leaveBlankToKeep")})</span>
+                )}
+              </label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => update("password", e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                placeholder={isEditing ? t("leaveBlankToKeep") : t("setInitialPassword")}
+              />
+            </div>
             <div>
               <label className="mb-1.5 block text-sm text-neutral-700">{t("colRole")}</label>
               <select

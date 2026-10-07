@@ -40,7 +40,9 @@ export const translations = {
   noSalesDataInRange: { en: "No sales data in this range yet", lo: "ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້" },
   noDataYet: { en: "No data yet", lo: "ຍັງບໍ່ມີຂໍ້ມູນ" },
   ticketMixTop2: { en: "Ticket mix (top 2 events)", lo: "ສັດສ່ວນປີ້ (2 ງານອັນດັບຕົ້ນ)" },
-  transactionDaily: { en: "Transaction (daily)", lo: "ທຸລະກຳ (ລາຍວັນ)" },
+  transactionMonthly: { en: "Transaction (Monthly)", lo: "ທຸລະກຳ (ລາຍເດືອນ)" },
+  timeMonthly: { en: "Time (Monthly)", lo: "ເວລາ (ລາຍເດືອນ)" },
+  amount: { en: "Amount", lo: "ຈຳນວນເງິນ" },
 
   // Manage tickets page
   addTicket: { en: "Add ticket", lo: "ເພີ່ມປີ້" },
@@ -128,6 +130,14 @@ export const translations = {
   // Add ticket modal
   editTicket: { en: "Edit ticket", lo: "ແກ້ໄຂປີ້" },
   uploadEventPhoto: { en: "Upload event photo", lo: "ອັບໂຫລດຮູບງານ" },
+  uploadingEllipsis: { en: "Uploading...", lo: "ກຳລັງອັບໂຫລດ..." },
+  photoAttached: { en: "Photo attached", lo: "ມີຮູບແນບແລ້ວ" },
+  downloadPhoto: { en: "Download", lo: "ດາວໂຫລດ" },
+  replacePhoto: { en: "Replace", lo: "ປ່ຽນຮູບ" },
+  removePhoto: { en: "Remove", lo: "ລຶບຮູບ" },
+  photoTypeError: { en: "Only JPG, PNG, WEBP, or GIF images are allowed", lo: "ຮອງຮັບສະເພາະໄຟລ໌ຮູບພາບ JPG, PNG, WEBP, ຫຼື GIF ເທົ່ານັ້ນ" },
+  photoSizeError: { en: "File is too large (max 5 MB)", lo: "ໄຟລ໌ໃຫຍ່ເກີນໄປ (ບໍ່ເກີນ 5 MB)" },
+  photoUploadFailed: { en: "Failed to upload photo", lo: "ອັບໂຫລດຮູບບໍ່ສຳເລັດ" },
   dragDropHint: { en: "Drag and drop or click to browse. JPG or PNG, up to 5 MB.", lo: "ລາກວາງ ຫຼື ກົດເພື່ອເລືອກໄຟລ໌. JPG ຫຼື PNG, ບໍ່ເກີນ 5 MB." },
   fillEventPriceStock: { en: "Please fill in the event name, price, and stock", lo: "ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ" },
   eventTitle: { en: "Event title", lo: "ຊື່ງານ" },
@@ -163,6 +173,7 @@ export const translations = {
   fillNameUsername: { en: "Please fill in name and username", lo: "ກະລຸນາປ້ອນຊື່ ແລະ ຊື່ຜູ້ໃຊ້ໃຫ້ຄົບ" },
   setPasswordForNewUser: { en: "Please set a password for the new user", lo: "ກະລຸນາກຳນົດລະຫັດຜ່ານສຳລັບຜູ້ໃຊ້ໃໝ່" },
   setInitialPassword: { en: "Set an initial password", lo: "ກຳນົດລະຫັດຜ່ານເລີ່ມຕົ້ນ" },
+  leaveBlankToKeep: { en: "leave blank to keep current password", lo: "ເວັ້ນວ່າງໄວ້ຖ້າບໍ່ຕ້ອງການປ່ຽນລະຫັດຜ່ານ" },
   save: { en: "Save", lo: "ບັນທຶກ" },
 
   // StatusPill labels (backend status values, mapped to display text)

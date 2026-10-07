@@ -38,7 +38,15 @@ export default function AdminUsersPage() {
 
   async function handleSave(formData) {
     if (editingUser) {
-      await updateAdminUser(editingUser.id, { name: formData.name, role: formData.role });
+      await updateAdminUser(editingUser.id, {
+        name: formData.name,
+        username: formData.username,
+        role: formData.role,
+      });
+      // เปลี่ยนรหัสผ่านแยกต่างหาก เฉพาะตอนที่แอดมินกรอกรหัสผ่านใหม่มาด้วย (เว้นว่างไว้ = ไม่เปลี่ยน)
+      if (formData.password.trim()) {
+        await resetAdminUserPassword(editingUser.id, formData.password.trim());
+      }
     } else {
       await createAdminUser(formData);
     }

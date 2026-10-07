@@ -1,8 +1,7 @@
 // ตัวกลางเรียก backend API (Node.js/Express ที่รันอยู่ port 5000)
 // เปลี่ยน URL ได้ผ่านไฟล์ .env -> VITE_API_URL
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -10,7 +9,6 @@ function getToken() {
 
 async function request(path, options = {}) {
   const token = getToken();
-
   const res = await fetch(`${API_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
@@ -20,24 +18,20 @@ async function request(path, options = {}) {
   });
 
   let data = null;
-
   try {
     data = await res.json();
-  } catch {}
+  } catch {
+
+  }
 
   if (!res.ok) {
-    const message =
-      data?.message || `Request failed with status ${res.status}`;
-
+    const message = data?.message || `Request failed with status ${res.status}`;
     throw new Error(message);
   }
 
   return data;
 }
 
-// ======================================================
-// Tickets
-// ======================================================
 
 function fromBackend(row) {
   return {
@@ -47,7 +41,7 @@ function fromBackend(row) {
     stock: row.Stock,
     location: row.Location,
     date: row.DateEvent,
-    status: row.Status?.trim(),
+    status: row.Status?.trim(), // Status เป็น char(100) มี space ปน ต้อง trim
     description: row.Description,
     logo: row.Logo,
   };
@@ -81,7 +75,6 @@ export async function createTicket(payload) {
     method: "POST",
     body: JSON.stringify(toBackend(payload)),
   });
-
   return fromBackend(row);
 }
 
@@ -90,7 +83,6 @@ export async function updateTicket(id, payload) {
     method: "PUT",
     body: JSON.stringify(toBackend(payload)),
   });
-
   return fromBackend(row);
 }
 
@@ -99,7 +91,6 @@ export async function toggleTicketStatus(id, status) {
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
-
   return fromBackend(row);
 }
 
@@ -109,22 +100,15 @@ export function deleteTicket(id) {
   });
 }
 
-// ======================================================
-// Auth
-// ======================================================
+// ---------- Auth (Sign in) ----------
 
 export async function login(username, password) {
   const data = await request("/auth/login", {
     method: "POST",
-    body: JSON.stringify({
-      username,
-      password,
-    }),
+    body: JSON.stringify({ username, password }),
   });
-
   localStorage.setItem("token", data.token);
   localStorage.setItem("user", JSON.stringify(data.user));
-
   return data.user;
 }
 
@@ -135,7 +119,6 @@ export function logout() {
 
 export function getCurrentUser() {
   const raw = localStorage.getItem("user");
-
   return raw ? JSON.parse(raw) : null;
 }
 
@@ -143,9 +126,7 @@ export function isLoggedIn() {
   return Boolean(getToken());
 }
 
-// ======================================================
-// Admin users
-// ======================================================
+// ---------- Admin users ----------
 
 export function getAdminUsers() {
   return request("/admin-users");
@@ -168,68 +149,44 @@ export function updateAdminUser(id, payload) {
 export function resetAdminUserPassword(id, newPassword) {
   return request(`/admin-users/${id}/reset-password`, {
     method: "PATCH",
-    body: JSON.stringify({
-      newPassword,
-    }),
+    body: JSON.stringify({ newPassword }),
   });
 }
 
 export function toggleAdminUserStatus(id, status) {
   return request(`/admin-users/${id}/status`, {
     method: "PATCH",
-    body: JSON.stringify({
-      status,
-    }),
+    body: JSON.stringify({ status }),
   });
 }
 
 export function changeOwnPassword(newPassword) {
   return request("/admin-users/me/password", {
     method: "PATCH",
-    body: JSON.stringify({
-      newPassword,
-    }),
+    body: JSON.stringify({ newPassword }),
   });
 }
 
-// ======================================================
-// Ticket codes
-// ======================================================
+// ---------- Ticket codes ----------
 
 export function getTicketCodes({ tickid, status, search } = {}) {
   const params = new URLSearchParams();
-
-  if (tickid) {
-    params.set("tickid", tickid);
-  }
-
-  if (status && status !== "All") {
-    params.set("status", status);
-  }
-
-  if (search) {
-    params.set("search", search);
-  }
-
+  if (tickid) params.set("tickid", tickid);
+  if (status && status !== "All") params.set("status", status);
+  if (search) params.set("search", search);
   const qs = params.toString();
-
   return request(`/ticket-codes${qs ? `?${qs}` : ""}`);
 }
 
 export function getTicketCodeStats(tickid) {
   const qs = tickid ? `?tickid=${tickid}` : "";
-
   return request(`/ticket-codes/stats${qs}`);
 }
 
 export function generateTicketCodes({ tickid, quantity, prefix }) {
   return request("/ticket-codes/generate", {
     method: "POST",
-    body: JSON.stringify({
-      tickid,
-      quantity,
-      prefix,
-    }),
+    body: JSON.stringify({ tickid, quantity, prefix }),
   });
 }
 
@@ -242,20 +199,14 @@ export function markTicketCodeReceived(id) {
 export function sellTicketCode({ tickid, owner, tranid }) {
   return request("/ticket-codes/sell", {
     method: "POST",
-    body: JSON.stringify({
-      tickid,
-      owner,
-      tranid,
-    }),
+    body: JSON.stringify({ tickid, owner, tranid }),
   });
 }
 
 export function scanTicketCode(code) {
   return request("/ticket-codes/scan", {
     method: "POST",
-    body: JSON.stringify({
-      code,
-    }),
+    body: JSON.stringify({ code }),
   });
 }
 
@@ -263,45 +214,31 @@ export function getQrCodeUrl(code) {
   return `${API_URL}/ticket-codes/qrcode/${encodeURIComponent(code)}`;
 }
 
-// ======================================================
-// Reports
-// ======================================================
+// ---------- Reports ----------
 
 function buildDateParams(from, to) {
   const params = new URLSearchParams();
-
-  if (from) {
-    params.set("from", from);
-  }
-
-  if (to) {
-    params.set("to", to);
-  }
-
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
   return params.toString();
 }
 
 export function getReportSummary(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/reports/summary${qs ? `?${qs}` : ""}`);
 }
 
 export function getRevenueByEvent(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/reports/revenue-by-event${qs ? `?${qs}` : ""}`);
 }
 
 export function getReportTransactions(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/reports/transactions${qs ? `?${qs}` : ""}`);
 }
 
-// ======================================================
-// Dashboard
-// ======================================================
+// ---------- Dashboard ----------
 
 export function getDashboardSummary() {
   return request("/dashboard/summary");
@@ -309,74 +246,44 @@ export function getDashboardSummary() {
 
 export function getDashboardSoldByEvent(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/dashboard/sold-by-event${qs ? `?${qs}` : ""}`);
 }
 
 export function getDashboardTicketMix(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/dashboard/ticket-mix${qs ? `?${qs}` : ""}`);
 }
 
 export function getDashboardTransactions(from, to) {
   const qs = buildDateParams(from, to);
-
   return request(`/dashboard/transactions${qs ? `?${qs}` : ""}`);
 }
 
-// ======================================================
-// Upload Image
-// ======================================================
-
 export async function uploadImage(file) {
   const token = localStorage.getItem("token");
-
   const formData = new FormData();
-
-  // ต้องตรงกับ upload.single("image") ใน backend
   formData.append("image", file);
 
   const res = await fetch(`${API_URL}/upload/image`, {
     method: "POST",
-
     headers: {
-      // ห้ามใส่ Content-Type เอง
-      // Browser จะสร้าง multipart/form-data boundary ให้เอง
+      // ห้ามใส่ Content-Type เอง! เบราว์เซอร์ต้องเป็นคนตั้ง boundary ของ multipart ให้อัตโนมัติ
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-
     body: formData,
   });
 
   const data = await res.json();
-
   if (!res.ok) {
-    throw new Error(
-      data?.message || "อัปโหลดรูปไม่สำเร็จ"
-    );
+    throw new Error(data?.message || "อัปโหลดรูปไม่สำเร็จ");
   }
-
-  return data.path;
+  return data.path; // เช่น "/uploads/abc123.jpg"
 }
 
-// ======================================================
-// Image URL
-// ======================================================
-
+// ฟังก์ชันช่วยแปลง path ที่เก็บใน DB (เช่น "/uploads/abc123.jpg") ให้เป็น URL เต็มสำหรับแสดงรูป
 export function getImageUrl(path) {
-  if (!path) {
-    return null;
-  }
-
-  // ถ้าใน DB เป็น URL เต็มอยู่แล้ว
-  if (path.startsWith("http")) {
-    return path;
-  }
-
-  // API_URL = http://localhost:5000/api
-  // รูปอยู่ที่ http://localhost:5000/uploads/...
-  const baseUrl = API_URL.replace(/\/api$/, "");
-
+  if (!path) return null;
+  if (path.startsWith("http")) return path; // เผื่อเก็บเป็น URL เต็มไว้อยู่แล้ว
+  const baseUrl = API_URL.replace(/\/api$/, ""); // ตัด /api ออก เพราะรูปอยู่ที่ root ไม่ใช่ใต้ /api
   return `${baseUrl}${path}`;
 }

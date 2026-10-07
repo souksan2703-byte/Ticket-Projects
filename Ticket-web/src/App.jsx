@@ -24,6 +24,7 @@ const PAGES = {
 const ADMIN_ONLY_PAGES = ["tickets", "users"];
 
 export default function App() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [checked, setChecked] = useState(false);
