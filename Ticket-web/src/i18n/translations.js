@@ -14,10 +14,16 @@ export const translations = {
   roleUser: { en: "User", lo: "ຜູ້ໃຊ້" },
 
   // App.jsx
-  redirectingToStore: { en: "Redirecting you to the ticket store...", lo: "ກຳລັງນຳທ່ານໄປທີ່ຮ້ານຂາຍປີ້..." },
+  redirectingToStore: {
+    en: "Redirecting you to the ticket store...",
+    lo: "ກຳລັງນຳທ່ານໄປທີ່ຮ້ານຂາຍປີ້...",
+  },
 
   // Login page
-  signInSubtitle: { en: "Sign in to manage events and tickets", lo: "ເຂົ້າສູ່ລະບົບເພື່ອຈັດການງານອີເວັນຕ໌ ແລະ ປີ້" },
+  signInSubtitle: {
+    en: "Sign in to manage events and tickets",
+    lo: "ເຂົ້າສູ່ລະບົບເພື່ອຈັດການງານອີເວັນຕ໌ ແລະ ປີ້",
+  },
   username: { en: "Username", lo: "ຊື່ຜູ້ໃຊ້" },
   usernamePlaceholder: { en: "Enter your username", lo: "ປ້ອນຊື່ຜູ້ໃຊ້" },
   password: { en: "Password", lo: "ລະຫັດຜ່ານ" },
@@ -32,23 +38,36 @@ export const translations = {
   loadFailed: { en: "Failed to load data", lo: "ໂຫຼດຂໍ້ມູນບໍ່ສຳເລັດ" },
   retry: { en: "Retry", lo: "ລອງໃໝ່" },
   todaysSales: { en: "Today's sales", lo: "ຍອດຂາຍມື້ນີ້" },
-  ticketsSoldThisMonth: { en: "Tickets sold this month", lo: "ປີ້ທີ່ຂາຍໄດ້ໃນເດືອນນີ້" },
+  ticketsSoldThisMonth: {
+    en: "Tickets sold this month",
+    lo: "ປີ້ທີ່ຂາຍໄດ້ໃນເດືອນນີ້",
+  },
   active: { en: "Active", lo: "ເປີດໃຊ້ງານ" },
   off: { en: "OFF", lo: "ປິດ" },
-  ticketsSoldByEvent: { en: "Tickets sold by event", lo: "ປີ້ທີ່ຂາຍໄດ້ຕາມງານອີເວັນຕ໌" },
+  ticketsSoldByEvent: {
+    en: "Tickets sold by event",
+    lo: "ປີ້ທີ່ຂາຍໄດ້ຕາມງານອີເວັນຕ໌",
+  },
   total: { en: "total", lo: "ລວມ" },
-  noSalesDataInRange: { en: "No sales data in this range yet", lo: "ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້" },
+  noSalesDataInRange: {
+    en: "No sales data in this range yet",
+    lo: "ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້",
+  },
   noDataYet: { en: "No data yet", lo: "ຍັງບໍ່ມີຂໍ້ມູນ" },
-  ticketMixTop2: { en: "Ticket mix (top 2 events)", lo: "ສັດສ່ວນປີ້ (2 ງານອັນດັບຕົ້ນ)" },
-  transactionMonthly: { en: "Transaction (Monthly)", lo: "ທຸລະກຳ (ລາຍເດືອນ)" },
-  timeMonthly: { en: "Time (Monthly)", lo: "ເວລາ (ລາຍເດືອນ)" },
-  amount: { en: "Amount", lo: "ຈຳນວນເງິນ" },
+  ticketMixTop2: {
+    en: "Ticket mix (top 2 events)",
+    lo: "ສັດສ່ວນປີ້ (2 ງານອັນດັບຕົ້ນ)",
+  },
+  transactionDaily: { en: "Transaction (daily)", lo: "ທຸລະກຳ (ລາຍວັນ)" },
 
   // Manage tickets page
   addTicket: { en: "Add ticket", lo: "ເພີ່ມປີ້" },
   totalTickets: { en: "Total tickets", lo: "ປີ້ທັງໝົດ" },
   openForSale: { en: "Open for sale", lo: "ພ້ອມຂາຍ" },
-  confirmDeleteTicket: { en: "Delete this ticket?", lo: "ຕ້ອງການລຶບປີ້ນີ້ແທ້ບໍ?" },
+  confirmDeleteTicket: {
+    en: "Delete this ticket?",
+    lo: "ຕ້ອງການລຶບປີ້ນີ້ແທ້ບໍ?",
+  },
   colEvent: { en: "Event", lo: "ງານອີເວັນຕ໌" },
   colPrice: { en: "Price", lo: "ລາຄາ" },
   colStock: { en: "Stock", lo: "ຈຳນວນປີ້" },
@@ -66,7 +85,10 @@ export const translations = {
   generateCodes: { en: "Generate codes", lo: "ສ້າງລະຫັດ" },
   filterAllEvents: { en: "Event: All", lo: "ງານອີເວັນຕ໌: ທັງໝົດ" },
   filterStatusAll: { en: "Status: All", lo: "ສະຖານະ: ທັງໝົດ" },
-  searchOwnerTranId: { en: "Search ticket holder / transaction no.", lo: "ຄົ້ນຫາຜູ້ຖືປີ້ / ເລກທຸລະກຳ" },
+  searchOwnerTranId: {
+    en: "Search ticket holder / transaction no.",
+    lo: "ຄົ້ນຫາຜູ້ຖືປີ້ / ເລກທຸລະກຳ",
+  },
   totalCodes: { en: "Total codes", lo: "ລະຫັດທັງໝົດ" },
   remaining: { en: "Remaining", lo: "ເຫຼືອ" },
   receivedPickedUp: { en: "Received", lo: "ຮັບແລ້ວ" },
@@ -93,13 +115,25 @@ export const translations = {
   ticketsSold: { en: "Tickets sold", lo: "ປີ້ທີ່ຂາຍໄດ້" },
   bestSellingEvent: { en: "Best-selling event", lo: "ງານທີ່ຂາຍດີທີ່ສຸດ" },
   revenueByEvent: { en: "Revenue by event", lo: "ລາຍຮັບຕາມງານອີເວັນຕ໌" },
-  noSalesInRange: { en: "No sales in this range", lo: "ຍັງບໍ່ມີລາຍການຂາຍໃນຊ່ວງເວລານີ້" },
+  noSalesInRange: {
+    en: "No sales in this range",
+    lo: "ຍັງບໍ່ມີລາຍການຂາຍໃນຊ່ວງເວລານີ້",
+  },
 
   // Admin users page
   addAdminUser: { en: "Add admin user", lo: "ເພີ່ມຜູ້ໃຊ້ແອັດມິນ" },
-  promptNewPassword: { en: 'Set a new password for "{name}"', lo: 'ຕັ້ງລະຫັດຜ່ານໃໝ່ສຳລັບ "{name}"' },
-  resetPasswordSuccess: { en: "Password reset successfully", lo: "ຣີເຊັດລະຫັດຜ່ານສຳເລັດແລ້ວ" },
-  resetPasswordFailed: { en: "Password reset failed", lo: "ຣີເຊັດລະຫັດຜ່ານບໍ່ສຳເລັດ" },
+  promptNewPassword: {
+    en: 'Set a new password for "{name}"',
+    lo: 'ຕັ້ງລະຫັດຜ່ານໃໝ່ສຳລັບ "{name}"',
+  },
+  resetPasswordSuccess: {
+    en: "Password reset successfully",
+    lo: "ຣີເຊັດລະຫັດຜ່ານສຳເລັດແລ້ວ",
+  },
+  resetPasswordFailed: {
+    en: "Password reset failed",
+    lo: "ຣີເຊັດລະຫັດຜ່ານບໍ່ສຳເລັດ",
+  },
   changeStatusFailed: { en: "Status change failed", lo: "ປ່ຽນສະຖານະບໍ່ສຳເລັດ" },
   colName: { en: "Name", lo: "ຊື່" },
   colUsername: { en: "Username", lo: "ຊື່ຜູ້ໃຊ້" },
@@ -116,11 +150,26 @@ export const translations = {
   disable: { en: "Disable", lo: "ປິດໃຊ້ງານ" },
 
   // My profile page
-  fillAllFields: { en: "Please fill in all fields", lo: "ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບທຸກຊ່ອງ" },
-  passwordsDontMatch: { en: "New password and confirmation don't match", lo: "ລະຫັດຜ່ານໃໝ່ ແລະ ການຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ" },
-  passwordTooShort: { en: "New password must be at least 6 characters", lo: "ລະຫັດຜ່ານໃໝ່ຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ" },
-  passwordChangedSuccess: { en: "Password changed successfully", lo: "ປ່ຽນລະຫັດຜ່ານສຳເລັດແລ້ວ" },
-  passwordChangeFailed: { en: "Failed to change password", lo: "ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ" },
+  fillAllFields: {
+    en: "Please fill in all fields",
+    lo: "ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບທຸກຊ່ອງ",
+  },
+  passwordsDontMatch: {
+    en: "New password and confirmation don't match",
+    lo: "ລະຫັດຜ່ານໃໝ່ ແລະ ການຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ",
+  },
+  passwordTooShort: {
+    en: "New password must be at least 6 characters",
+    lo: "ລະຫັດຜ່ານໃໝ່ຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ",
+  },
+  passwordChangedSuccess: {
+    en: "Password changed successfully",
+    lo: "ປ່ຽນລະຫັດຜ່ານສຳເລັດແລ້ວ",
+  },
+  passwordChangeFailed: {
+    en: "Failed to change password",
+    lo: "ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ",
+  },
   changePassword: { en: "Change password", lo: "ປ່ຽນລະຫັດຜ່ານ" },
   newPassword: { en: "New password", lo: "ລະຫັດຜ່ານໃໝ່" },
   confirmNewPassword: { en: "Confirm new password", lo: "ຢືນຢັນລະຫັດຜ່ານໃໝ່" },
@@ -128,38 +177,107 @@ export const translations = {
   updatePassword: { en: "Update password", lo: "ອັບເດດລະຫັດຜ່ານ" },
 
   // Add ticket modal
-  editTicket: { en: "Edit ticket", lo: "ແກ້ໄຂປີ້" },
-  uploadEventPhoto: { en: "Upload event photo", lo: "ອັບໂຫລດຮູບງານ" },
-  uploadingEllipsis: { en: "Uploading...", lo: "ກຳລັງອັບໂຫລດ..." },
-  photoAttached: { en: "Photo attached", lo: "ມີຮູບແນບແລ້ວ" },
-  downloadPhoto: { en: "Download", lo: "ດາວໂຫລດ" },
-  replacePhoto: { en: "Replace", lo: "ປ່ຽນຮູບ" },
-  removePhoto: { en: "Remove", lo: "ລຶບຮູບ" },
-  photoTypeError: { en: "Only JPG, PNG, WEBP, or GIF images are allowed", lo: "ຮອງຮັບສະເພາະໄຟລ໌ຮູບພາບ JPG, PNG, WEBP, ຫຼື GIF ເທົ່ານັ້ນ" },
-  photoSizeError: { en: "File is too large (max 5 MB)", lo: "ໄຟລ໌ໃຫຍ່ເກີນໄປ (ບໍ່ເກີນ 5 MB)" },
-  photoUploadFailed: { en: "Failed to upload photo", lo: "ອັບໂຫລດຮູບບໍ່ສຳເລັດ" },
-  dragDropHint: { en: "Drag and drop or click to browse. JPG or PNG, up to 5 MB.", lo: "ລາກວາງ ຫຼື ກົດເພື່ອເລືອກໄຟລ໌. JPG ຫຼື PNG, ບໍ່ເກີນ 5 MB." },
-  fillEventPriceStock: { en: "Please fill in the event name, price, and stock", lo: "ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ" },
-  eventTitle: { en: "Event title", lo: "ຊື່ງານ" },
-  priceLak: { en: "Price (LAK)", lo: "ລາຄາ (LAK)" },
+  // Add ticket modal
+
+  editTicket: {
+    en: "Edit ticket",
+    lo: "ແກ້ໄຂປີ້",
+  },
+
+  uploadEventPhoto: {
+    en: "Upload event photo",
+    lo: "ອັບໂຫລດຮູບງານ",
+  },
+
+  dragDropHint: {
+    en: "Drag and drop or click to browse. JPG or PNG, up to 5 MB.",
+    lo: "ລາກວາງ ຫຼື ກົດເພື່ອເລືອກໄຟລ໌. JPG ຫຼື PNG, ບໍ່ເກີນ 5 MB.",
+  },
+
+  fillEventPriceStock: {
+    en: "Please fill in the event name, price, and stock",
+    lo: "ກະລຸນາປ້ອນຊື່ງານ, ລາຄາ ແລະ ຈຳນວນປີ້ໃຫ້ຄົບ",
+  },
+
+  eventTitle: {
+    en: "Event title",
+    lo: "ຊື່ງານ",
+  },
+
+  priceLak: {
+    en: "Price (LAK)",
+    lo: "ລາຄາ (LAK)",
+  },
+
   autoGenCodesHint: {
     en: "Ticket codes will be auto-generated based on this amount (up to 1000).",
     lo: "ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)",
   },
-  location: { en: "Location", lo: "ສະຖານທີ່" },
-  statusOpen: { en: "Open", lo: "ເປີດ" },
-  statusOff: { en: "OFF", lo: "ປິດ" },
-  cancel: { en: "Cancel", lo: "ຍົກເລີກ" },
-  saveTicket: { en: "Save ticket", lo: "ບັນທຶກປີ້" },
+  currentTickets: {
+    en: "Current Tickets",
+    lo: "ຈຳນວນປີ້ປັດຈຸບັນ",
+  },
+  currentTicketsHint: {
+    en: "Existing tickets cannot be reduced.",
+    lo: "ຈຳນວນປີ້ເກົ່າບໍ່ສາມາດຫຼຸດໄດ້",
+  },
+  addTickets: {
+    en: "Add Tickets",
+    lo: "ເພີ່ມປີ້",
+  },
+  addTicketsHint: {
+    en: "Add up to 1000 new tickets.",
+    lo: "ສາມາດເພີ່ມປີ້ໃໝ່ໄດ້ສູງສຸດ 1000 ໃບ",
+  },
+  invalidAdditionalTickets: {
+    en: "The number of tickets must be 0 or more.",
+    lo: "ຈຳນວນປີ້ຕ້ອງເປັນ 0 ຫຼືຫຼາຍກວ່າ",
+  },
+  maxAdditionalTickets: {
+    en: "You can add up to 1000 tickets at a time.",
+    lo: "ສາມາດເພີ່ມປີ້ໄດ້ສູງສຸດ 1000 ໃບຕໍ່ຄັ້ງ",
+  },
+  location: {
+    en: "Location",
+    lo: "ສະຖານທີ່",
+  },
+  statusOpen: {
+    en: "Open",
+    lo: "ເປີດ",
+  },
+  statusOff: {
+    en: "OFF",
+    lo: "ປິດ",
+  },
+  cancel: {
+    en: "Cancel",
+    lo: "ຍົກເລີກ",
+  },
+  saveTicket: {
+    en: "Save ticket",
+    lo: "ບັນທຶກປີ້",
+  },
 
   // Generate codes modal
   generateTicketCodes: { en: "Generate ticket codes", lo: "ສ້າງລະຫັດປີ້" },
-  pleaseSelectEvent: { en: "Please select an event", lo: "ກະລຸນາເລືອກງານອີເວັນຕ໌" },
-  pleaseSpecifyQuantity: { en: "Please specify how many codes to generate", lo: "ກະລຸນາລະບຸຈຳນວນລະຫັດທີ່ຕ້ອງການສ້າງ" },
+  pleaseSelectEvent: {
+    en: "Please select an event",
+    lo: "ກະລຸນາເລືອກງານອີເວັນຕ໌",
+  },
+  pleaseSpecifyQuantity: {
+    en: "Please specify how many codes to generate",
+    lo: "ກະລຸນາລະບຸຈຳນວນລະຫັດທີ່ຕ້ອງການສ້າງ",
+  },
   generateFailed: { en: "Failed to generate codes", lo: "ສ້າງລະຫັດບໍ່ສຳເລັດ" },
   quantity: { en: "Quantity", lo: "ຈຳນວນ" },
-  codePrefixOptional: { en: "Code prefix (optional)", lo: "Prefix ລະຫັດ (ບໍ່ບັງຄັບ)" },
-  codeFormatHint: { en: 'Codes will look like "{prefix}-8F2K91"', lo: 'ລະຫັດທີ່ໄດ້ຈະມີຮູບແບບ ເຊັ່ນ "{prefix}-8F2K91"' },
+  codePrefixOptional: {
+    en: "Code prefix (optional)",
+    lo: "Prefix ລະຫັດ (ບໍ່ບັງຄັບ)",
+  },
+  codeFormatHint: {
+    en: 'Codes will look like "{prefix}-8F2K91"',
+    lo: 'ລະຫັດທີ່ໄດ້ຈະມີຮູບແບບ ເຊັ່ນ "{prefix}-8F2K91"',
+  },
   generatingEllipsis: { en: "Generating...", lo: "ກຳລັງສ້າງ..." },
   generate: { en: "Generate", lo: "ສ້າງ" },
 
@@ -170,10 +288,18 @@ export const translations = {
 
   // Add admin user modal
   editAdminUser: { en: "Edit admin user", lo: "ແກ້ໄຂຜູ້ໃຊ້ແອັດມິນ" },
-  fillNameUsername: { en: "Please fill in name and username", lo: "ກະລຸນາປ້ອນຊື່ ແລະ ຊື່ຜູ້ໃຊ້ໃຫ້ຄົບ" },
-  setPasswordForNewUser: { en: "Please set a password for the new user", lo: "ກະລຸນາກຳນົດລະຫັດຜ່ານສຳລັບຜູ້ໃຊ້ໃໝ່" },
-  setInitialPassword: { en: "Set an initial password", lo: "ກຳນົດລະຫັດຜ່ານເລີ່ມຕົ້ນ" },
-  leaveBlankToKeep: { en: "leave blank to keep current password", lo: "ເວັ້ນວ່າງໄວ້ຖ້າບໍ່ຕ້ອງການປ່ຽນລະຫັດຜ່ານ" },
+  fillNameUsername: {
+    en: "Please fill in name and username",
+    lo: "ກະລຸນາປ້ອນຊື່ ແລະ ຊື່ຜູ້ໃຊ້ໃຫ້ຄົບ",
+  },
+  setPasswordForNewUser: {
+    en: "Please set a password for the new user",
+    lo: "ກະລຸນາກຳນົດລະຫັດຜ່ານສຳລັບຜູ້ໃຊ້ໃໝ່",
+  },
+  setInitialPassword: {
+    en: "Set an initial password",
+    lo: "ກຳນົດລະຫັດຜ່ານເລີ່ມຕົ້ນ",
+  },
   save: { en: "Save", lo: "ບັນທຶກ" },
 
   // StatusPill labels (backend status values, mapped to display text)
