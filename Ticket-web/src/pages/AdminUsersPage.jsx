@@ -18,6 +18,10 @@ export default function AdminUsersPage() {
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [resetUser, setResetUser] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetPasswordError, setResetPasswordError] = useState("");
 
   async function loadUsers() {
     setLoading(true);
@@ -40,13 +44,8 @@ export default function AdminUsersPage() {
     if (editingUser) {
       await updateAdminUser(editingUser.id, {
         name: formData.name,
-        username: formData.username,
         role: formData.role,
       });
-      // เปลี่ยนรหัสผ่านแยกต่างหาก เฉพาะตอนที่แอดมินกรอกรหัสผ่านใหม่มาด้วย (เว้นว่างไว้ = ไม่เปลี่ยน)
-      if (formData.password.trim()) {
-        await resetAdminUserPassword(editingUser.id, formData.password.trim());
-      }
     } else {
       await createAdminUser(formData);
     }
@@ -56,13 +55,40 @@ export default function AdminUsersPage() {
   }
 
   async function handleReset(user) {
-    const newPassword = prompt(t("promptNewPassword").replace("{name}", user.username));
-    if (!newPassword) return; // กดยกเลิกหรือเว้นว่างไว้
+    setResetUser(user);
+    setNewPassword("");
+    setConfirmPassword("");
+    setResetPasswordError("");
+  }
+  async function handleResetPassword() {
+    setResetPasswordError("");
+
+    if (!newPassword.trim() || !confirmPassword.trim()) {
+      setResetPasswordError(t("fillAllFields"));
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setResetPasswordError(t("passwordTooShort"));
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setResetPasswordError(t("passwordsDontMatch"));
+      return;
+    }
+
     try {
-      await resetAdminUserPassword(user.id, newPassword);
-      alert(t("resetPasswordSuccess"));
+      await resetAdminUserPassword(resetUser.id, newPassword);
+
+      setResetUser(null);
+      setNewPassword("");
+      setConfirmPassword("");
+      setResetPasswordError("");
+
+      await loadUsers();
     } catch (err) {
-      alert(`${t("resetPasswordFailed")}: ${err.message}`);
+      setResetPasswordError(`${t("resetPasswordFailed")}: ${err.message}`);
     }
   }
 
@@ -119,20 +145,31 @@ export default function AdminUsersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="px-5 py-8 text-center text-neutral-400">
+                <td
+                  colSpan={8}
+                  className="px-5 py-8 text-center text-neutral-400"
+                >
                   {t("loadingEllipsis")}
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-5 py-8 text-center text-neutral-400">
+                <td
+                  colSpan={8}
+                  className="px-5 py-8 text-center text-neutral-400"
+                >
                   {t("noAdminUsersYet")}
                 </td>
               </tr>
             ) : (
               users.map((u) => (
-                <tr key={u.id} className="border-b border-neutral-100 last:border-0">
-                  <td className="px-5 py-4 font-medium text-neutral-900">{u.name}</td>
+                <tr
+                  key={u.id}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-5 py-4 font-medium text-neutral-900">
+                    {u.name}
+                  </td>
                   <td className="px-5 py-4 text-neutral-700">{u.username}</td>
                   <td className="px-5 py-4">
                     <StatusPill status={u.role} />
@@ -140,7 +177,9 @@ export default function AdminUsersPage() {
                   <td className="px-5 py-4">
                     <StatusPill status={u.status} />
                   </td>
-                  <td className="px-5 py-4 text-neutral-700">{u.last || "-"}</td>
+                  <td className="px-5 py-4 text-neutral-700">
+                    {u.last || "-"}
+                  </td>
                   <td className="px-5 py-4">
                     <button
                       onClick={() => {
@@ -188,6 +227,104 @@ export default function AdminUsersPage() {
           }}
           onSave={handleSave}
         />
+      )}
+      {resetUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between px-10 pt-8">
+              <h2 className="text-2xl font-semibold text-neutral-900">
+                {t("changeUserPassword")}
+              </h2>
+
+              <button
+                type="button"
+                onClick={() => setResetUser(null)}
+                className="text-3xl leading-none text-neutral-400 hover:text-neutral-600"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="px-10 pb-8 pt-6">
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-neutral-700">
+                  {t("username")}
+                </label>
+
+                <input
+                  type="text"
+                  value={resetUser.username}
+                  disabled
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-100 px-4 py-3 text-neutral-500 outline-none"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-neutral-700">
+                  {t("newPassword")}
+                </label>
+
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder={t("newPassword")}
+                  autoFocus
+                  className="w-full rounded-lg border border-neutral-200 px-4 py-3 text-neutral-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="mb-2 block text-sm font-medium text-neutral-700">
+                  {t("confirmNewPassword")}
+                </label>
+
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setResetPasswordError("");
+                  }}
+                  placeholder={t("confirmNewPassword")}
+                  className={`w-full rounded-lg border px-4 py-3 text-neutral-900 outline-none transition focus:ring-2 ${
+                    resetPasswordError
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-neutral-200 focus:border-red-500 focus:ring-red-100"
+                  }`}
+                />
+
+                {resetPasswordError && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {resetPasswordError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetUser(null);
+                    setNewPassword("");
+                    setConfirmPassword("");
+                  }}
+                  className="rounded-lg border border-neutral-200 bg-white px-5 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                >
+                  {t("cancel")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  className="rounded-lg bg-red-600 px-5 py-3 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  {t("save")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

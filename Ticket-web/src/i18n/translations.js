@@ -149,6 +149,11 @@ export const translations = {
   enable: { en: "Enable", lo: "ເປີດໃຊ້ງານ" },
   disable: { en: "Disable", lo: "ປິດໃຊ້ງານ" },
 
+  changeUserPassword: {
+  en: "Change user password",
+  lo: "ປ່ຽນລະຫັດຜ່ານຜູ້ໃຊ້",
+},
+
   // My profile page
   fillAllFields: {
     en: "Please fill in all fields",
@@ -176,7 +181,6 @@ export const translations = {
   savingEllipsis: { en: "Saving...", lo: "ກຳລັງບັນທຶກ..." },
   updatePassword: { en: "Update password", lo: "ອັບເດດລະຫັດຜ່ານ" },
 
-  // Add ticket modal
   // Add ticket modal
 
   editTicket: {
