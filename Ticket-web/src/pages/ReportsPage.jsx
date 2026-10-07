@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 import { Download } from "lucide-react";
 import PageHeader from "../components/PageHeader.jsx";
 import DateField from "../components/DateField.jsx";
@@ -11,20 +12,40 @@ function currency(n) {
   return `${Number(n || 0).toLocaleString()} LAK`;
 }
 
-// สร้างไฟล์ CSV จากข้อมูลที่โหลดมาแล้วในเบราว์เซอร์ ไม่ต้องมี endpoint แยกฝั่ง backend
-function downloadCsv(rows) {
-  const header = ["ລະຫັດ", "ງານອີເວັນຕ໌", "ຜູ້ຖືປີ້", "ເລກທຸລະກຳ", "ລາຄາ"];
-  const lines = rows.map((r) => [r.code, r.eventName, r.owner, r.tranid, r.price].join(","));
-  const csv = [header.join(","), ...lines].join("\n");
+// Export รายงานเป็นไฟล์ Excel (.xlsx)
+function downloadExcel(rows) {
+  const data = rows.map((r) => ({
+    "ລະຫັດ": r.code,
+    "ງານອີເວັນຕ໌": r.eventName,
+    "ຜູ້ຖືປີ້": r.owner || "-",
+    "ເລກທຸລະກຳ": r.tranid || "-",
+    "ລາຄາ": Number(r.price || 0),
+    "ສະຖານະ": "Success",
+  }));
 
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `report-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+  // ກຳນົດຄວາມກວ້າງຂອງ Column
+  worksheet["!cols"] = [
+    { wch: 18 },
+    { wch: 30 },
+    { wch: 25 },
+    { wch: 22 },
+    { wch: 15 },
+    { wch: 15 },
+  ];
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  XLSX.writeFile(
+    workbook,
+    `report-${today}.xlsx`
+  );
 }
+
 
 export default function ReportsPage() {
   const { t } = useLanguage();
@@ -72,12 +93,12 @@ export default function ReportsPage() {
       </div>
 
       <button
-        onClick={() => downloadCsv(transactions)}
+        onClick={() => downloadExcel(transactions)}
         disabled={transactions.length === 0}
         className="mb-6 flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
       >
         <Download className="h-4 w-4" />
-        {t("exportCsv")}
+        {t("exportExcel")}
       </button>
 
       {error && (
