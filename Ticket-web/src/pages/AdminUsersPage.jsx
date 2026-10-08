@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import PageHeader from "../components/PageHeader.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddAdminUserModal from "../components/AddAdminUserModal.jsx";
@@ -22,6 +23,8 @@ export default function AdminUsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [resetPasswordError, setResetPasswordError] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function loadUsers() {
     setLoading(true);
@@ -109,8 +112,10 @@ export default function AdminUsersPage() {
         action={
           <button
             onClick={() => {
-              setEditingUser(null);
-              setModalOpen(true);
+              setResetUser(null);
+              setNewPassword("");
+              setConfirmPassword("");
+              setResetPasswordError("");
             }}
             className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
@@ -246,6 +251,12 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="px-10 pb-8 pt-6">
+              {resetPasswordError && (
+                <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {resetPasswordError}
+                </div>
+              )}
+
               <div className="mb-5">
                 <label className="mb-2 block text-sm font-medium text-neutral-700">
                   {t("username")}
@@ -264,14 +275,40 @@ export default function AdminUsersPage() {
                   {t("newPassword")}
                 </label>
 
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder={t("newPassword")}
-                  autoFocus
-                  className="w-full rounded-lg border border-neutral-200 px-4 py-3 text-neutral-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder={t("newPassword")}
+                    autoFocus
+                    className="w-full rounded-lg border border-neutral-200 px-4 py-3 pr-12 text-neutral-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                    aria-label={
+                      showNewPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    <span
+                      className="inline-flex transition-all duration-200 ease-in-out"
+                      style={{
+                        transform: showNewPassword
+                          ? "scale(1) rotate(0deg)"
+                          : "scale(0.9) rotate(-8deg)",
+                      }}
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="h-6 w-6" strokeWidth={2.2} />
+                      ) : (
+                        <Eye className="h-6 w-6" strokeWidth={2.2} />
+                      )}
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div className="mb-5">
@@ -279,26 +316,46 @@ export default function AdminUsersPage() {
                   {t("confirmNewPassword")}
                 </label>
 
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    setResetPasswordError("");
-                  }}
-                  placeholder={t("confirmNewPassword")}
-                  className={`w-full rounded-lg border px-4 py-3 text-neutral-900 outline-none transition focus:ring-2 ${
-                    resetPasswordError
-                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-                      : "border-neutral-200 focus:border-red-500 focus:ring-red-100"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setResetPasswordError("");
+                    }}
+                    placeholder={t("confirmNewPassword")}
+                    className={`w-full rounded-lg border px-4 py-3 pr-12 text-neutral-900 outline-none transition focus:ring-2 ${
+                      resetPasswordError
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                        : "border-neutral-200 focus:border-red-500 focus:ring-red-100"
+                    }`}
+                  />
 
-                {resetPasswordError && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {resetPasswordError}
-                  </p>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                    aria-label={
+                      showConfirmPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    <span
+                      className="inline-flex transition-all duration-200 ease-in-out"
+                      style={{
+                        transform: showConfirmPassword
+                          ? "scale(1) rotate(0deg)"
+                          : "scale(0.9) rotate(-8deg)",
+                      }}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-6 w-6" strokeWidth={2.2} />
+                      ) : (
+                        <Eye className="h-6 w-6" strokeWidth={2.2} />
+                      )}
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">

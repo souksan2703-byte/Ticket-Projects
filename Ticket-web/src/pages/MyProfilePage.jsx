@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import PageHeader from "../components/PageHeader.jsx";
 import { changeOwnPassword } from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -10,6 +11,8 @@ export default function MyProfilePage({ currentUser }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -75,30 +78,76 @@ export default function MyProfilePage({ currentUser }) {
             )}
 
             <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">{t("newPassword")}</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              />
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                {t("newPassword")}
+              </label>
+
+              <div className="relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 pr-12 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                  aria-label={
+                    showNewPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  <span
+                    className="inline-flex transition-all duration-200 ease-in-out"
+                    style={{
+                      transform: showNewPassword
+                        ? "scale(1) rotate(0deg)"
+                        : "scale(0.9) rotate(-8deg)",
+                    }}
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-6 w-6" strokeWidth={2.2} />
+                    ) : (
+                      <Eye className="h-6 w-6" strokeWidth={2.2} />
+                    )}
+                  </span>
+                </button>
+              </div>
             </div>
-            <div>
-              <label className="mb-1.5 block text-sm text-neutral-700">{t("confirmNewPassword")}</label>
+
+            <div className="relative">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 pr-12 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               />
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+              >
+                <span
+                  className="inline-flex transition-all duration-200 ease-in-out"
+                  style={{
+                    transform: showConfirmPassword
+                      ? "scale(1) rotate(0deg)"
+                      : "scale(0.9) rotate(-8deg)",
+                  }}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-6 w-6" strokeWidth={2.2} />
+                  ) : (
+                    <Eye className="h-6 w-6" strokeWidth={2.2} />
+                  )}
+                </span>
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full rounded-lg bg-red-600 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
-            >
-              {saving ? t("savingEllipsis") : t("updatePassword")}
-            </button>
           </form>
         </div>
       </div>
