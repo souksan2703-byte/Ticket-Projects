@@ -7,14 +7,14 @@ export default function Header() {
   return (
     <header className="fixed left-0 right-0 top-0 z-50 h-16 border-b border-neutral-200 bg-white">
       <div className="flex h-full items-center justify-between px-6">
-        {/* ชื่อระบบ */}
+        {/* ຊື່ລະບົບ */}
         <div className="flex items-center">
           <span className="text-lg font-semibold text-neutral-900">
             {t("appTitle")}
           </span>
         </div>
 
-        {/* เปลี่ยนภาษา */}
+        {/* ປ່ຽນພາສາ */}
         <div className="flex items-center">
           <LanguageSwitcher />
         </div>

@@ -13,8 +13,6 @@ const STYLES = {
   Success: "bg-green-100 text-green-700",
 };
 
-// status ที่ backend ส่งมาเป็นภาษาอังกฤษเสมอ (เช่น "Open", "Sold") ไม่แปลตรงนั้น
-// map ไปเป็น translation key ที่นี่แทน เพื่อโชว์เป็นภาษาที่เลือกไว้
 const STATUS_KEYS = {
   Open: "statusOpen",
   OFF: "statusOff",

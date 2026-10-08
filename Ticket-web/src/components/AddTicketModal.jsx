@@ -50,12 +50,12 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      setError("รองรับเฉพาะไฟล์ JPG, PNG, WEBP และ GIF เท่านั้น");
+      setError("ຮອງຮັບສະເພາະໄຟລ໌ JPG, PNG, WEBP, ແລະ GIF ເທົ່ານັ້ນ");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("ไฟล์ใหญ่เกินไป (จำกัดไม่เกิน 5MB)");
+      setError("ໄຟລ໌ໃຫຍ່ເກີນໄປ (ສູງສຸດ 5MB)");
       return;
     }
 
@@ -73,7 +73,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       setPreview(getImageUrl(imagePath));
     } catch (err) {
       console.error("Upload image error:", err);
-      setError(err.message || "อัปโหลดรูปไม่สำเร็จ");
+      setError(err.message || "ອັບໂຫຼດຮູບພາບບໍ່ສຳເລັດ");
       update("logo", "");
     } finally {
       setUploading(false);
@@ -89,13 +89,11 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       return;
     }
 
-    // ตอนสร้าง Event ใหม่ ต้องกรอก Stock
     if (!isEditing && form.stock === "") {
       setError(t("fillEventPriceStock"));
       return;
     }
 
-    // Add Tickets ต้องเป็นจำนวนเต็ม 0 ขึ้นไป
     if (isEditing) {
       const additionalTickets = Number(form.additionalTickets || 0);
 
@@ -114,7 +112,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     }
 
     if (uploading) {
-      setError("กรุณารอให้รูปภาพอัปโหลดเสร็จก่อน");
+      setError("ກະລຸນາລໍຖ້າໃຫ້ຮູບພາບອັບໂຫລດສຳເລັດ");
       return;
     }
 

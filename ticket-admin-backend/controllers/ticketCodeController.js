@@ -4,8 +4,8 @@ const { generateCodesForEvent } = require('../utils/ticketCodeGenerator');
 
 // ແປງ status(bit) + myticket(bit) ໃນຖານຂໍ້ມູນ ໃຫ້ເປັນສະຖານະທີ່ສະແດງຜົນໄດ້ກົງກັບ UI
 // status=1            -> Available (ຍັງບໍ່ຂາຍ)
-// status=0, myticket=0 -> Sold (ຂາຍແລ້ວ ຍັງບໍ່ມາຮັບຕົ໋ວ)
-// status=0, myticket=1 -> Used (ຂາຍແລ້ວແລະຮັບຕົ໋ວໄປແລ້ວ)
+// status=0, myticket=0 -> Sold (ຂາຍແລ້ວ ຍັງບໍ່ມາຮັບປີ້)
+// status=0, myticket=1 -> Used (ຂາຍແລ້ວແລະຮັບປີ້ໄປແລ້ວ)
 const STATUS_CASE_SQL = `
     CASE
         WHEN tc.status = 1 THEN 'Available'
@@ -50,7 +50,7 @@ async function getAllCodes(req, res) {
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນລະຫັດຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
+        res.status(500).json({ message: 'ດຶງຂໍ້ມູນລະຫັດປີ້ບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -90,8 +90,6 @@ async function getStats(req, res) {
     }
 }
 
-// POST /api/ticket-codes/generate -> ສ້າງລະຫັດຕົ໋ວໃໝ່ເປັນຊຸດ (bulk) ສຳລັບ 1 ອີເວັນທີ່ມີຢູ່ແລ້ວ
-// ໃຊ້ຕອນຢາກເພີ່ມຈຳນວນຕົ໋ວໃຫ້ອີເວັນທີ່ສ້າງໄປແລ້ວ (ຕອນສ້າງອີເວັນໃໝ່ລະບົບຈະສ້າງໃຫ້ອັດຕະໂນມັດຕາມ Stock ຢູ່ແລ້ວ)
 async function generateCodes(req, res) {
     try {
         const { tickid, quantity, prefix } = req.body;
@@ -107,12 +105,12 @@ async function generateCodes(req, res) {
         const createdCodes = await generateCodesForEvent(pool, tickid, quantity, prefix);
 
         res.status(201).json({
-            message: `ສ້າງລະຫັດຕົ໋ວສຳເລັດ ${createdCodes.length} ໃບ`,
+            message: `ສ້າງລະຫັດປີ້ສຳເລັດ ${createdCodes.length} ໃບ`,
             codes: createdCodes,
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ສ້າງລະຫັດຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
+        res.status(500).json({ message: 'ສ້າງລະຫັດປີ້ບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
@@ -124,7 +122,7 @@ function generateTransactionId() {
     return `TXN-${datePart}-${randomPart}`;
 }
 
-// POST /api/ticket-codes/sell -> ໜ້າ "Sell ticket": ຂາຍຕົ໋ວ 1 ໃບໃຫ້ລູກຄ້າ
+// POST /api/ticket-codes/sell -> ໜ້າ "Sell ticket": ຂາຍປີ້ 1 ໃບໃຫ້ລູກຄ້າ
 // ຫຍິບລະຫັດທີ່ຍັງວ່າງ (Available) ມາ 1 ໃບແບບ atomic (ກັນບັນຫາຂາຍຊ້ຳຖ້າມີຄົນກົດພ້ອມກັນ)
 // ແລ້ວປ່ຽນເປັນ Sold ພ້ອມຜູກ owner/transaction ID ເຂົ້າໄປ
 async function sellCode(req, res) {
@@ -161,7 +159,7 @@ async function sellCode(req, res) {
             `);
 
         if (result.recordset.length === 0) {
-            return res.status(409).json({ message: 'ຕົ໋ວສຳລັບອີເວັນນີ້ໝົດແລ້ວ (ບໍ່ມີລະຫັດວ່າງເຫຼືອ)' });
+            return res.status(409).json({ message: 'ປີ້ສຳລັບອີເວັນນີ້ໝົດແລ້ວ (ບໍ່ມີລະຫັດວ່າງເຫຼືອ)' });
         }
 
         const sold = result.recordset[0];
@@ -179,11 +177,11 @@ async function sellCode(req, res) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'ຂາຍຕົ໋ວບໍ່ສຳເລັດ', error: err.message });
+        res.status(500).json({ message: 'ຂາຍປີ້ບໍ່ສຳເລັດ', error: err.message });
     }
 }
 
-// PATCH /api/ticket-codes/:id/receive -> ເຮັດເຄື່ອງໝາຍວ່າລູກຄ້າມາຮັບຕົ໋ວແລ້ວ
+// PATCH /api/ticket-codes/:id/receive -> ເຮັດເຄື່ອງໝາຍວ່າລູກຄ້າມາຮັບປີ້ແລ້ວ
 async function markReceived(req, res) {
     try {
         const pool = await getPool();
@@ -204,7 +202,7 @@ async function markReceived(req, res) {
         if (result.recordset.length === 0) {
             return res.status(404).json({ message: 'ບໍ່ພົບລະຫັດນີ້ ຫຼືລະຫັດຍັງບໍ່ໄດ້ຂາຍ' });
         }
-        res.json({ message: 'ບັນທຶກການຮັບຕົ໋ວຮຽບຮ້ອຍແລ້ວ' });
+        res.json({ message: 'ບັນທຶກການຮັບປີ້ຮຽບຮ້ອຍແລ້ວ' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'ບັນທຶກບໍ່ສຳເລັດ', error: err.message });
@@ -212,7 +210,7 @@ async function markReceived(req, res) {
 }
 
 // POST /api/ticket-codes/scan -> ໃຊ້ກັບເຄື່ອງສະແກນ QR ໜ້າງານ
-// ຮັບ code ທີ່ສະແກນໄດ້ ກວດສອບສະຖານະ ແລ້ວຢືນຢັນການຮັບຕົ໋ວໃຫ້ອັດຕະໂນມັດຖ້າຖືກຕ້ອງ
+// ຮັບ code ທີ່ສະແກນໄດ້ ກວດສອບສະຖານະ ແລ້ວຢືນຢັນການຮັບປີ້ໃຫ້ອັດຕະໂນມັດຖ້າຖືກຕ້ອງ
 async function scanCode(req, res) {
     try {
         const { code } = req.body;
@@ -235,29 +233,29 @@ async function scanCode(req, res) {
         if (!ticket) {
             return res.status(404).json({
                 result: 'invalid',
-                message: 'ບໍ່ພົບລະຫັດນີ້ໃນລະບົບ ກະລຸນາກວດສອບຕົ໋ວອີກຄັ້ງ',
+                message: 'ບໍ່ພົບລະຫັດນີ້ໃນລະບົບ ກະລຸນາກວດສອບປີ້ອີກຄັ້ງ',
             });
         }
 
-        // ກໍລະນີທີ 1: ຍັງບໍ່ຂາຍ (status = 1) -> ຫ້າມໃຫ້ຮັບຕົ໋ວ
+        // ກໍລະນີທີ 1: ຍັງບໍ່ຂາຍ (status = 1) -> ຫ້າມໃຫ້ຮັບປີ້
         if (ticket.status === true || ticket.status === 1) {
             return res.status(409).json({
                 result: 'not_sold',
-                message: `ລະຫັດນີ້ຍັງບໍ່ໄດ້ຂາຍ (${ticket.eventName}) ບໍ່ສາມາດຮັບຕົ໋ວໄດ້`,
+                message: `ລະຫັດນີ້ຍັງບໍ່ໄດ້ຂາຍ (${ticket.eventName}) ບໍ່ສາມາດຮັບປີ້ໄດ້`,
                 ticket: { code: ticket.code, eventName: ticket.eventName },
             });
         }
 
-        // ກໍລະນີທີ 2: ຂາຍແລ້ວແລະຮັບຕົ໋ວໄປແລ້ວ (Used) -> ແຈ້ງເຕືອນກັນຮັບຊ້ຳ
+        // ກໍລະນີທີ 2: ຂາຍແລ້ວແລະຮັບປີ້ໄປແລ້ວ (Used) -> ແຈ້ງເຕືອນກັນຮັບຊ້ຳ
         if (ticket.myticket === true || ticket.myticket === 1) {
             return res.status(409).json({
                 result: 'already_used',
-                message: `ຕົ໋ວໃບນີ້ຖືກຮັບໄປແລ້ວກ່ອນໜ້ານີ້ (${ticket.eventName})`,
+                message: `ປີ້ໃບນີ້ຖືກຮັບໄປແລ້ວກ່ອນໜ້ານີ້ (${ticket.eventName})`,
                 ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
             });
         }
 
-        // ກໍລະນີທີ 3: ຂາຍແລ້ວ ລໍຖ້າຮັບ -> ຢືນຢັນຮັບຕົ໋ວໃຫ້ທັນທີ
+        // ກໍລະນີທີ 3: ຂາຍແລ້ວ ລໍຖ້າຮັບ -> ຢືນຢັນຮັບປີ້ໃຫ້ທັນທີ
         await pool.request()
             .input('id', sql.Int, ticket.id)
             .query(`
@@ -268,7 +266,7 @@ async function scanCode(req, res) {
 
         res.json({
             result: 'success',
-            message: `ຢືນຢັນຮັບຕົ໋ວສຳເລັດ: ${ticket.eventName}`,
+            message: `ຢືນຢັນຮັບປີ້ສຳເລັດ: ${ticket.eventName}`,
             ticket: { code: ticket.code, eventName: ticket.eventName, owner: ticket.owner },
         });
     } catch (err) {
@@ -277,7 +275,7 @@ async function scanCode(req, res) {
     }
 }
 
-// GET /api/ticket-codes/qrcode/:code -> ສົ່ງຄືນຮູບ QR (PNG) ທີ່ encode ລະຫັດຕົ໋ວນີ້ໄວ້
+// GET /api/ticket-codes/qrcode/:code -> ສົ່ງຄືນຮູບ QR (PNG) ທີ່ encode ລະຫັດປີ້ນີ້ໄວ້
 async function getQrCode(req, res) {
     try {
         const { code } = req.params;
