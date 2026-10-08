@@ -19,12 +19,17 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
   });
 
   const [preview, setPreview] = useState(
-    initialData?.logo ? getImageUrl(initialData.logo) : ""
+    initialData?.logo ? getImageUrl(initialData.logo) : "",
   );
 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  // Date & Time
+  const [eventDate, setEventDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
   function update(field, value) {
     setForm((f) => ({
@@ -42,12 +47,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
     setError(null);
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "image/gif",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
     if (!allowedTypes.includes(file.type)) {
       setError("ຮອງຮັບສະເພາະໄຟລ໌ JPG, PNG, WEBP, ແລະ GIF ເທົ່ານັ້ນ");
@@ -97,10 +97,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     if (isEditing) {
       const additionalTickets = Number(form.additionalTickets || 0);
 
-      if (
-        !Number.isInteger(additionalTickets) ||
-        additionalTickets < 0
-      ) {
+      if (!Number.isInteger(additionalTickets) || additionalTickets < 0) {
         setError(t("invalidAdditionalTickets"));
         return;
       }
@@ -117,9 +114,26 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     }
 
     setSaving(true);
+    if (!eventDate || !startTime || !endTime) {
+      setError("กรุณาเลือกวันที่ เวลาเริ่ม และเวลาสิ้นสุด");
+      return;
+    }
+
+    if (startTime >= endTime) {
+      setError("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      return;
+    }
+
+    // รวม Date + Start time + End time
+    const dateTimeValue = `${eventDate} ${startTime} - ${endTime}`;
+
+    const submitData = {
+      ...form,
+      date: dateTimeValue,
+    };
 
     try {
-      await onSave(form);
+      await onSave(submitData);
     } catch (err) {
       setError(err.message || t("saveFailed"));
     } finally {
@@ -319,14 +333,42 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
             {/* Date */}
             <div>
               <label className="mb-1.5 block text-sm text-neutral-700">
-                {t("colDateTime")}
+                Date
               </label>
 
               <input
-                value={form.date}
-                onChange={(e) => update("date", e.target.value)}
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                placeholder="e.g. Oct 4, 2026, 17:00 - 23:30"
+              />
+            </div>
+
+            {/* Start Time */}
+            <div>
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                Start time
+              </label>
+
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+              />
+            </div>
+
+            {/* End Time */}
+            <div>
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                End time
+              </label>
+
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               />
             </div>
 
