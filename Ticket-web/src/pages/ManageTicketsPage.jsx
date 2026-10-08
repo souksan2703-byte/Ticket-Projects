@@ -7,6 +7,22 @@ import { currency } from "../data/sampleData.js";
 import {getTickets,createTicket,updateTicket,deleteTicket,getImageUrl,} from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
+function formatDateTime(value) {
+  if (!value) return "-";
+
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})$/,
+  );
+
+  if (match) {
+    const [, year, month, day, startTime, endTime] = match;
+
+    return `${day}/${month}/${year} ${startTime} - ${endTime}`;
+  }
+
+  return value;
+}
+
 export default function ManageTicketsPage() {
   const { t } = useLanguage();
   const [tickets, setTickets] = useState([]);
@@ -151,7 +167,9 @@ export default function ManageTicketsPage() {
                   <td className="px-5 py-4 text-neutral-700">
                     {e.stock?.toLocaleString()}
                   </td>
-                  <td className="px-5 py-4 text-neutral-700">{e.date}</td>
+                  <td className="px-5 py-4 text-neutral-700">
+                    {formatDateTime(e.date)}
+                  </td>
                   <td className="px-5 py-4">
                     <StatusPill status={e.status} />
                   </td>
