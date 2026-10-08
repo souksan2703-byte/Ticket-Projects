@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 
-// ธง UK แบบ SVG จริง (ไม่ใช่ emoji) เพื่อให้แสดงผลเหมือนกันทุกเครื่อง
-// รวมถึง Windows ที่บาง font ไม่รองรับ emoji ธงชาติ (ขึ้นเป็นตัวอักษรแทน)
+
 function FlagGB({ size }) {
   return (
     <svg viewBox="0 0 60 60" width={size} height={size}>
@@ -21,7 +20,6 @@ function FlagGB({ size }) {
   );
 }
 
-// ธงลาวแบบ SVG จริง: แถบแดง-น้ำเงิน-แดง พร้อมวงกลมขาวตรงกลาง
 function FlagLA({ size }) {
   return (
     <svg viewBox="0 0 60 60" width={size} height={size}>

@@ -9,24 +9,9 @@ import {
   createTicket,
   updateTicket,
   deleteTicket,
+  getImageUrl,
 } from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
-
-function formatDateTime(value) {
-  if (!value) return "-";
-
-  const match = value.match(
-    /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})$/,
-  );
-
-  if (match) {
-    const [, year, month, day, startTime, endTime] = match;
-
-    return `${day}/${month}/${year} ${startTime} - ${endTime}`;
-  }
-
-  return value;
-}
 
 export default function ManageTicketsPage() {
   const { t } = useLanguage();
@@ -61,7 +46,7 @@ export default function ManageTicketsPage() {
     }
     setModalOpen(false);
     setEditingTicket(null);
-    await loadTickets(); // โหลดใหม่ให้ตรงกับฐานข้อมูลเสมอ
+    await loadTickets();
   }
 
   async function handleDelete(id) {
@@ -151,7 +136,15 @@ export default function ManageTicketsPage() {
                 >
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 rounded-md bg-neutral-200" />
+                      {e.logo ? (
+                        <img
+                          src={getImageUrl(e.logo)}
+                          alt={e.name}
+                          className="h-9 w-9 shrink-0 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="h-9 w-9 shrink-0 rounded-md bg-neutral-200" />
+                      )}
                       <div>
                         <p className="font-medium text-neutral-900">{e.name}</p>
                         <p className="text-xs text-neutral-500">{e.location}</p>
@@ -164,9 +157,7 @@ export default function ManageTicketsPage() {
                   <td className="px-5 py-4 text-neutral-700">
                     {e.stock?.toLocaleString()}
                   </td>
-                  <td className="px-5 py-4 text-neutral-700">
-                    {formatDateTime(e.date)}
-                  </td>
+                  <td className="px-5 py-4 text-neutral-700">{e.date}</td>
                   <td className="px-5 py-4">
                     <StatusPill status={e.status} />
                   </td>

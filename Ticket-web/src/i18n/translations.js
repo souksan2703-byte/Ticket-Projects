@@ -61,7 +61,7 @@ export const translations = {
   transactionDaily: { en: "Transaction (daily)", lo: "ທຸລະກຳ (ລາຍວັນ)" },
 
   // Manage tickets page
-  addTicket: { en: "Add ticket", lo: "ເພີ່ມປີ້" },
+  addTicket: { en: "Add Concert", lo: "ເພີ່ມງານຄອນເສີດ" },
   totalTickets: { en: "Total tickets", lo: "ປີ້ທັງໝົດ" },
   openForSale: { en: "Open for sale", lo: "ພ້ອມຂາຍ" },
   confirmDeleteTicket: {
