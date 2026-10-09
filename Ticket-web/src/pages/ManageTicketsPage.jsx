@@ -4,13 +4,7 @@ import StatCard from "../components/StatCard.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddTicketModal from "../components/AddTicketModal.jsx";
 import { currency } from "../data/sampleData.js";
-import {
-  getTickets,
-  createTicket,
-  updateTicket,
-  deleteTicket,
-  getImageUrl,
-} from "../api.js";
+import {getTickets,createTicket,updateTicket,deleteTicket,getImageUrl,} from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
 function formatDateTime(value) {
