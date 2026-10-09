@@ -17,7 +17,7 @@ export default function SellTicketPage() {
   const [loading, setLoading] = useState(true);
   const [selling, setSelling] = useState(false);
   const [error, setError] = useState(null);
-  const [sold, setSold] = useState(null); // ผลลัพธ์การขายล่าสุด (โค้ด + QR)
+  const [sold, setSold] = useState(null);
 
   async function loadEvents() {
     setLoading(true);
@@ -55,7 +55,7 @@ export default function SellTicketPage() {
       setSold(result);
       setOwner("");
       setTranid("");
-      await loadEvents(); // รีเฟรช stock ที่เหลือให้ตรง
+      await loadEvents(); 
     } catch (err) {
       setError(err.message || t("sellFailed"));
     } finally {

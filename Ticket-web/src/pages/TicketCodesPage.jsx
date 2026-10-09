@@ -16,7 +16,7 @@ export default function TicketCodesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [qrCode, setQrCode] = useState(null); // โค้ดที่กำลังเปิดดู QR อยู่ (null = ไม่ได้เปิด modal)
+  const [qrCode, setQrCode] = useState(null);
 
   const [eventFilter, setEventFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -58,7 +58,6 @@ export default function TicketCodesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventFilter, statusFilter]);
 
-  // ค้นหาแบบ debounce เล็กน้อย กันยิง request รัวทุกตัวอักษรที่พิมพ์
   useEffect(() => {
     const timer = setTimeout(() => loadCodes(), 400);
     return () => clearTimeout(timer);

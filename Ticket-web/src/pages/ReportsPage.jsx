@@ -12,7 +12,7 @@ function currency(n) {
   return `${Number(n || 0).toLocaleString()} LAK`;
 }
 
-// Export รายงานเป็นไฟล์ Excel (.xlsx)
+// Export ລາຍການໄຟຮ Excel (.xlsx)
 function downloadExcel(rows) {
   const data = rows.map((r) => ({
     "ລະຫັດ": r.code,

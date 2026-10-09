@@ -1,5 +1,3 @@
-// ตัวกลางเรียก backend API (Node.js/Express ที่รันอยู่ port 5000)
-// เปลี่ยน URL ได้ผ่านไฟล์ .env -> VITE_API_URL
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -20,9 +18,7 @@ async function request(path, options = {}) {
   let data = null;
   try {
     data = await res.json();
-  } catch {
-
-  }
+  } catch {}
 
   if (!res.ok) {
     const message = data?.message || `Request failed with status ${res.status}`;
@@ -32,7 +28,6 @@ async function request(path, options = {}) {
   return data;
 }
 
-
 function fromBackend(row) {
   return {
     id: row.tickid,
@@ -41,7 +36,7 @@ function fromBackend(row) {
     stock: row.Stock,
     location: row.Location,
     date: row.DateEvent,
-    status: row.Status?.trim(), // Status เป็น char(100) มี space ปน ต้อง trim
+    status: row.Status?.trim(),
     description: row.Description,
     logo: row.Logo,
   };
@@ -268,7 +263,7 @@ export async function uploadImage(file) {
   const res = await fetch(`${API_URL}/upload/image`, {
     method: "POST",
     headers: {
-      // ห้ามใส่ Content-Type เอง! เบราว์เซอร์ต้องเป็นคนตั้ง boundary ของ multipart ให้อัตโนมัติ
+
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: formData,
@@ -276,15 +271,14 @@ export async function uploadImage(file) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data?.message || "อัปโหลดรูปไม่สำเร็จ");
+    throw new Error(data?.message || "ອັບໂຫຼດຮູບພາບລົ້ມເຫຼວ");
   }
-  return data.path; // เช่น "/uploads/abc123.jpg"
+  return data.path;
 }
 
-// ฟังก์ชันช่วยแปลง path ที่เก็บใน DB (เช่น "/uploads/abc123.jpg") ให้เป็น URL เต็มสำหรับแสดงรูป
 export function getImageUrl(path) {
   if (!path) return null;
-  if (path.startsWith("http")) return path; // เผื่อเก็บเป็น URL เต็มไว้อยู่แล้ว
-  const baseUrl = API_URL.replace(/\/api$/, ""); // ตัด /api ออก เพราะรูปอยู่ที่ root ไม่ใช่ใต้ /api
+  if (path.startsWith("http")) return path;
+  const baseUrl = API_URL.replace(/\/api$/, "");
   return `${baseUrl}${path}`;
 }

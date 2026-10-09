@@ -93,20 +93,6 @@ async function createTicket(req, res) {
     }
 }
 
-// PUT /api/tickets/:id -> ແກ້ໄຂຕັ໋ວ (ໜ້າ Edit)
-// ໃນໜ້າ Edit ຈະໃຊ້ additionalTickets ສຳລັບເພີ່ມປີ້ໃໝ່
-//
-// ຕົວຢ່າງ:
-// Stock ປັດຈຸບັນ = 50
-// Add Tickets = 100
-// -> ສ້າງ TicketCode ໃໝ່ 100 ໃບ
-// -> Stock ຈະເປັນ 150 ໃບ
-//
-// ຖ້າ Add Tickets = 0
-// -> ບໍ່ສ້າງປີ້ໃໝ່
-//
-// ບໍ່ມີການລົດ Stock ໂດຍກົງ
-// ເພາະ Stock ຖືກຄວບຄຸມຕາມ TicketCode ໂດຍ Trigger
 
 async function updateTicket(req, res) {
     try {
@@ -123,7 +109,6 @@ async function updateTicket(req, res) {
 
         const pool = await getPool();
 
-        // 1. ກວດສອບວ່າ Event ມີຢູ່ບໍ່
         const currentResult = await pool.request()
             .input('id', sql.Int, req.params.id)
             .query(`
@@ -142,7 +127,6 @@ async function updateTicket(req, res) {
             currentResult.recordset[0].Stock || 0
         );
 
-        // 2. ຈຳນວນປີ້ທີ່ຕ້ອງການເພີ່ມ
         const addQuantity = Number(additionalTickets || 0);
 
         // 3. ກວດສອບຄ່າ Add Tickets
@@ -152,15 +136,12 @@ async function updateTicket(req, res) {
             });
         }
 
-        // 4. ຈຳກັດການເພີ່ມສູງສຸດ 1000 ໃບຕໍ່ຄັ້ງ
         if (addQuantity > 1000) {
             return res.status(400).json({
                 message: 'ເພີ່ມປີ້ໄດ້ບໍ່ເກີນ 1000 ໃບຕໍ່ຄັ້ງ',
             });
         }
 
-        // 5. ອັບເດດຂໍ້ມູນ Event
-        // ບໍ່ແຕະ Stock ໂດຍກົງ
         await pool.request()
             .input('id', sql.Int, req.params.id)
             .input('Title', sql.NVarChar(100), title)
@@ -182,7 +163,6 @@ async function updateTicket(req, res) {
                 WHERE tickid = @id
             `);
 
-        // 6. ຖ້າມີການເພີ່ມປີ້
         if (addQuantity > 0) {
 
             console.log(
@@ -229,7 +209,6 @@ async function updateTicket(req, res) {
     }
 }
 
-// PATCH /api/tickets/:id/status -> เปิด/ปิดการขาย (toggle Open/OFF)
 async function toggleTicketStatus(req, res) {
     try {
         const { status } = req.body;
@@ -255,12 +234,10 @@ async function toggleTicketStatus(req, res) {
     }
 }
 
-// DELETE /api/tickets/:id -> ลบตั๋ว
 async function deleteTicket(req, res) {
     try {
         const pool = await getPool();
 
-        // ต้องลบโค้ดตั๋วที่ผูกกับอีเวนต์นี้ก่อน (ตาราง TicketCode) ไม่งั้นจะเหลือข้อมูลกำพร้าอยู่
         await pool.request()
             .input('id', sql.Int, req.params.id)
             .query('DELETE FROM TicketCode WHERE tickid = @id');
