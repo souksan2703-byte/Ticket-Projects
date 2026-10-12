@@ -16,7 +16,7 @@ export function LanguageProvider({ children }) {
 
   function t(key) {
     const entry = translations[key];
-    if (!entry) return key; // key ที่ยังไม่มีคำแปล แสดงชื่อ key ไว้ก่อน กันแอปพัง
+    if (!entry) return key; 
     return entry[language] ?? entry.en ?? key;
   }
 
@@ -29,6 +29,6 @@ export function LanguageProvider({ children }) {
 
 export function useLanguage() {
   const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage ต้องใช้ภายใน <LanguageProvider>");
+  if (!ctx) throw new Error("useLanguage ຕ້ອງໃຊ້ພາຍໃນ <LanguageProvider>");
   return ctx;
 }

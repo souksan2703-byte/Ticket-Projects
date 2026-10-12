@@ -15,16 +15,16 @@ const uploadRoutes = require('./routes/upload');
 
 const app = express();
 
-app.use(cors()); // ให้ React (localhost:3000/5173) เรียก API นี้ได้
+app.use(cors()); // ໃຫ້ React (localhost:3000/5173) ເອີ້ນ API ນີ້ໄດ້
 app.use(express.json());
 
-// สร้างโฟลเดอร์ /uploads อัตโนมัติถ้ายังไม่มี (กันพังตอน deploy ครั้งแรกที่ยังไม่มีโฟลเดอร์นี้)
+// ສ້າງໂຟນເດີ /uploads ໂດຍອັດຕະໂນມັດຖ້າມັນຍັງບໍ່ມີຢູ່ (ເພື່ອປ້ອງກັນການເສຍຫາຍໃນລະຫວ່າງການນຳໃຊ້ຄັ້ງທຳອິດເມື່ອໂຟນເດີນີ້ບໍ່ມີຢູ່)
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// เปิดให้เข้าถึงไฟล์ที่อัปโหลดแล้วผ่าน URL ตรงๆ เช่น http://localhost:5000/uploads/xxxx.jpg
+// ອະນຸຍາດໃຫ້ເຂົ້າເຖິງໄຟລ໌ທີ່ອັບໂຫລດຜ່ານ URL ໂດຍກົງ, ເຊັ່ນ: http://localhost:5000/uploads/xxxx.jpg
 app.use('/uploads', express.static(uploadsDir));
 
 // Route กลุ่มต่างๆ
@@ -34,8 +34,8 @@ app.use('/api/admin-users', adminUserRoutes); // Admin users
 app.use('/api/ticket-codes', ticketCodeRoutes); // Ticket codes
 app.use('/api/reports', reportRoutes);        // Reports
 app.use('/api/dashboard', dashboardRoutes);   // Dashboard
-app.use('/api/public', publicRoutes);         // หน้าร้านสำหรับลูกค้า (ไม่ต้อง login)
-app.use('/api/upload', uploadRoutes);         // อัปโหลดรูปภาพ (ใช้ Multer)
+app.use('/api/public', publicRoutes);         // ໜ້າຮ້ານສຳລັບລູກຄ້າ (ບໍ່ຕ້ອງ login)
+app.use('/api/upload', uploadRoutes);         // ອັບໂຫລດຮູບພາບ (ໃຊ້ Multer)
 
 
 app.get('/', (req, res) => {
