@@ -18,11 +18,7 @@ const app = express();
 app.use(cors()); // ໃຫ້ React (localhost:3000/5173) ເອີ້ນ API ນີ້ໄດ້
 app.use(express.json());
 
-<<<<<<< Updated upstream
 // ສ້າງໂຟນເດີ /uploads ໂດຍອັດຕະໂນມັດຖ້າມັນຍັງບໍ່ມີຢູ່ (ເພື່ອປ້ອງກັນການເສຍຫາຍໃນລະຫວ່າງການນຳໃຊ້ຄັ້ງທຳອິດເມື່ອໂຟນເດີນີ້ບໍ່ມີຢູ່)
-=======
-// สร้างโฟลเดอร์ /uploads อัตโนมัติถ้ายังไม่มี
->>>>>>> Stashed changes
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
@@ -38,14 +34,8 @@ app.use('/api/admin-users', adminUserRoutes); // Admin users
 app.use('/api/ticket-codes', ticketCodeRoutes); // Ticket codes
 app.use('/api/reports', reportRoutes);        // Reports
 app.use('/api/dashboard', dashboardRoutes);   // Dashboard
-<<<<<<< Updated upstream
 app.use('/api/public', publicRoutes);         // ໜ້າຮ້ານສຳລັບລູກຄ້າ (ບໍ່ຕ້ອງ login)
 app.use('/api/upload', uploadRoutes);         // ອັບໂຫລດຮູບພາບ (ໃຊ້ Multer)
-
-=======
-app.use('/api/public', publicRoutes);         // หน้าร้านสำหรับลูกค้า (ไม่ต้อง login)
-app.use('/api/upload', uploadRoutes);         // อัปโหลดรูปภาพ (Multer)
->>>>>>> Stashed changes
 
 app.get('/', (req, res) => {
     res.json({ message: 'Ticket Admin API กำลังทำงานอยู่' });

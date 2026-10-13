@@ -279,7 +279,6 @@ export async function uploadImage(file) {
 
 export function getImageUrl(path) {
   if (!path) return null;
-<<<<<<< Updated upstream
 
   if (/^https?:\/\//i.test(path)) {
     return path;
@@ -290,10 +289,3 @@ export function getImageUrl(path) {
 
   return `${baseUrl}${imagePath}`;
 }
-=======
-  if (path.startsWith("http")) return path; // เผื่อเก็บเป็น URL เต็มไว้อยู่แล้ว
-  const baseUrl = API_URL.replace(/\/api$/, ""); // ตัด /api ออก เพราะรูปอยู่ที่ root ไม่ใช่ใต้ /api
-  return `${baseUrl}${path}`;
-}
-
->>>>>>> Stashed changes
