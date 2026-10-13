@@ -278,7 +278,13 @@ export async function uploadImage(file) {
 
 export function getImageUrl(path) {
   if (!path) return null;
-  if (path.startsWith("http")) return path;
-  const baseUrl = API_URL.replace(/\/api$/, "");
-  return `${baseUrl}${path}`;
+
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const baseUrl = API_URL.replace(/\/api\/?$/, "");
+  const imagePath = path.startsWith("/") ? path : `/${path}`;
+
+  return `${baseUrl}${imagePath}`;
 }
