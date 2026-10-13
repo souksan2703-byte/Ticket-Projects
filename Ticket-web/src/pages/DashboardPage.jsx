@@ -27,15 +27,35 @@ function currency(n) {
   return `${Number(n || 0).toLocaleString()} LAK`;
 }
 
-const BAR_COLORS = ["#DC2626", "#F59E0B", "#7C2D12", "#D1D5DB", "#059669", "#9333EA"];
-const LINE_COLORS = ["#F97316", "#2563EB"];
+const BAR_COLORS = [
+  "#DC2626",
+  "#F59E0B",
+  "#7C2D12",
+  "#D1D5DB",
+  "#059669",
+  "#9333EA",
+];
+
+const LINE_COLORS = [
+  "#F97316",
+  "#2563EB",
+  "#16A34A",
+  "#DC2626",
+  "#9333EA",
+  "#0891B2",
+];
 
 export default function DashboardPage() {
   const { t } = useLanguage();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
-  const [summary, setSummary] = useState({ todaysSales: 0, ticketsSoldThisMonth: 0, active: 0, off: 0 });
+  const [summary, setSummary] = useState({
+    todaysSales: 0,
+    ticketsSoldThisMonth: 0,
+    active: 0,
+    off: 0,
+  });
   const [soldByEvent, setSoldByEvent] = useState([]);
   const [ticketMix, setTicketMix] = useState([]);
   const [txData, setTxData] = useState({ events: [], series: [] });
@@ -75,7 +95,11 @@ export default function DashboardPage() {
       <PageHeader title={t("dashboard")} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2">
-        <DateField label={t("transactionDate")} value={from} onChange={setFrom} />
+        <DateField
+          label={t("transactionDate")}
+          value={from}
+          onChange={setFrom}
+        />
         <DateField label={t("toDate")} value={to} onChange={setTo} />
       </div>
 
@@ -99,13 +123,23 @@ export default function DashboardPage() {
           value={summary.ticketsSoldThisMonth.toLocaleString()}
           className="bg-cyan-200 text-cyan-900"
         />
-        <StatCard label={t("active")} value={summary.active} className="bg-lime-200 text-lime-900" />
-        <StatCard label={t("off")} value={summary.off} className="bg-red-200 text-red-900" />
+        <StatCard
+          label={t("active")}
+          value={summary.active}
+          className="bg-lime-200 text-lime-900"
+        />
+        <StatCard
+          label={t("off")}
+          value={summary.off}
+          className="bg-red-200 text-red-900"
+        />
       </div>
 
       <div className="mb-6 rounded-xl border border-neutral-200 bg-white p-5">
         <p className="mb-4 text-sm font-medium text-neutral-800">
-          {t("ticketsSoldByEvent")} ({totalSold === 1 && soldByEvent.length === 0 ? 0 : totalSold} {t("total")})
+          {t("ticketsSoldByEvent")} (
+          {totalSold === 1 && soldByEvent.length === 0 ? 0 : totalSold}{" "}
+          {t("total")})
         </p>
         {soldByEvent.length === 0 ? (
           <p className="text-sm text-neutral-400">{t("noSalesDataInRange")}</p>
@@ -115,15 +149,24 @@ export default function DashboardPage() {
               {soldByEvent.map((s, i) => (
                 <div
                   key={s.name}
-                  style={{ width: `${(s.value / totalSold) * 100}%`, backgroundColor: BAR_COLORS[i % BAR_COLORS.length] }}
+                  style={{
+                    width: `${(s.value / totalSold) * 100}%`,
+                    backgroundColor: BAR_COLORS[i % BAR_COLORS.length],
+                  }}
                 />
               ))}
             </div>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-600">
               {soldByEvent.map((s, i) => (
                 <div key={s.name} className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: BAR_COLORS[i % BAR_COLORS.length] }} />
-                  {s.name} · {s.value} ({Math.round((s.value / totalSold) * 100)}%)
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: BAR_COLORS[i % BAR_COLORS.length],
+                    }}
+                  />
+                  {s.name} · {s.value} (
+                  {Math.round((s.value / totalSold) * 100)}%)
                 </div>
               ))}
             </div>
@@ -133,20 +176,33 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="mb-4 text-sm font-medium text-neutral-800">{t("ticketMixTop2")}</p>
+          <p className="mb-4 text-sm font-medium text-neutral-800">
+            {t("ticketMixTop2").replace("Top 2", "All Events")}
+          </p>
           {ticketMix.length === 0 ? (
             <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
           ) : (
             <div style={{ width: "100%", height: 260 }}>
               <ResponsiveContainer>
                 <PieChart>
-                  <Pie data={ticketMix} dataKey="value" nameKey="name" innerRadius={0} outerRadius={90}>
+                  <Pie
+                    data={ticketMix}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={0}
+                    outerRadius={90}
+                  >
                     {ticketMix.map((entry) => (
                       <Cell key={entry.name} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(v) => `${v}%`} />
-                  <Legend verticalAlign="middle" align="right" layout="vertical" iconType="circle" />
+                  <Legend
+                    verticalAlign="middle"
+                    align="right"
+                    layout="vertical"
+                    iconType="circle"
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -154,7 +210,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="mb-4 text-sm font-medium text-neutral-800">{t("transactionMonthly")}</p>
+          <p className="mb-4 text-sm font-medium text-neutral-800">
+            {t("transactionMonthly")}
+          </p>
           {txData.series.length === 0 ? (
             <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
           ) : (
@@ -164,28 +222,48 @@ export default function DashboardPage() {
                   <div key={name} className="flex items-center gap-2">
                     <span
                       className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: LINE_COLORS[i % LINE_COLORS.length] }}
+                      style={{
+                        backgroundColor: LINE_COLORS[i % LINE_COLORS.length],
+                      }}
                     />
                     {name}
                   </div>
                 ))}
               </div>
               <div style={{ overflowX: "auto" }}>
-                <div style={{ width: Math.max(600, txData.series.length * 48), height: 300 }}>
+                <div
+                  style={{
+                    width: Math.max(600, txData.series.length * 48),
+                    height: 300,
+                  }}
+                >
                   <ResponsiveContainer>
-                    <LineChart data={txData.series} margin={{ top: 10, left: 10, right: 10, bottom: 20 }}>
+                    <LineChart
+                      data={txData.series}
+                      margin={{ top: 10, left: 10, right: 10, bottom: 20 }}
+                    >
                       <CartesianGrid strokeDasharray="3 3" stroke="#F1F1EF" />
                       <XAxis
                         dataKey="date"
                         tick={{ fontSize: 11 }}
                         tickFormatter={(v) => v.split("-")[2]}
-                        label={{ value: t("timeMonthly"), position: "insideBottom", offset: -12, fontSize: 12 }}
+                        label={{
+                          value: t("timeMonthly"),
+                          position: "insideBottom",
+                          offset: -12,
+                          fontSize: 12,
+                        }}
                       />
                       <YAxis
                         tick={{ fontSize: 11 }}
                         tickFormatter={(v) => v.toLocaleString()}
                         width={70}
-                        label={{ value: t("amount"), angle: -90, position: "insideLeft", fontSize: 12 }}
+                        label={{
+                          value: t("amount"),
+                          angle: -90,
+                          position: "insideLeft",
+                          fontSize: 12,
+                        }}
                       />
                       <Tooltip
                         formatter={(v) => currency(v)}

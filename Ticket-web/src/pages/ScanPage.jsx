@@ -3,7 +3,7 @@ import { ScanLine, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { scanTicketCode } from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
-// สีและไอคอนของแต่ละผลลัพธ์ที่เป็นไปได้จาก backend
+// ສີ ແລະ ຮູບສັນຍາລັກສຳລັບແຕ່ລະຜົນໄດ້ຮັບທີ່ເປັນໄປໄດ້ backend
 const RESULT_STYLES = {
   success: { bg: "bg-green-50", border: "border-green-200", text: "text-green-700", Icon: CheckCircle2 },
   not_sold: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", Icon: AlertTriangle },
@@ -20,8 +20,8 @@ export default function ScanPage() {
   const [history, setHistory] = useState([]);
   const inputRef = useRef(null);
 
-  // โฟกัสช่อง input ค้างไว้เสมอ เพราะเครื่องสแกนภายนอกทำงานเหมือนคีย์บอร์ด
-  // (พิมพ์โค้ดแล้วกด Enter ให้อัตโนมัติ) ต้องมี focus อยู่ที่ช่องนี้ตลอดเวลาถึงจะรับค่าได้
+  // ຮັກສາຈຸດສຸມຢູ່ໃນຊ່ອງປ້ອນຂໍ້ມູນຕະຫຼອດເວລາ, ເພາະວ່າເຄື່ອງສະແກນພາຍນອກເຮັດໜ້າທີ່ຄືກັບແປ້ນພິມ
+ // (ພິມລະຫັດໂດຍອັດຕະໂນມັດ ແລະ ກົດ Enter) ຈຸດສຸມຕ້ອງຢູ່ໃນຊ່ອງນີ້ເພື່ອໃຫ້ຂໍ້ມູນຖືກຮັບ
   useEffect(() => {
     inputRef.current?.focus();
     const refocus = () => inputRef.current?.focus();

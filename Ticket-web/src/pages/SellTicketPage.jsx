@@ -17,13 +17,12 @@ export default function SellTicketPage() {
   const [loading, setLoading] = useState(true);
   const [selling, setSelling] = useState(false);
   const [error, setError] = useState(null);
-  const [sold, setSold] = useState(null); // ผลลัพธ์การขายล่าสุด (โค้ด + QR)
-
+  const [sold, setSold] = useState(null);// ຜົນການຂາຍລ່າສຸດ (ລະຫັດ + QR)
   async function loadEvents() {
     setLoading(true);
     try {
       const data = await getTickets();
-      // แสดงเฉพาะอีเวนต์ที่เปิดขายอยู่ (Open) เท่านั้น
+      // ສະແດງສະເພາະເຫດການທີ່ກຳລັງເປີດຂາຍຢູ່ໃນປະຈຸບັນ
       const openEvents = data.filter((e) => e.status === "Open");
       setEvents(openEvents);
       if (openEvents[0]) setTickid(openEvents[0].id);
@@ -61,7 +60,7 @@ export default function SellTicketPage() {
     } finally {
       setSelling(false);
     }
-  }
+  }// ໂຫຼດຂໍ້ມູນສິນຄ້າທີ່ຍັງເຫຼືອຄືນໃໝ່ເພື່ອໃຫ້ກົງກັນ
 
   return (
     <div>
