@@ -1,28 +1,28 @@
-const { sql, getPool } = require('../config/db');
+const { sql, getPool } = require("../config/db");
 
-const SOLD_DATE_SQL = 'COALESCE(tc.soldAt, tc.created)';
+const SOLD_DATE_SQL = "COALESCE(tc.soldAt, tc.created)";
 
 function buildDateFilter(request, from, to, dateExpr = SOLD_DATE_SQL) {
-    let where = '';
-    if (from) {
-        request.input('from', sql.Date, from);
-        where += ` AND ${dateExpr} >= @from`;
-    }
-    if (to) {
-        request.input('to', sql.Date, to);
-        where += ` AND ${dateExpr} < DATEADD(day, 1, @to)`;
-    }
-    return where;
+  let where = "";
+  if (from) {
+    request.input("from", sql.Date, from);
+    where += ` AND ${dateExpr} >= @from`;
+  }
+  if (to) {
+    request.input("to", sql.Date, to);
+    where += ` AND ${dateExpr} < DATEADD(day, 1, @to)`;
+  }
+  return where;
 }
 
 // GET /api/dashboard/summary
 // ກາດສະຫຼຸບ 4 ອັນ: Today's sales, Tickets sold this month, Active, OFF
 // (ຄ່ານີ້ຕຶງກັບ "ມື້ນີ້"/"ເດືອນນີ້" ແທ້ໆສະເໝີ ບໍ່ຜູກກັບຕົວກອງວັນທີ່ເທິງໜ້າ Dashboard)
 async function getSummary(req, res) {
-    try {
-        const pool = await getPool();
+  try {
+    const pool = await getPool();
 
-        const salesResult = await pool.request().query(`
+    const salesResult = await pool.request().query(`
             SELECT ISNULL(SUM(m.Price), 0) AS todaysSales
             FROM TicketCode tc
             JOIN TicketCodeMaster m ON m.tickid = tc.tickid
@@ -30,7 +30,7 @@ async function getSummary(req, res) {
                 AND CAST(${SOLD_DATE_SQL} AS date) = CAST(GETDATE() AS date)
         `);
 
-        const monthResult = await pool.request().query(`
+    const monthResult = await pool.request().query(`
             SELECT COUNT(*) AS ticketsSoldThisMonth
             FROM TicketCode tc
             WHERE tc.status = 0
@@ -38,34 +38,36 @@ async function getSummary(req, res) {
                 AND MONTH(${SOLD_DATE_SQL}) = MONTH(GETDATE())
         `);
 
-        const statusResult = await pool.request().query(`
+    const statusResult = await pool.request().query(`
             SELECT
                 SUM(CASE WHEN RTRIM(Status) = 'Open' THEN 1 ELSE 0 END) AS active,
                 SUM(CASE WHEN RTRIM(Status) = 'OFF' THEN 1 ELSE 0 END) AS offCount
             FROM TicketCodeMaster
         `);
 
-        res.json({
-            todaysSales: salesResult.recordset[0].todaysSales || 0,
-            ticketsSoldThisMonth: monthResult.recordset[0].ticketsSoldThisMonth || 0,
-            active: statusResult.recordset[0].active || 0,
-            off: statusResult.recordset[0].offCount || 0,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນສະຫຼຸບບໍ່ສຳເລັດ', error: err.message });
-    }
+    res.json({
+      todaysSales: salesResult.recordset[0].todaysSales || 0,
+      ticketsSoldThisMonth: monthResult.recordset[0].ticketsSoldThisMonth || 0,
+      active: statusResult.recordset[0].active || 0,
+      off: statusResult.recordset[0].offCount || 0,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "ດຶງຂໍ້ມູນສະຫຼຸບບໍ່ສຳເລັດ", error: err.message });
+  }
 }
 
 // GET /api/dashboard/sold-by-event?from=&to= -> ຈຳນວນຕົ໋ວທີ່ຂາຍໄດ້ ແຍກຕາມອີເວັນ (ສຳລັບແຖບສີດ້ານເທິງ)
 async function getSoldByEvent(req, res) {
-    try {
-        const { from, to } = req.query;
-        const pool = await getPool();
-        const request = pool.request();
-        const dateFilter = buildDateFilter(request, from, to);
+  try {
+    const { from, to } = req.query;
+    const pool = await getPool();
+    const request = pool.request();
+    const dateFilter = buildDateFilter(request, from, to);
 
-        const result = await request.query(`
+    const result = await request.query(`
             SELECT m.Title AS name, COUNT(*) AS value
             FROM TicketCode tc
             JOIN TicketCodeMaster m ON m.tickid = tc.tickid
@@ -74,123 +76,195 @@ async function getSoldByEvent(req, res) {
             ORDER BY COUNT(*) DESC
         `);
 
-        res.json(result.recordset);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
-    }
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "ດຶງຂໍ້ມູນບໍ່ສຳເລັດ", error: err.message });
+  }
 }
 
 // GET /api/dashboard/ticket-mix?from=&to= -> ເອົາແຕ່ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດ ມາຄິດເປັນ % ທຽບກັນເອງ (ສຳລັບ pie chart)
+// GET /api/dashboard/ticket-mix?from=&to=
 async function getTicketMix(req, res) {
-    try {
-        const { from, to } = req.query;
-        const pool = await getPool();
-        const request = pool.request();
-        const dateFilter = buildDateFilter(request, from, to);
+  try {
+    const { from, to } = req.query;
+    const pool = await getPool();
+    const request = pool.request();
 
-        const result = await request.query(`
-            SELECT TOP 2 m.Title AS name, COUNT(*) AS count
-            FROM TicketCode tc
-            JOIN TicketCodeMaster m ON m.tickid = tc.tickid
-            WHERE tc.status = 0 ${dateFilter}
-            GROUP BY m.Title
-            ORDER BY COUNT(*) DESC
-        `);
+    // ກຳນົດສີໃຫ້ແຕ່ລະ Event
+    const colors = [
+      "#F97316",
+      "#2563EB",
+      "#16A34A",
+      "#9333EA",
+      "#DC2626",
+      "#0891B2",
+      "#CA8A04",
+      "#EC4899",
+    ];
 
-        const rows = result.recordset;
-        const total = rows.reduce((sum, r) => sum + r.count, 0) || 1;
-        const colors = ['#2563EB', '#F97316'];
+    // ກຳນົດເງື່ອນໄຂວັນທີໃນ JOIN
+    // ເພື່ອໃຫ້ Event ທີ່ຍັງບໍ່ມີການຂາຍກໍສະແດງ
+    const joinConditions = ["tc.status = 0"];
 
-        res.json(
-            rows.map((r, i) => ({
-                name: r.name,
-                value: Math.round((r.count / total) * 100),
-                color: colors[i] || '#9CA3AF',
-            }))
-        );
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
+    if (from) {
+      request.input("from", sql.Date, from);
+      joinConditions.push(`${SOLD_DATE_SQL} >= @from`);
     }
+
+    if (to) {
+      request.input("to", sql.Date, to);
+      joinConditions.push(`${SOLD_DATE_SQL} < DATEADD(day, 1, @to)`);
+    }
+
+    const result = await request.query(`
+      SELECT
+        m.tickid,
+        m.Title AS name,
+        COUNT(tc.tickid) AS count
+      FROM TicketCodeMaster m
+      LEFT JOIN TicketCode tc
+        ON tc.tickid = m.tickid
+        AND ${joinConditions.join(" AND ")}
+      GROUP BY m.tickid, m.Title
+      ORDER BY m.tickid
+    `);
+
+    const rows = result.recordset;
+    const total = rows.reduce((sum, row) => sum + Number(row.count), 0);
+
+    res.json(
+      rows.map((row, index) => ({
+        name: row.name,
+        count: Number(row.count),
+        value: total > 0 ? Math.round((Number(row.count) / total) * 100) : 0,
+        color: colors[index % colors.length],
+      })),
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "ດຶງຂໍ້ມູນບໍ່ສຳເລັດ",
+      error: err.message,
+    });
+  }
 }
 
 // GET /api/dashboard/transactions?from=&to= -> ລາຍຮັບລາຍວັນຂອງ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດ (ສຳລັບ line chart)
 // ຖ້າບໍ່ລະບຸໄລຍະວັນທີ່ ຈະໃຊ້ "ເດືອນນີ້" (ວັນທີ 1 ເຖິງວັນສຸດທ້າຍຂອງເດືອນ) ເປັນຄ່າເລີ່ມຕົ້ນ
+// GET /api/dashboard/transactions?from=&to=
+// ສະແດງລາຍຮັບລາຍວັນຂອງທຸກ Event
 async function getTransactionSeries(req, res) {
-    try {
-        let { from, to } = req.query;
-        const pool = await getPool();
+  try {
+    let { from, to } = req.query;
+    const pool = await getPool();
 
-        if (!from || !to) {
-            const today = new Date();
-            const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            from = from || firstOfMonth.toISOString().slice(0, 10);
-            to = to || lastOfMonth.toISOString().slice(0, 10);
-        }
+    // ຖ້າບໍ່ລະບຸວັນທີ ໃຊ້ເດືອນປັດຈຸບັນ
+    if (!from || !to) {
+      const today = new Date();
+      const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastOfMonth = new Date(
+        today.getFullYear(),
+        today.getMonth() + 1,
+        0,
+      );
 
-        // ຫາ 2 ອີເວັນທີ່ຂາຍດີທີ່ສຸດໃນຊ່ວງນີ້ກ່ອນ
-        const topEventsResult = await pool.request()
-            .input('from', sql.Date, from)
-            .input('to', sql.Date, to)
-            .query(`
-                SELECT TOP 2 m.Title AS name
-                FROM TicketCode tc
-                JOIN TicketCodeMaster m ON m.tickid = tc.tickid
-                WHERE tc.status = 0
-                    AND ${SOLD_DATE_SQL} >= @from AND ${SOLD_DATE_SQL} < DATEADD(day, 1, @to)
-                GROUP BY m.Title
-                ORDER BY COUNT(*) DESC
-            `);
+      const formatDate = (date) =>
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0",
+        )}-${String(date.getDate()).padStart(2, "0")}`;
 
-        const topEvents = topEventsResult.recordset.map((r) => r.name);
-
-        if (topEvents.length === 0) {
-            return res.json({ events: [], series: [] });
-        }
-
-        const request2 = pool.request().input('from', sql.Date, from).input('to', sql.Date, to);
-        topEvents.forEach((name, i) => request2.input(`ev${i}`, sql.NVarChar(100), name));
-        const dataResult2 = await request2.query(`
-            SELECT
-                CONVERT(varchar(10), ${SOLD_DATE_SQL}, 23) AS date,
-                m.Title AS eventName,
-                SUM(m.Price) AS revenue
-            FROM TicketCode tc
-            JOIN TicketCodeMaster m ON m.tickid = tc.tickid
-            WHERE tc.status = 0
-                AND ${SOLD_DATE_SQL} >= @from AND ${SOLD_DATE_SQL} < DATEADD(day, 1, @to)
-                AND m.Title IN (${topEvents.map((_, i) => `@ev${i}`).join(',')})
-            GROUP BY CONVERT(varchar(10), ${SOLD_DATE_SQL}, 23), m.Title
-        `);
-
-        // ຕື່ມທຸກວັນໃນຊ່ວງໃຫ້ຄົບ (ແມ່ນວັນໃດບໍ່ມີການຂາຍເລີຍ ກໍ່ໃຫ້ເປັນ 0 ຈະໄດ້ກຣາບເສັ້ນຕໍ່ເນື່ອງບໍ່ຂາດຊ່ວງ)
-        const byDate = {};
-        dataResult2.recordset.forEach((row) => {
-            const dateKey = row.date;
-            if (!byDate[dateKey]) byDate[dateKey] = {};
-            byDate[dateKey][row.eventName] = row.revenue;
-        });
-
-        const series = [];
-        const cursor = new Date(from);
-        const endDate = new Date(to);
-        while (cursor <= endDate) {
-            const dateKey = cursor.toISOString().slice(0, 10);
-            const entry = { date: dateKey };
-            topEvents.forEach((name) => {
-                entry[name] = byDate[dateKey]?.[name] || 0;
-            });
-            series.push(entry);
-            cursor.setDate(cursor.getDate() + 1);
-        }
-
-        res.json({ events: topEvents, series });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນບໍ່ສຳເລັດ', error: err.message });
+      from = from || formatDate(firstOfMonth);
+      to = to || formatDate(lastOfMonth);
     }
+
+    // ດຶງ Event ທຸກອັນ ບໍ່ຈຳກັດ TOP 2
+    const eventsResult = await pool.request().query(`
+      SELECT tickid, Title AS name
+      FROM TicketCodeMaster
+      ORDER BY tickid
+    `);
+
+    const events = eventsResult.recordset.map((row) => row.name);
+
+    if (eventsResult.recordset.length === 0) {
+      return res.json({ events: [], series: [] });
+    }
+
+    // ດຶງລາຍຮັບຈາກການຂາຍຕາມວັນ ແລະ Event
+    const dataResult = await pool
+      .request()
+      .input("from", sql.Date, from)
+      .input("to", sql.Date, to).query(`
+        SELECT
+          CONVERT(
+            varchar(10),
+            ${SOLD_DATE_SQL},
+            23
+          ) AS date,
+          m.Title AS eventName,
+          SUM(m.Price) AS revenue
+        FROM TicketCode tc
+        JOIN TicketCodeMaster m
+          ON m.tickid = tc.tickid
+        WHERE tc.status = 0
+          AND ${SOLD_DATE_SQL} >= @from
+          AND ${SOLD_DATE_SQL} < DATEADD(day, 1, @to)
+        GROUP BY
+          CONVERT(
+            varchar(10),
+            ${SOLD_DATE_SQL},
+            23
+          ),
+          m.Title
+      `);
+
+    const byDate = {};
+
+    dataResult.recordset.forEach((row) => {
+      if (!byDate[row.date]) {
+        byDate[row.date] = {};
+      }
+
+      byDate[row.date][row.eventName] = Number(row.revenue) || 0;
+    });
+
+    // ສ້າງຂໍ້ມູນຄົບທຸກວັນ ແລະທຸກ Event
+    const series = [];
+    const cursor = new Date(`${from}T00:00:00`);
+    const endDate = new Date(`${to}T00:00:00`);
+
+    while (cursor <= endDate) {
+      const dateKey = [
+        cursor.getFullYear(),
+        String(cursor.getMonth() + 1).padStart(2, "0"),
+        String(cursor.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const entry = { date: dateKey };
+
+      events.forEach((name) => {
+        entry[name] = byDate[dateKey]?.[name] ?? 0;
+      });
+
+      series.push(entry);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    res.json({ events, series });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "ດຶງຂໍ້ມູນບໍ່ສຳເລັດ",
+      error: err.message,
+    });
+  }
 }
 
-module.exports = { getSummary, getSoldByEvent, getTicketMix, getTransactionSeries };
+module.exports = {
+  getSummary,
+  getSoldByEvent,
+  getTicketMix,
+  getTransactionSeries,
+};
