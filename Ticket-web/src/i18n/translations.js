@@ -58,7 +58,14 @@ export const translations = {
     en: "Ticket mix (top 2 events)",
     lo: "ສັດສ່ວນປີ້ (2 ງານອັນດັບຕົ້ນ)",
   },
-  transactionDaily: { en: "Transaction (daily)", lo: "ທຸລະກຳ (ລາຍວັນ)" },
+  transactionMonthly: {
+    en: "Transaction (monthly)",
+    lo: "ທຸລະກຳ (ລາຍເດືອນ)",
+  },
+  amount: {
+    en: "Amount",
+    lo: "ຈຳນວນເງິນ",
+  },
 
   // Manage tickets page
   addTicket: { en: "Add Concert", lo: "ເພີ່ມງານຄອນເສີດ" },
@@ -150,9 +157,9 @@ export const translations = {
   disable: { en: "Disable", lo: "ປິດໃຊ້ງານ" },
 
   changeUserPassword: {
-  en: "Change user password",
-  lo: "ປ່ຽນລະຫັດຜ່ານຜູ້ໃຊ້",
-},
+    en: "Change user password",
+    lo: "ປ່ຽນລະຫັດຜ່ານຜູ້ໃຊ້",
+  },
 
   // My profile page
   fillAllFields: {
