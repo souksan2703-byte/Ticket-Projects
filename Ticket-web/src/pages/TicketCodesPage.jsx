@@ -16,7 +16,7 @@ export default function TicketCodesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [qrCode, setQrCode] = useState(null); // ລະຫັດທີ່ກຳລັງເບິ່ງລະຫັດ QR (null = ບໍ່ຢູ່ໃນມຸມມອງແບບໂມດໍ)
+  const [qrCode, setQrCode] = useState(null);
 
   const [eventFilter, setEventFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -27,7 +27,7 @@ export default function TicketCodesPage() {
       const data = await getTickets();
       setEvents(data);
     } catch {
-      // ຖ້າເຫດການ ບໍ່ ຮ້າຍແຮງ ຖືກໂຫຼດ, ທ່ານຍັງສາມາດໃຊ້ໜ້ານີ້ໄດ້, ມີພຽງເມນູເລື່ອນລົງເທົ່ານັ້ນທີ່ຈະຫວ່າງເປົ່າ
+      // ถ้าโหลด events ບໍ່ສຳເລັດ ยังใช้หน้านี้ต่อได้ แค่ dropdown จะว่าง
     }
   }
 
@@ -58,7 +58,6 @@ export default function TicketCodesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventFilter, statusFilter]);
 
-  // ค้นหาแบบ debounce เล็กน้อย กันยิง request รัวทุกตัวอักษรที่พิมพ์
   useEffect(() => {
     const timer = setTimeout(() => loadCodes(), 400);
     return () => clearTimeout(timer);

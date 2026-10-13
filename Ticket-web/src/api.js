@@ -1,5 +1,3 @@
-// ตัวกลางเรียก backend API (Node.js/Express ที่รันอยู่ port 5000)
-// เปลี่ยน URL ได้ผ่านไฟล์ .env -> VITE_API_URL
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -20,9 +18,7 @@ async function request(path, options = {}) {
   let data = null;
   try {
     data = await res.json();
-  } catch {
-
-  }
+  } catch {}
 
   if (!res.ok) {
     const message = data?.message || `Request failed with status ${res.status}`;
@@ -32,7 +28,6 @@ async function request(path, options = {}) {
   return data;
 }
 
-
 function fromBackend(row) {
   return {
     id: row.tickid,
@@ -41,7 +36,7 @@ function fromBackend(row) {
     stock: row.Stock,
     location: row.Location,
     date: row.DateEvent,
-    status: row.Status?.trim(), // Status เป็น char(100) มี space ปน ต้อง trim
+    status: row.Status?.trim(),
     description: row.Description,
     logo: row.Logo,
   };
@@ -268,7 +263,7 @@ export async function uploadImage(file) {
   const res = await fetch(`${API_URL}/upload/image`, {
     method: "POST",
     headers: {
-      // ຢ່າໃສ່ Content-Type ດ້ວຍຕົນເອງ! ໂປຣແກຣມທ່ອງເວັບຕ້ອງຕັ້ງຄ່າຂອບເຂດຫຼາຍສ່ວນໂດຍອັດຕະໂນມັດ
+
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: formData,
@@ -276,15 +271,20 @@ export async function uploadImage(file) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data?.message || "อัปโหลดรูปไม่สำเร็จ");
+    throw new Error(data?.message || "ອັບໂຫຼດຮູບພາບລົ້ມເຫຼວ");
   }
-  return data.path;// ຕົວຢ່າງ, "/uploads/abc123.jpg"
+  return data.path;
 }
 
-// ຟັງຊັນນີ້ຊ່ວຍປ່ຽນເສັ້ນທາງທີ່ເກັບໄວ້ໃນຖານຂໍ້ມູນ (ເຊັ່ນ "/uploads/abc123.jpg") ໄປເປັນ URL ເຕັມສຳລັບສະແດງຮູບພາບ.
 export function getImageUrl(path) {
   if (!path) return null;
-  if (path.startsWith("http")) return path; // ໃນກໍລະນີທີ່ທ່ານມີ URL ເຕັມທີ່ບັນທຶກໄວ້ແລ້ວ.
-  const baseUrl = API_URL.replace(/\/api$/, "");// ລຶບ /api ເພາະວ່າຮູບພາບຢູ່ໃນໄດເລກະທໍລີຮາກ, ບໍ່ແມ່ນຢູ່ລຸ່ມ /api.
-  return `${baseUrl}${path}`;
+
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const baseUrl = API_URL.replace(/\/api\/?$/, "");
+  const imagePath = path.startsWith("/") ? path : `/${path}`;
+
+  return `${baseUrl}${imagePath}`;
 }
