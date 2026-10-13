@@ -3,6 +3,40 @@ import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { uploadImage, getImageUrl } from "../api";
 
+function parseEventDateTime(value) {
+  if (!value) {
+    return { date: "", start: "", end: "" };
+  }
+
+  const timeMatch = value.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+
+  const datePart = timeMatch
+    ? value.slice(0, timeMatch.index).replace(/[,\s]+$/, "")
+    : value;
+
+  let date = "";
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(datePart)) {
+    date = datePart.slice(0, 10);
+  } else {
+    const parsed = new Date(datePart);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      const year = parsed.getFullYear();
+      const month = String(parsed.getMonth() + 1).padStart(2, "0");
+      const day = String(parsed.getDate()).padStart(2, "0");
+
+      date = `${year}-${month}-${day}`;
+    }
+  }
+
+  return {
+    date,
+    start: timeMatch?.[1] || "",
+    end: timeMatch?.[2] || "",
+  };
+}
+
 export default function AddTicketModal({ onClose, onSave, initialData }) {
   const { t } = useLanguage();
   const isEditing = Boolean(initialData);
@@ -27,9 +61,11 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
   const [error, setError] = useState(null);
 
   // Date & Time
-  const [eventDate, setEventDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const initialDateTime = parseEventDateTime(initialData?.date);
+
+  const [eventDate, setEventDate] = useState(initialDateTime.date);
+  const [startTime, setStartTime] = useState(initialDateTime.start);
+  const [endTime, setEndTime] = useState(initialDateTime.end);
 
   function update(field, value) {
     setForm((f) => ({
@@ -113,16 +149,17 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       return;
     }
 
-    setSaving(true);
     if (!eventDate || !startTime || !endTime) {
-      setError("กรุณาเลือกวันที่ เวลาเริ่ม และเวลาสิ้นสุด");
+      setError("ກະລຸນາເລືອກວັນທີ ເວລາເລີ່ມ ແລະ ເວລາສິ້ນສຸດ");
       return;
     }
 
     if (startTime >= endTime) {
-      setError("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+      setError("ເວລາສິ້ນສຸດຕ້ອງຫຼາຍກວ່າເວລາເລີ່ມ");
       return;
     }
+
+    setSaving(true);
 
     // รวม Date + Start time + End time
     const dateTimeValue = `${eventDate} ${startTime} - ${endTime}`;

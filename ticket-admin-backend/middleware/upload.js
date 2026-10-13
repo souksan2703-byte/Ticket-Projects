@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const uploadDir = path.join(__dirname, '..', 'uploads');
 
-// สร้างโฟลเดอร์ uploads ถ้ายังไม่มี
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -38,7 +37,7 @@ const fileFilter = (req, file, cb) => {
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('อนุญาตเฉพาะไฟล์ JPG, PNG และ WEBP เท่านั้น'));
+        cb(new Error('ອະນຸຍາດສະເພາະໄຟ JPG, PNG ແລະ WEBP ເທົ່ານັ້ນ'));
     }
 };
 
