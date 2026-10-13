@@ -28,12 +28,12 @@ function currency(n) {
 }
 
 const BAR_COLORS = [
+  "#F97316",
+  "#2563EB",
+  "#16A34A",
   "#DC2626",
-  "#F59E0B",
-  "#7C2D12",
-  "#D1D5DB",
-  "#059669",
   "#9333EA",
+  "#0891B2",
 ];
 
 const LINE_COLORS = [
