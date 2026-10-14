@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { login } from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -6,6 +7,7 @@ export default function LoginPage({ onSignIn }) {
   const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +33,9 @@ export default function LoginPage({ onSignIn }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-10 shadow-sm">
-        <h1 className="text-center text-2xl font-semibold text-neutral-900">{t("appTitle")}</h1>
+        <h1 className="text-center text-2xl font-semibold text-neutral-900">
+          {t("appTitle")}
+        </h1>
         <p className="mt-2 text-center text-sm text-neutral-500">
           {t("signInSubtitle")}
         </p>
@@ -44,7 +48,9 @@ export default function LoginPage({ onSignIn }) {
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">{t("username")}</label>
+            <label className="mb-1.5 block text-sm text-neutral-700">
+              {t("username")}
+            </label>
             <input
               type="text"
               value={username}
@@ -53,16 +59,45 @@ export default function LoginPage({ onSignIn }) {
               placeholder={t("usernamePlaceholder")}
             />
           </div>
+
           <div>
-            <label className="mb-1.5 block text-sm text-neutral-700">{t("password")}</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
-              placeholder={t("passwordPlaceholder")}
-            />
+            <label className="mb-1.5 block text-sm text-neutral-700">
+              {t("password")}
+            </label>
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 pr-12 text-sm text-neutral-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                placeholder={t("passwordPlaceholder")}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                <span
+                  className="inline-flex transition-all duration-200 ease-in-out"
+                  style={{
+                    transform: showPassword
+                      ? "scale(1) rotate(0deg)"
+                      : "scale(0.9) rotate(-8deg)",
+                  }}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-6 w-6" strokeWidth={2.2} />
+                  ) : (
+                    <Eye className="h-6 w-6" strokeWidth={2.2} />
+                  )}
+                </span>
+              </button>
+            </div>
           </div>
+
           <button
             type="submit"
             disabled={loading}

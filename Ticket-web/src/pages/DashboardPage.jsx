@@ -34,6 +34,10 @@ const BAR_COLORS = [
   "#DC2626",
   "#9333EA",
   "#0891B2",
+  "#FACC15",
+  "#F43F5E",
+  "#8B5CF6",
+  "#14B8A6",
 ];
 
 const LINE_COLORS = [
@@ -43,6 +47,10 @@ const LINE_COLORS = [
   "#DC2626",
   "#9333EA",
   "#0891B2",
+  "#FACC15",
+  "#F43F5E",
+  "#8B5CF6",
+  "#14B8A6",
 ];
 
 export default function DashboardPage() {
