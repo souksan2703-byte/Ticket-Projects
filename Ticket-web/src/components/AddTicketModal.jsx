@@ -331,7 +331,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   />
 
                   <p className="mt-1 text-xs text-neutral-400">
-                    {t("addTicketsHint")}
+                    {t("AddTicketsHint")}
                   </p>
                 </div>
               </div>
