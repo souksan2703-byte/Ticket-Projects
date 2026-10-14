@@ -62,8 +62,8 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
 
   // Date & Time
   const initialDateTime = parseEventDateTime(initialData?.date);
-
   const [eventDate, setEventDate] = useState(initialDateTime.date);
+  const [endDate, setEndDate] = useState(initialDateTime.date);
   const [startTime, setStartTime] = useState(initialDateTime.start);
   const [endTime, setEndTime] = useState(initialDateTime.end);
 
@@ -149,13 +149,17 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
       return;
     }
 
-    if (!eventDate || !startTime || !endTime) {
-      setError("ກະລຸນາເລືອກວັນທີ ເວລາເລີ່ມ ແລະ ເວລາສິ້ນສຸດ");
+    if (!eventDate || !endDate || !startTime || !endTime) {
+      setError("ກະລຸນາເລືອກວັນເລີ່ມ ວັນສິ້ນສຸດ ແລະເວລາໃຫ້ຄົບ");
       return;
     }
 
     if (startTime >= endTime) {
       setError("ເວລາສິ້ນສຸດຕ້ອງຫຼາຍກວ່າເວລາເລີ່ມ");
+      return;
+    }
+    if (endDate === eventDate && startTime >= endTime) {
+      setError("ເວລາສິ້ນສຸດຕ້ອງຫຼັງເວລາເລີ່ມ");
       return;
     }
 
@@ -377,6 +381,19 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                 type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+              />
+            </div>
+            {/* End Date */}
+            <div>
+              <label className="mb-1.5 block text-sm text-neutral-700">
+                End date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                min={eventDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
               />
             </div>
