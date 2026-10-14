@@ -3,11 +3,64 @@ import { Eye, EyeOff } from "lucide-react";
 import PageHeader from "../components/PageHeader.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddAdminUserModal from "../components/AddAdminUserModal.jsx";
-import {getAdminUsers,createAdminUser,updateAdminUser,resetAdminUserPassword,toggleAdminUserStatus,} from "../api.js";
+import {
+  getAdminUsers,
+  createAdminUser,
+  updateAdminUser,
+  resetAdminUserPassword,
+  toggleAdminUserStatus,
+} from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
 
+function formatLastLogin(date, language) {
+  if (!date) {
+    return language === "lo" ? "ບໍ່ມີ" : "Never";
+  }
+
+  const d = new Date(date);
+
+  if (Number.isNaN(d.getTime())) return "-";
+
+  const now = new Date();
+  const diffMins = Math.floor((now - d) / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  const time = d.toLocaleTimeString(language === "lo" ? "lo-LA" : "en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  if (diffMins < 1) {
+    return language === "lo" ? "ບໍ່ດົນມານີ້" : "Just now";
+  }
+
+  if (diffHours < 1) {
+    return language === "lo"
+      ? `${diffMins} ນາທີຜ່ານມາ`
+      : `${diffMins} minutes ago`;
+  }
+
+  if (diffDays < 1) {
+    return language === "lo" ? `ມື້ນີ້, ${time}` : `Today, ${time}`;
+  }
+
+  if (diffDays === 1) {
+    return language === "lo" ? `ມື້ວານນີ້, ${time}` : `Yesterday, ${time}`;
+  }
+
+  if (diffDays < 14) {
+    return language === "lo" ? `${diffDays} ມື້ຜ່ານມາ` : `${diffDays} days ago`;
+  }
+
+  const weeks = Math.floor(diffDays / 7);
+
+  return language === "lo" ? `${weeks} ອາທິດຜ່ານມາ` : `${weeks} weeks ago`;
+}
+
 export default function AdminUsersPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -177,7 +230,7 @@ export default function AdminUsersPage() {
                     <StatusPill status={u.status} />
                   </td>
                   <td className="px-5 py-4 text-neutral-700">
-                    {u.last || "-"}
+                    {formatLastLogin(u.lastLogin, language)}
                   </td>
                   <td className="px-5 py-4">
                     <button

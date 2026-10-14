@@ -28,14 +28,20 @@ const STATUS_KEYS = {
 
 export default function StatusPill({ status }) {
   const { t } = useLanguage();
-  const key = STATUS_KEYS[status];
+
+  const normalizedStatus =
+    typeof status === "string" ? status.trim() : status;
+
+  const key = STATUS_KEYS[normalizedStatus];
+
   return (
     <span
       className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${
-        STYLES[status] || "bg-neutral-100 text-neutral-600"
+        STYLES[normalizedStatus] ||
+        "bg-neutral-100 text-neutral-600"
       }`}
     >
-      {key ? t(key) : status}
+      {key ? t(key) : normalizedStatus ?? "-"}
     </span>
   );
 }

@@ -157,9 +157,9 @@ export const translations = {
   disable: { en: "Disable", lo: "ປິດໃຊ້ງານ" },
 
   changeUserPassword: {
-  en: "Change user password",
-  lo: "ປ່ຽນລະຫັດຜ່ານຜູ້ໃຊ້",
-},
+    en: "Change user password",
+    lo: "ປ່ຽນລະຫັດຜ່ານຜູ້ໃຊ້",
+  },
 
   // My profile page
   fillAllFields: {
