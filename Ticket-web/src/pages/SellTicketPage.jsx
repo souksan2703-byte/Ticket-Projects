@@ -23,7 +23,6 @@ export default function SellTicketPage() {
     setLoading(true);
     try {
       const data = await getTickets();
-      // แสดงเฉพาะอีเวนต์ที่เปิดขายอยู่ (Open) เท่านั้น
       const openEvents = data.filter((e) => e.status === "Open");
       setEvents(openEvents);
       if (openEvents[0]) setTickid(openEvents[0].id);

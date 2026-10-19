@@ -4,12 +4,15 @@ import StatCard from "../components/StatCard.jsx";
 import StatusPill from "../components/StatusPill.jsx";
 import AddTicketModal from "../components/AddTicketModal.jsx";
 import { currency } from "../data/sampleData.js";
-<<<<<<< Updated upstream
-import {getTickets,createTicket,updateTicket,deleteTicket,getImageUrl,} from "../api.js";
+import {
+  getTickets,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+  getImageUrl,
+} from "../api.js";
 import { useLanguage } from "../i18n/LanguageContext";
-=======
-import { getTickets, createTicket, updateTicket, deleteTicket, getImageUrl } from "../api.js";
->>>>>>> Stashed changes
+import { Trash2, X, AlertTriangle } from "lucide-react";
 
 function formatDateTime(value) {
   if (!value) return "-";
@@ -28,11 +31,15 @@ function formatDateTime(value) {
 }
 
 export default function ManageTicketsPage() {
+  const { t } = useLanguage();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingTicket, setEditingTicket] = useState(null); // null = โหมดเพิ่มใหม่
+  const [editingTicket, setEditingTicket] = useState(null);
+  const [ticketToDelete, setTicketToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   async function loadTickets() {
     setLoading(true);
@@ -62,10 +69,21 @@ export default function ManageTicketsPage() {
     await loadTickets();
   }
 
-  async function handleDelete(id) {
-    if (!confirm("ต้องการลบตั๋วนี้ใช่ไหม?")) return;
-    await deleteTicket(id);
-    await loadTickets();
+  async function handleDelete() {
+    if (!ticketToDelete || deleting) return;
+
+    setDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deleteTicket(ticketToDelete.id);
+      setTicketToDelete(null);
+      await loadTickets();
+    } catch (err) {
+      setDeleteError(err.message || t("deleteFailed"));
+    } finally {
+      setDeleting(false);
+    }
   }
 
   const openCount = tickets.filter((e) => e.status === "Open").length;
@@ -73,7 +91,7 @@ export default function ManageTicketsPage() {
   return (
     <div>
       <PageHeader
-        title="Manage tickets"
+        title={t("manageTickets")}
         action={
           <button
             onClick={() => {
@@ -82,13 +100,12 @@ export default function ManageTicketsPage() {
             }}
             className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
-            Add ticket
+            {t("addTicket")}
           </button>
         }
       />
 
       <div className="mb-6 grid grid-cols-2 gap-4">
-<<<<<<< Updated upstream
         <StatCard
           label={t("totalTickets")}
           value={tickets.length}
@@ -99,17 +116,13 @@ export default function ManageTicketsPage() {
           value={openCount}
           className="bg-neutral-100 text-green-700"
         />
-=======
-        <StatCard label="Total tickets" value={tickets.length} className="bg-neutral-100 text-neutral-900" />
-        <StatCard label="Open for sale" value={openCount} className="bg-neutral-100 text-green-700" />
->>>>>>> Stashed changes
       </div>
 
       {error && (
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          โหลดข้อมูลไม่สำเร็จ: {error}
+          {t("loadFailed")}: {error}
           <button onClick={loadTickets} className="ml-3 underline">
-            ลองใหม่
+            {t("retry")}
           </button>
         </div>
       )}
@@ -118,42 +131,32 @@ export default function ManageTicketsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
-              <th className="px-5 py-3 font-normal">Event</th>
-              <th className="px-5 py-3 font-normal">Price</th>
-              <th className="px-5 py-3 font-normal">Stock</th>
-              <th className="px-5 py-3 font-normal">Date &amp; time</th>
-              <th className="px-5 py-3 font-normal">Status</th>
-              <th className="px-5 py-3 font-normal">Edit</th>
-              <th className="px-5 py-3 font-normal">Delete</th>
+              <th className="px-5 py-3 font-normal">{t("colEvent")}</th>
+              <th className="px-5 py-3 font-normal">{t("colPrice")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStock")}</th>
+              <th className="px-5 py-3 font-normal">{t("colDateTime")}</th>
+              <th className="px-5 py-3 font-normal">{t("colStatus")}</th>
+              <th className="px-5 py-3 font-normal">{t("colEdit")}</th>
+              <th className="px-5 py-3 font-normal">{t("colDelete")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-<<<<<<< Updated upstream
                 <td
                   colSpan={7}
                   className="px-5 py-8 text-center text-neutral-400"
                 >
                   {t("loadingEllipsis")}
-=======
-                <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  กำลังโหลด...
->>>>>>> Stashed changes
                 </td>
               </tr>
             ) : tickets.length === 0 ? (
               <tr>
-<<<<<<< Updated upstream
                 <td
                   colSpan={7}
                   className="px-5 py-8 text-center text-neutral-400"
                 >
                   {t("noTicketsYet")}
-=======
-                <td colSpan={7} className="px-5 py-8 text-center text-neutral-400">
-                  ยังไม่มีตั๋ว กด "Add ticket" เพื่อเพิ่มรายการแรก
->>>>>>> Stashed changes
                 </td>
               </tr>
             ) : (
@@ -199,15 +202,20 @@ export default function ManageTicketsPage() {
                       }}
                       className="text-neutral-600 hover:text-neutral-900"
                     >
-                      Edit
+                      {t("colEdit")}
                     </button>
                   </td>
                   <td className="px-5 py-4">
                     <button
-                      onClick={() => handleDelete(e.id)}
-                      className="text-red-600 hover:text-red-800"
+                      onClick={() => {
+                        setTicketToDelete(e);
+                        setDeleteError(null);
+                      }}
+                      aria-label={`${t("colDelete")} ${e.name}`}
+                      className="inline-flex items-center justify-center rounded-lg p-2
+                       text-red-500 transition hover:bg-red-50 hover:text-red-700"
                     >
-                      Delete
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
@@ -226,6 +234,147 @@ export default function ManageTicketsPage() {
           }}
           onSave={handleSave}
         />
+      )}
+
+      {ticketToDelete && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center
+      bg-neutral-950/50 px-4 py-6 backdrop-blur-sm"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !deleting) {
+              setTicketToDelete(null);
+              setDeleteError(null);
+            }
+          }}
+        >
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-ticket-title"
+            className="w-full max-w-md overflow-hidden rounded-2xl
+        bg-white shadow-2xl"
+          >
+            <div className="p-6 sm:p-7">
+              <div className="mb-5 flex items-start justify-between">
+                <div
+                  className="flex h-14 w-14 items-center justify-center
+            rounded-2xl bg-red-50 text-red-600"
+                >
+                  <Trash2 className="h-7 w-7" />
+                </div>
+
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={() => {
+                    setTicketToDelete(null);
+                    setDeleteError(null);
+                  }}
+                  className="rounded-lg p-2 text-neutral-400
+              transition hover:bg-neutral-100 hover:text-neutral-700
+              disabled:opacity-50"
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <h2
+                id="delete-ticket-title"
+                className="text-xl font-bold text-neutral-900"
+              >
+                {t("confirmDeleteTicket")}
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-neutral-500">
+                {t("confirmDeleteTicketDesc")}
+              </p>
+
+              <div
+                className="mt-5 flex items-center gap-3 rounded-xl
+          border border-red-100 bg-red-50/70 p-3.5"
+              >
+                {ticketToDelete.logo ? (
+                  <img
+                    src={getImageUrl(ticketToDelete.logo)}
+                    alt=""
+                    className="h-14 w-14 shrink-0 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div
+                    className="flex h-14 w-14 shrink-0 items-center
+              justify-center rounded-lg bg-red-100 text-red-500"
+                  >
+                    <AlertTriangle className="h-6 w-6" />
+                  </div>
+                )}
+
+                <div className="min-w-0">
+                  <p className="break-words font-semibold text-neutral-900">
+                    {ticketToDelete.name}
+                  </p>
+                  <p className="mt-1 text-sm text-neutral-500">
+                    {ticketToDelete.location || "-"}
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-400">
+                    {formatDateTime(ticketToDelete.date)}
+                  </p>
+                </div>
+              </div>
+
+              {deleteError && (
+                <div
+                  className="mt-4 rounded-lg border border-red-200
+            bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                >
+                  {deleteError}
+                </div>
+              )}
+
+              <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={() => {
+                    setTicketToDelete(null);
+                    setDeleteError(null);
+                  }}
+                  className="flex-1 rounded-xl border border-neutral-200
+              px-4 py-3 text-sm font-semibold text-neutral-700
+              transition hover:bg-neutral-50 disabled:opacity-50"
+                >
+                  {t("cancel")}
+                </button>
+
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={handleDelete}
+                  className="flex-1 inline-flex items-center justify-center
+              gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm
+              font-semibold text-white shadow-sm transition
+              hover:bg-red-700 disabled:cursor-not-allowed
+              disabled:opacity-60"
+                >
+                  {deleting ? (
+                    <>
+                      <span
+                        className="h-4 w-4 animate-spin rounded-full
+                  border-2 border-white/40 border-t-white"
+                      />
+                      {t("Forgetting")}
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="h-4 w-4" />
+                      {t("confirmDeletion")}
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

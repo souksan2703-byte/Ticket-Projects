@@ -75,6 +75,18 @@ export const translations = {
     en: "Delete this ticket?",
     lo: "ຕ້ອງການລຶບປີ້ນີ້ແທ້ບໍ?",
   },
+  confirmDeletion: {
+    en: "Confirm deletion",
+    lo: "ຍຶນຢັນການລຶມ",
+  },
+  Forgetting: {
+    en: "Forgetting...",
+    lo: "ກຳລັງລຶມ...",
+  },
+  confirmDeleteTicketDesc: {
+    en: "Are you sure you want to delete this item? Please check the information before confirming",
+    lo: "ທ່ານແນ່ໃຈບໍ່ວ່າທ່ານຕ້ອງການລຶບລາຍການນີ້? ກະລຸນາກວດສອບຂໍ້ມູນກ່ອນທີ່ຈະຢືນຢັນ",
+  },
   colEvent: { en: "Event", lo: "ງານອີເວັນຕ໌" },
   colPrice: { en: "Price", lo: "ລາຄາ" },
   colStock: { en: "Stock", lo: "ຈຳນວນປີ້" },
@@ -220,10 +232,6 @@ export const translations = {
     lo: "ລາຄາ (LAK)",
   },
 
-  autoGenCodesHint: {
-    en: "Ticket codes will be auto-generated based on this amount (up to 1000).",
-    lo: "ລະບົບຈະສ້າງລະຫັດປີ້ອັດຕະໂນມັດຕາມຈຳນວນນີ້ (ສູງສຸດ 1000 ໃບ)",
-  },
   currentTickets: {
     en: "Current Tickets",
     lo: "ຈຳນວນປີ້ປັດຈຸບັນ",
@@ -237,9 +245,10 @@ export const translations = {
     lo: "ເພີ່ມປີ້",
   },
   addTicketsHint: {
-    en: "Add up to 1000 new tickets.",
-    lo: "ສາມາດເພີ່ມປີ້ໃໝ່ໄດ້ສູງສຸດ 1000 ໃບ",
+    en: "Add Tickets Hint",
+    lo: "ເພີ່ມປີ້",
   },
+  
   invalidAdditionalTickets: {
     en: "The number of tickets must be 0 or more.",
     lo: "ຈຳນວນປີ້ຕ້ອງເປັນ 0 ຫຼືຫຼາຍກວ່າ",
