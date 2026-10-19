@@ -321,7 +321,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   <input
                     type="number"
                     min="0"
-                    max="1000"
                     value={form.additionalTickets}
                     onChange={(e) =>
                       update("additionalTickets", e.target.value)

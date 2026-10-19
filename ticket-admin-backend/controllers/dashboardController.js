@@ -65,21 +65,45 @@ async function getSoldByEvent(req, res) {
     const { from, to } = req.query;
     const pool = await getPool();
     const request = pool.request();
-    const dateFilter = buildDateFilter(request, from, to);
+
+    // ກຳນົດເງື່ອນໄຂສຳລັບ TicketCode
+    const joinConditions = ["tc.tickid = m.tickid", "tc.status = 0"];
+
+    if (from) {
+      request.input("from", sql.Date, from);
+      joinConditions.push(`${SOLD_DATE_SQL} >= @from`);
+    }
+
+    if (to) {
+      request.input("to", sql.Date, to);
+      joinConditions.push(`${SOLD_DATE_SQL} < DATEADD(day, 1, @to)`);
+    }
 
     const result = await request.query(`
-            SELECT m.Title AS name, COUNT(*) AS value
-            FROM TicketCode tc
-            JOIN TicketCodeMaster m ON m.tickid = tc.tickid
-            WHERE tc.status = 0 ${dateFilter}
-            GROUP BY m.Title
-            ORDER BY COUNT(*) DESC
-        `);
+      SELECT
+        m.tickid,
+        m.Title AS name,
+        COUNT(tc.tickid) AS value
+      FROM TicketCodeMaster m
+      LEFT JOIN TicketCode tc
+        ON ${joinConditions.join(" AND ")}
+      GROUP BY m.tickid, m.Title
+      ORDER BY COUNT(tc.tickid) DESC, m.tickid ASC
+    `);
 
-    res.json(result.recordset);
+    res.json(
+      result.recordset.map((row) => ({
+        tickid: row.tickid,
+        name: row.name,
+        value: Number(row.value),
+      })),
+    );
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "ດຶງຂໍ້ມູນບໍ່ສຳເລັດ", error: err.message });
+    res.status(500).json({
+      message: "ດຶງຂໍ້ມູນບໍ່ສຳເລັດ",
+      error: err.message,
+    });
   }
 }
 

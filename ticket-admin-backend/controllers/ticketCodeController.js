@@ -136,7 +136,6 @@ async function generateCodes(req, res) {
 function generateTransactionId() {
   const now = new Date();
   const datePart = now.toISOString().slice(0, 10).replace(/-/g, "");
-  const randomPart = Math.floor(1000 + Math.random() * 9000);
   return `TXN-${datePart}-${randomPart}`;
 }
 
@@ -245,14 +244,32 @@ async function scanCode(req, res) {
     }
 
     const pool = await getPool();
+
     const result = await pool
       .request()
       .input("code", sql.NVarChar(50), code.trim()).query(`
-                SELECT tc.id, tc.code, tc.status, tc.myticket, tc.owner, tc.tranid, m.Title AS eventName
-                FROM TicketCode tc
-                JOIN TicketCodeMaster m ON m.tickid = tc.tickid
-                WHERE tc.code = @code
-            `);
+    SELECT
+      tc.id,
+      tc.code,
+      tc.tickid,
+      tc.status,
+      tc.myticket,
+      tc.owner,
+      tc.tranid,
+      tc.soldAt,
+      tc.getTicket_date AS receivedAt,
+      m.Title AS eventName,
+      m.Price AS price,
+      m.Location AS location,
+      m.DateEvent AS eventDate,
+      m.[Day] AS eventDay,
+      m.Description AS description,
+      m.Logo AS logo
+    FROM TicketCode tc
+    INNER JOIN TicketCodeMaster m
+      ON m.tickid = tc.tickid
+    WHERE tc.code = @code
+  `);
 
     const ticket = result.recordset[0];
 
@@ -273,14 +290,24 @@ async function scanCode(req, res) {
     }
 
     // ກໍລະນີທີ 2: ຂາຍແລ້ວແລະຮັບປີ້ໄປແລ້ວ (Used) -> ແຈ້ງເຕືອນກັນຮັບຊ້ຳ
+    // ຕົ໋ວຖືກຮັບໄປແລ້ວ
     if (ticket.myticket === true || ticket.myticket === 1) {
       return res.status(409).json({
         result: "already_used",
-        message: `ປີ້ໃບນີ້ຖືກຮັບໄປແລ້ວກ່ອນໜ້ານີ້ (${ticket.eventName})`,
+        message: `ຕົ໋ວໃບນີ້ຖືກຮັບໄປແລ້ວ (${ticket.eventName})`,
         ticket: {
+          id: ticket.id,
+          tickid: ticket.tickid,
           code: ticket.code,
           eventName: ticket.eventName,
+          eventLocation: ticket.eventLocation,
+          eventDate: ticket.eventDate,
+          price: ticket.price,
           owner: ticket.owner,
+          tranid: ticket.tranid,
+          soldAt: ticket.soldAt,
+          receivedAt: ticket.receivedAt,
+          status: "Sold",
         },
       });
     }
@@ -296,9 +323,21 @@ async function scanCode(req, res) {
       result: "success",
       message: `ຢືນຢັນຮັບປີ້ສຳເລັດ: ${ticket.eventName}`,
       ticket: {
+        id: ticket.id,
         code: ticket.code,
+        tickid: ticket.tickid,
         eventName: ticket.eventName,
+        price: ticket.price,
+        location: ticket.location,
+        eventDate: ticket.eventDate,
+        eventDay: ticket.eventDay,
+        description: ticket.description,
+        logo: ticket.logo,
         owner: ticket.owner,
+        tranid: ticket.tranid,
+        soldAt: ticket.soldAt,
+        receivedAt: new Date(),
+        status: "Used",
       },
     });
   } catch (err) {
