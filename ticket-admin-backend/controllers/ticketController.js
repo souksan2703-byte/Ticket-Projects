@@ -68,12 +68,12 @@ async function createTicket(req, res) {
         .status(400)
         .json({ message: "ກະລຸນາເພີ່ມຂໍ້ມູນ Title, Price ແລະ Stock ໃຫ້ຄົບ" });
     }
-    if (stock > 1000) {
-      return res
-        .status(400)
-        .json({
-          message: "ເພີ່ມໄດ້ບໍ່ເກີນ 1000 ໃບຕໍ່ຄັ້ງ (Stock ຕ້ອງບໍ່ເກີນ 1000)",
-        });
+    const parsedStock = Number(stock);
+
+    if (!Number.isSafeInteger(parsedStock) || parsedStock < 0) {
+      return res.status(400).json({
+        message: "ຈຳນວນປີ້ຕ້ອງເປັນເລກເຕັມ 0 ຫຼືຫຼາຍກວ່າ",
+      });
     }
 
     const pool = await getPool();
@@ -101,11 +101,11 @@ async function createTicket(req, res) {
 
     const newTickid = insertResult.recordset[0].tickid;
 
-    if (stock > 0) {
+    if (parsedStock > 0) {
       await generateCodesForEvent(
         pool,
         newTickid,
-        stock,
+        parsedStock,
         prefixFromTitle(title),
       );
     }
@@ -156,15 +156,9 @@ async function updateTicket(req, res) {
     const addQuantity = Number(additionalTickets || 0);
 
     // 3. ກວດສອບຄ່າ Add Tickets
-    if (!Number.isInteger(addQuantity) || addQuantity < 0) {
+    if (!Number.isSafeInteger(addQuantity) || addQuantity < 0) {
       return res.status(400).json({
-        message: "ຈຳນວນປີ້ທີ່ເພີ່ມຕ້ອງເປັນຈຳນວນເຕັມ 0 ຫຼືຫຼາຍກວ່າ",
-      });
-    }
-
-    if (addQuantity > 1000) {
-      return res.status(400).json({
-        message: "ເພີ່ມປີ້ໄດ້ບໍ່ເກີນ 1000 ໃບຕໍ່ຄັ້ງ",
+        message: "ຈຳນວນປີ້ທີ່ເພີ່ມຕ້ອງເປັນເລກເຕັມ 0 ຫຼືຫຼາຍກວ່າ",
       });
     }
 

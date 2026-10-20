@@ -133,13 +133,8 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
     if (isEditing) {
       const additionalTickets = Number(form.additionalTickets || 0);
 
-      if (!Number.isInteger(additionalTickets) || additionalTickets < 0) {
+      if (!Number.isSafeInteger(additionalTickets) || additionalTickets < 0) {
         setError(t("invalidAdditionalTickets"));
-        return;
-      }
-
-      if (additionalTickets > 1000) {
-        setError(t("maxAdditionalTickets"));
         return;
       }
     }
@@ -321,7 +316,6 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   <input
                     type="number"
                     min="0"
-                    
                     value={form.additionalTickets}
                     onChange={(e) =>
                       update("additionalTickets", e.target.value)
@@ -331,7 +325,7 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
                   />
 
                   <p className="mt-1 text-xs text-neutral-400">
-                    {t("AddTicketsHint")}
+                    {t("addTicketsHint")}
                   </p>
                 </div>
               </div>
