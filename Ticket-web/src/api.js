@@ -55,6 +55,7 @@ function toBackend(payload) {
   };
 }
 
+
 export async function getTickets() {
   const rows = await request("/tickets");
   return rows.map(fromBackend);

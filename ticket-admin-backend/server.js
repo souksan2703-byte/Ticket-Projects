@@ -29,7 +29,7 @@ app.use('/uploads', express.static(uploadsDir));
 
 // Route กลุ่มต่างๆ
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/auth', authRoutes);             // Sign in (Admin/Staff)
+app.use('/api/auth', authRoutes);             // Sign in
 app.use('/api/admin-users', adminUserRoutes); // Admin users
 app.use('/api/ticket-codes', ticketCodeRoutes); // Ticket codes
 app.use('/api/reports', reportRoutes);        // Reports
@@ -37,12 +37,11 @@ app.use('/api/dashboard', dashboardRoutes);   // Dashboard
 app.use('/api/public', publicRoutes);         // ໜ້າຮ້ານສຳລັບລູກຄ້າ (ບໍ່ຕ້ອງ login)
 app.use('/api/upload', uploadRoutes);         // ອັບໂຫລດຮູບພາບ (ໃຊ້ Multer)
 
-
 app.get('/', (req, res) => {
-    res.json({ message: 'Ticket Admin API ກຳລັງໃຊ້ງານຢູ່' });
+    res.json({ message: 'Ticket Admin API กำลังทำงานอยู่' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server ລັນຢູ່ທີ່ http://localhost:${PORT}`);
+    console.log(`Server รันอยู่ที่ http://localhost:${PORT}`);
 });
