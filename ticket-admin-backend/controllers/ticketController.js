@@ -33,18 +33,8 @@ async function getTicketById(req, res) {
       .input("id", sql.Int, req.params.id)
       .query("SELECT * FROM TicketCodeMaster WHERE tickid = @id");
 
-<<<<<<< Updated upstream
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "ບໍ່ພົບປີ້ທີ່ຕ້ອງການ" });
-=======
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ບໍ່ພົບປີ໋ທີ່ຕ້ອງການ' });
-        }
-        res.json(result.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ດຶງຂໍ້ມູນຕັ້ວບໍ່ສຳເລັດ', error: err.message });
->>>>>>> Stashed changes
     }
     res.json(result.recordset[0]);
   } catch (err) {
@@ -111,7 +101,6 @@ async function createTicket(req, res) {
 
     const newTickid = insertResult.recordset[0].tickid;
 
-<<<<<<< Updated upstream
     if (stock > 0) {
       await generateCodesForEvent(
         pool,
@@ -119,20 +108,6 @@ async function createTicket(req, res) {
         stock,
         prefixFromTitle(title),
       );
-=======
-        if (stock > 0) {
-            await generateCodesForEvent(pool, newTickid, stock, prefixFromTitle(title));
-        }
-
-        const finalResult = await pool.request()
-            .input('id', sql.Int, newTickid)
-            .query('SELECT * FROM TicketCodeMaster WHERE tickid = @id');
-
-        res.status(201).json(finalResult.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ເພີ່ມປີ໋ບໍ່ສຳເລັດ', error: err.message });
->>>>>>> Stashed changes
     }
 
     const finalResult = await pool
@@ -170,19 +145,11 @@ async function updateTicket(req, res) {
                 WHERE tickid = @id
             `);
 
-<<<<<<< Updated upstream
     if (currentResult.recordset.length === 0) {
       return res.status(404).json({
         message: "ບໍ່ພົບປີ້ທີ່ຕ້ອງການແກ້ໄຂ",
       });
     }
-=======
-        if (currentResult.recordset.length === 0) {
-            return res.status(404).json({ message: 'ບໍ່ພົບປີ໋ທີ່ຕ້ອງການແກ້ໄຂ' });
-        }
-        const currentStock = currentResult.recordset[0].Stock || 0;
-        const requestedStock = Number(stock);
->>>>>>> Stashed changes
 
     const currentStock = Number(currentResult.recordset[0].Stock || 0);
 
@@ -225,24 +192,12 @@ async function updateTicket(req, res) {
     if (addQuantity > 0) {
       console.log(`Adding ${addQuantity} tickets to tickid=${req.params.id}`);
 
-<<<<<<< Updated upstream
       await generateCodesForEvent(
         pool,
         req.params.id,
         addQuantity,
         prefixFromTitle(title),
       );
-=======
-        // 4. ดึงข้อมูลล่าสุดกลับไปแสดง (Stock ตอนนี้ตรงกับจำนวนโค้ด Available จริงเสมอ)
-        const finalResult = await pool.request()
-            .input('id', sql.Int, req.params.id)
-            .query('SELECT * FROM TicketCodeMaster WHERE tickid = @id');
-
-        res.json(finalResult.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ແກ້ໄຂປີ໋ບໍ່ສຳເລັດ', error: err.message });
->>>>>>> Stashed changes
     }
 
     // 7. ດຶງຂໍ້ມູນຫຼ້າສຸດຈາກ SQL Server
@@ -288,18 +243,8 @@ async function toggleTicketStatus(req, res) {
                 WHERE tickid = @id
             `);
 
-<<<<<<< Updated upstream
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "ບໍ່ພົບປີ້ທີ່ຕ້ອງການ" });
-=======
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ message: 'ບໍ່ພົບປີ໋ທີ່ຕ້ອງການ' });
-        }
-        res.json(result.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ປ່ຽນສະຖານະບໍ່ສຳເລັດ', error: err.message });
->>>>>>> Stashed changes
     }
     res.json(result.recordset[0]);
   } catch (err) {
@@ -324,18 +269,8 @@ async function deleteTicket(req, res) {
       .input("id", sql.Int, req.params.id)
       .query("DELETE FROM TicketCodeMaster WHERE tickid = @id");
 
-<<<<<<< Updated upstream
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ message: "ບໍ່ພົບປີ້ທີ່ຕ້ອງການລົບ" });
-=======
-        if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ message: 'ບໍ່ພົບປີ໋ທີ່ຕ້ອງການລົບ' });
-        }
-        res.json({ message: 'ລົບປີ໋ສຳເລັດ' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'ລົບປີ໋ບໍ່ສຳເລັດ', error: err.message });
->>>>>>> Stashed changes
     }
     res.json({ message: "ລົບປີ້ສຳເລັດ" });
   } catch (err) {
