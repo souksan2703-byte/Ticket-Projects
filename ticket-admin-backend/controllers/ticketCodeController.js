@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const QRCode = require("qrcode");
 const { sql, getPool } = require("../config/db");
 const { generateCodesForEvent } = require("../utils/ticketCodeGenerator");
@@ -133,9 +134,14 @@ async function generateCodes(req, res) {
 }
 
 // ສ້າງ transaction ID ອັດຕະໂນມັດ ເຊັ່ນ TXN-20260904-4821
+// ສ້າງ Transaction ID ແບບສຸ່ມໃໝ່ທຸກຄັ້ງ
 function generateTransactionId() {
   const now = new Date();
   const datePart = now.toISOString().slice(0, 10).replace(/-/g, "");
+
+  // ສຸ່ມ 8 ຕົວອັກສອນ/ຕົວເລກ
+  const randomPart = crypto.randomBytes(4).toString("hex").toUpperCase();
+
   return `TXN-${datePart}-${randomPart}`;
 }
 
@@ -145,15 +151,12 @@ function generateTransactionId() {
 async function sellCode(req, res) {
   try {
     const { tickid, owner } = req.body;
-    let { tranid } = req.body;
+    const tranid = generateTransactionId();
 
     if (!tickid || !owner) {
       return res
         .status(400)
         .json({ message: "ກະລຸນາເລືອກອີເວັນແລະປ້ອນຂໍ້ມູນຜູ້ຊື້" });
-    }
-    if (!tranid) {
-      tranid = generateTransactionId();
     }
 
     const pool = await getPool();

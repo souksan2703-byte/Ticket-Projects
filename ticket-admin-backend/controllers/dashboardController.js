@@ -205,7 +205,6 @@ async function getTransactionSeries(req, res) {
       to = to || formatDate(lastOfMonth);
     }
 
-    // ດຶງ Event ທຸກອັນ ບໍ່ຈຳກັດ TOP 2
     const eventsResult = await pool.request().query(`
       SELECT tickid, Title AS name
       FROM TicketCodeMaster

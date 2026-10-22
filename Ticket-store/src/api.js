@@ -43,11 +43,3 @@ export function getImageUrl(path) {
   const baseUrl = API_URL.replace(/\/api$/, "");
   return `${baseUrl}${path}`;
 }
-
-
-export function getImageUrl(path) {
-  if (!path) return null;
-  if (path.startsWith("http")) return path;
-  const baseUrl = API_URL.replace(/\/api$/, "");
-  return `${baseUrl}${path}`;
-}

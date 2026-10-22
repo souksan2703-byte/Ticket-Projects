@@ -54,9 +54,9 @@ export const translations = {
     lo: "ຍັງບໍ່ມີຂໍ້ມູນຍອດຂາຍໃນຊ່ວງເວລານີ້",
   },
   noDataYet: { en: "No data yet", lo: "ຍັງບໍ່ມີຂໍ້ມູນ" },
-  ticketMixTop2: {
-    en: "Ticket mix (top 2 events)",
-    lo: "ສັດສ່ວນປີ້ (2 ງານອັນດັບຕົ້ນ)",
+  ticketMixTop: {
+    en: "Ticket",
+    lo: "ສັດສ່ວນປີ້",
   },
   transactionMonthly: {
     en: "Transaction (monthly)",
