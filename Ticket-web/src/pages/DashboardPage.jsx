@@ -185,7 +185,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
           <p className="mb-4 text-sm font-medium text-neutral-800">
-            {t("ticketMixTop").replace("Top 2", "All Events")}
+            {t("ticketDistributionEvents")}
           </p>
           {ticketMix.length === 0 ? (
             <p className="text-sm text-neutral-400">{t("noDataYet")}</p>
