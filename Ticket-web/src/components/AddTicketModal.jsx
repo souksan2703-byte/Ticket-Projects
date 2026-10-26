@@ -200,13 +200,13 @@ export default function AddTicketModal({ onClose, onSave, initialData }) {
           <div className="mb-5">
             <label
               htmlFor="event-image"
-              className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-6 py-8 text-center hover:bg-neutral-100"
+              className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-4 text-center hover:bg-neutral-100"
             >
               {preview ? (
                 <img
                   src={preview}
                   alt="Event preview"
-                  className="mb-4 h-48 w-full rounded-lg object-cover"
+                  className="mb-4 block h-auto w-full rounded-lg object-contain"
                 />
               ) : (
                 <>
