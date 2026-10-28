@@ -36,7 +36,7 @@ export default function StatusPill({ status }) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${
+      className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
         STYLES[normalizedStatus] ||
         "bg-neutral-100 text-neutral-600"
       }`}
